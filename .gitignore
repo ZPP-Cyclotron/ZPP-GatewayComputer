@@ -1,3 +1,5 @@
+# Template source: https://github.com/github/gitignore
+
 # Logs
 gateway-computer-app/logs
 gateway-computer-app/*.log
