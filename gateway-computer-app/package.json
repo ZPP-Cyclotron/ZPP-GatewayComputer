@@ -4,6 +4,7 @@
   "description": "power supplies remote control application",
   "main": "main.js",
   "scripts": {
+    "start": "electron .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Jan Roguwski, Marcin Żołek",
