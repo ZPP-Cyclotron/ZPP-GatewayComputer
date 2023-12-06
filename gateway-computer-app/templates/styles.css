@@ -1,6 +1,6 @@
 @font-face {
   font-family: 'Terminator';
-  src: url('TERMINAT.TTF') format('truetype');
+  src: url('templates/TERMINAT.TTF') format('truetype');
 }
 
 :root {
