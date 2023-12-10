@@ -1,6 +1,6 @@
 @font-face {
   font-family: 'Terminator';
-  src: url('templates/TERMINAT.TTF') format('truetype');
+  src: url('TERMINAT.TTF') format('truetype');
 }
 
 :root {
@@ -55,6 +55,7 @@ body {
   /* background-image: url('background.svg'); */
   display: flex;
   flex-direction: column;
+  gap: 10px;
 }
 
 .naglowek {
@@ -76,6 +77,7 @@ body {
 }
 
 .obszar-na-naglowek-i-cos {
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -97,23 +99,12 @@ body {
   /*background-color: yellow;*/
 }
 
-.paragraf-na-nazwe-magnesu {
-  padding: 30px;
-  font-size: 20px;
-  font-family: 'Terminator', sans-serif;
-}
-
 .obszar-na-guzik-on-off {
   display: flex;
   flex-grow: 1;
   justify-content: center;
   align-items: center;
   /*background-color: green;*/
-}
-
-.guzik-on-off {
-  width: 30px;
-  height: 30px;
 }
 
 .obszar-na-polaryzacje {
@@ -133,31 +124,60 @@ body {
   align-items: center;
 }
 
-.paragraf-na-wartosc-napiecia {
-  padding: 10px;
-  font-size: 20px;
-  font-family: 'Terminator', sans-serif;
-}
-
 .obszar-na-natezenie {
   display: flex;
   flex-grow: 1;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
 }
 
-.paragraf-na-wartosc-natezenia {
-  padding: 10px;
-  font-size: 20px;
-  font-family: 'Terminator', sans-serif;
+.obszar-na-zmiane-natezenia-i-guziki {
+  position: absolute;
+  bottom: -60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  visibility: hidden;
+  z-index: 7;
+  gap: 3px;
+  background-color: grey;
+  border-radius: 3px;
 }
 
-.pole-tekstowe-na-wartosc-pradu {
-  width: 5em;
-  font-size: 20px;
-  font-family: 'Terminator', sans-serif;
-  outline: none;
-  resize: none;
+.obszar-na-zmiane-natezenia-i-guziki::before {
+    content: "";
+    display: block;
+    position: absolute;
+    height: 20px;
+    width: 20px;
+    background: grey;
+    border-right: 0;
+    border-bottom: 0;
+    top: -10px;
+    transform: rotate(45deg);
+    z-index: -1;
+}
+
+.obszar-na-zmiane-natezenia {
+  padding: 5px;
+  padding-bottom: 1px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.obszar-na-przyciski {
+  display: flex;
+  gap: 5px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 4px;
+}
+
+.obszar-na-przyciski input {
+  cursor: pointer;
 }
 
 .obszar-na-bledy {
@@ -167,24 +187,18 @@ body {
   align-items: center;
 }
 
-.paragraf-na-kod-bledu {
-  padding: 10px;
-  font-size: 20px;
-  font-family: 'Terminator', sans-serif;
-}
-
-
-
 
 .cyfra svg {
-  height: 80px;
   width: 56px;
   background-color: #090608;
 }
 
 .obszar-na-bledy svg {
-  height: 40px;
   width: 28px;
+}
+
+.obszar-na-zmiane-natezenia svg, .pusty-napis svg {
+  width: 35px;
 }
 
 #panel1 .cyfra {

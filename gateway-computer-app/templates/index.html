@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <link rel="stylesheet" href="styles.css">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline';">
   <title>Cyclotron</title>
 </head>
 <body>
@@ -11,10 +12,6 @@
       <img class="mapa-cyklotronu" src="cyklotron.png">
     </div>
     <div class="obszar-paneli">
-
-      <!--<input type="number" step="0.1" value="0" class="pole-tekstowe-na-wartosc-pradu"></input>
-      <p>asdasdM</p>-->
-
       <div id="panel1" class="panel">
         <div class="obszar-na-naglowek-i-cos">
           <div class="obszar-na-naglowek">
@@ -72,16 +69,29 @@
             <moja-cyfra class="cyfra" wartosc="V"></moja-cyfra>
           </div>
         </div>
-        <div class="obszar-na-naglowek-i-cos">
+        <div id="natezenie1" class="obszar-na-naglowek-i-cos">
           <div class="obszar-na-naglowek">
             <p class="naglowek">CURRENT<p>
           </div>
           <div class="obszar-na-natezenie">
             <moja-cyfra class="cyfra" wartosc=" "></moja-cyfra>
-            <moja-cyfra class="cyfra" wartosc="4"></moja-cyfra>
+            <moja-cyfra class="cyfra" wartosc=" "></moja-cyfra>
             <moja-cyfra class="cyfra" wartosc="2."></moja-cyfra>
             <moja-cyfra class="cyfra" wartosc="9"></moja-cyfra>
             <moja-cyfra class="cyfra" wartosc="A"></moja-cyfra>
+          </div>
+          <div class="obszar-na-zmiane-natezenia-i-guziki">
+            <div class="obszar-na-zmiane-natezenia">
+              <moja-cyfra class="cyfra" wartosc=" "></moja-cyfra>
+              <moja-cyfra class="cyfra" wartosc=" "></moja-cyfra>
+              <moja-cyfra class="cyfra" wartosc=" "></moja-cyfra>
+              <moja-cyfra class="cyfra" wartosc=" "></moja-cyfra>
+              <moja-cyfra class="cyfra" wartosc=" "></moja-cyfra>
+            </div>
+            <div class="obszar-na-przyciski">
+              <input id="aplikuj1" type="button" value="Apply"/>
+              <input id="zamknij1" type="button" value="Cancel"/>
+            </div>
           </div>
         </div>
         <div class="obszar-na-naglowek-i-cos">
@@ -108,6 +118,9 @@
           </div>
         </div>
       </div>
+
+
+
 
 
 
@@ -165,9 +178,9 @@
             <p class="naglowek">VOLTAGE<p>
           </div>
           <div class="obszar-na-napiecie">
-            <moja-cyfra class="cyfra" wartosc=" "></moja-cyfra>
-            <moja-cyfra class="cyfra" wartosc="8"></moja-cyfra>
-            <moja-cyfra class="cyfra" wartosc="7."></moja-cyfra>
+            <moja-cyfra class="cyfra" wartosc="2"></moja-cyfra>
+            <moja-cyfra class="cyfra" wartosc="2"></moja-cyfra>
+            <moja-cyfra class="cyfra" wartosc="0."></moja-cyfra>
             <moja-cyfra class="cyfra" wartosc="0"></moja-cyfra>
             <moja-cyfra class="cyfra" wartosc="V"></moja-cyfra>
           </div>
@@ -177,11 +190,24 @@
             <p class="naglowek">CURRENT<p>
           </div>
           <div class="obszar-na-natezenie">
-            <moja-cyfra class="cyfra" wartosc="1"></moja-cyfra>
-            <moja-cyfra class="cyfra" wartosc="3"></moja-cyfra>
-            <moja-cyfra class="cyfra" wartosc="7."></moja-cyfra>
-            <moja-cyfra class="cyfra" wartosc="6"></moja-cyfra>
+            <moja-cyfra class="cyfra" wartosc=" "></moja-cyfra>
+            <moja-cyfra class="cyfra" wartosc=" "></moja-cyfra>
+            <moja-cyfra class="cyfra" wartosc="2."></moja-cyfra>
+            <moja-cyfra class="cyfra" wartosc="9"></moja-cyfra>
             <moja-cyfra class="cyfra" wartosc="A"></moja-cyfra>
+          </div>
+          <div class="obszar-na-zmiane-natezenia-i-guziki">
+            <div class="obszar-na-zmiane-natezenia">
+              <moja-cyfra class="cyfra" wartosc=" "></moja-cyfra>
+              <moja-cyfra class="cyfra" wartosc=" "></moja-cyfra>
+              <moja-cyfra class="cyfra" wartosc=" "></moja-cyfra>
+              <moja-cyfra class="cyfra" wartosc=" "></moja-cyfra>
+              <moja-cyfra class="cyfra" wartosc=" "></moja-cyfra>
+            </div>
+            <div class="obszar-na-przyciski">
+              <input type="button" value="Apply"/>
+              <input type="button" value="Cancel"/>
+            </div>
           </div>
         </div>
         <div class="obszar-na-naglowek-i-cos">
@@ -208,8 +234,6 @@
           </div>
         </div>
       </div>
-
-
 
 
 
@@ -265,10 +289,10 @@
             <p class="naglowek">VOLTAGE<p>
           </div>
           <div class="obszar-na-napiecie">
-            <moja-cyfra class="cyfra" wartosc=" "></moja-cyfra>
-            <moja-cyfra class="cyfra" wartosc=" "></moja-cyfra>
-            <moja-cyfra class="cyfra" wartosc=" "></moja-cyfra>
-            <moja-cyfra class="cyfra" wartosc=" "></moja-cyfra>
+            <moja-cyfra class="cyfra" wartosc="2"></moja-cyfra>
+            <moja-cyfra class="cyfra" wartosc="2"></moja-cyfra>
+            <moja-cyfra class="cyfra" wartosc="0."></moja-cyfra>
+            <moja-cyfra class="cyfra" wartosc="0"></moja-cyfra>
             <moja-cyfra class="cyfra" wartosc="V"></moja-cyfra>
           </div>
         </div>
@@ -278,10 +302,23 @@
           </div>
           <div class="obszar-na-natezenie">
             <moja-cyfra class="cyfra" wartosc=" "></moja-cyfra>
-            <moja-cyfra class="cyfra" wartosc=" "></moja-cyfra>
-            <moja-cyfra class="cyfra" wartosc=" "></moja-cyfra>
-            <moja-cyfra class="cyfra" wartosc=" "></moja-cyfra>
+            <moja-cyfra class="cyfra" wartosc="7"></moja-cyfra>
+            <moja-cyfra class="cyfra" wartosc="7."></moja-cyfra>
+            <moja-cyfra class="cyfra" wartosc="0"></moja-cyfra>
             <moja-cyfra class="cyfra" wartosc="A"></moja-cyfra>
+          </div>
+          <div class="obszar-na-zmiane-natezenia-i-guziki">
+            <div class="obszar-na-zmiane-natezenia">
+              <moja-cyfra class="cyfra" wartosc=" "></moja-cyfra>
+              <moja-cyfra class="cyfra" wartosc=" "></moja-cyfra>
+              <moja-cyfra class="cyfra" wartosc=" "></moja-cyfra>
+              <moja-cyfra class="cyfra" wartosc=" "></moja-cyfra>
+              <moja-cyfra class="cyfra" wartosc=" "></moja-cyfra>
+            </div>
+            <div class="obszar-na-przyciski">
+              <input type="button" value="Apply"/>
+              <input type="button" value="Cancel"/>
+            </div>
           </div>
         </div>
         <div class="obszar-na-naglowek-i-cos">

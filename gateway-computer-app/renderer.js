@@ -13,13 +13,8 @@ class Cyferka extends HTMLElement {
     this.kolor_tla = window.getComputedStyle(this).backgroundColor;
     this.kolor_off = window.getComputedStyle(this).outlineColor;
     this.kolor_on = window.getComputedStyle(this).color;
+    this.id = this.getAttribute("id");
     this.wartosc = this.getAttribute("wartosc");
-
-    console.log(this.kolor_tla);
-    console.log(this.kolor_off);
-    console.log(this.kolor_on);
-    console.log(this.wartosc);
-
   }
 
   // Zwraca kolor atrybutu fill w zależności od kierunku k i this.wartosc.
@@ -77,7 +72,7 @@ class Cyferka extends HTMLElement {
 
   #zaktualizujWartosc() {
     this.innerHTML=`
-      <svg id="wyswietlacz-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1052 1361.9982">
+      <svg id="wyswietlacz-svg${this.id}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1052 1361.9982">
       <g
         id="wyswietlacz"
         transform="translate(665,172.63912)">
@@ -199,83 +194,142 @@ if (!customElements.get("moja-cyfra")) {
 /****************************
  * Obsługa pola tekstowego. *
  ****************************/
+var PoleNatezenia = (function() {
+  function main(div_natezenia) {
+    var obszar_na_zmiane_i_przyciski = div_natezenia.querySelector(".obszar-na-zmiane-natezenia-i-guziki");
+    var obszar_na_natezenie = div_natezenia.querySelector(".obszar-na-natezenie");
+    var obszar_zmiany_natezenia = div_natezenia.querySelector(".obszar-na-zmiane-natezenia");
+    var obszar_przyciskow = div_natezenia.querySelector(".obszar-na-przyciski");
 
-function wyznacz_czesc_calkowita(x) {
-  return x.split('.')[0] || "";
-}
+    var cyfry_natezenia = obszar_na_natezenie.querySelectorAll('.cyfra');
+    var cyfry_zmiany = obszar_zmiany_natezenia.querySelectorAll('.cyfra');
+    var guziki = obszar_przyciskow.querySelectorAll('input');
+    var guzik_aplikacji = guziki[0];
+    var guzik_anulowania = guziki[1];
 
-function wyznacz_czesc_ulamkowa(x) {
-  return x.split('.')[1] || "";
-}
+    // Poniższe dotyczy błyskajacej cyfry do zmiany wartości.
+    var indeks_cyfry;
+    var wartosc_cyfry;
+    var interwal_id;
 
-var PoleTekstoweNatezenia = (function() {
-  function main(pole_tekstowe, max_natezenie, liczba_cyfr_po_przecinku) {
-    function ustaw_natezenie(ev) {
-      var el = ev.target;
-
-      var czesc_calkowita = wyznacz_czesc_calkowita(el.value);
-      var czesc_ulamkowa = wyznacz_czesc_ulamkowa(el.value);
-      var korekta = false;
-
-      // Maksymalna dopuszczalna liczba cyfr po przecinku.
-      if (czesc_ulamkowa.length > liczba_cyfr_po_przecinku) {
-        czesc_ulamkowa = czesc_ulamkowa.slice(0, liczba_cyfr_po_przecinku);
-        korekta = true;
-      }
-
-      // Wiodące zera w częsci całkowitej.
-      if (czesc_calkowita[0] == '0' && czesc_calkowita.length > 1) {
-        czesc_calkowita = czesc_calkowita.replace(/^0+(\d)/gm, '$1$2');
-        korekta = true;
-      }
-
-      // Maksymalna dopuszczalna liczba cyfr częsci całkowitej bez zer wiodących.
-      if (czesc_calkowita.length > 3) {
-        czesc_calkowita = czesc_calkowita.slice(0, 3);
-        korekta = true;
-      }
-
-      // Maksymalna wartość liczby.
-      if (czesc_calkowita >= max_natezenie) {
-        czesc_calkowita = String(max_natezenie);
-        czesc_ulamkowa = "0";
-        korekta = true;
-      }
-
-      // Liczba nie może być ujemna.
-      if (el.value < 0) {
-        czesc_calkowita = "0";
-        czesc_ulamkowa = "0";
-        korekta = true;
-      }
-
-      if (korekta) {
-        // Trik pozwalający ustawić kursor na koniec po następnej instrukcji.
-        el.value = 0;
-        el.value = parseFloat(czesc_calkowita + "." + czesc_ulamkowa);
-      }
-
-      // Trik pozwalający na wykasowanie zawartości, gdy wartość nie jest liczbą.
-      // Dzięki temu naciśnięcie e (empty), - lub + kasuje wartość.
-      if (el.value == '') {
-        el.value = '';
+    function inicjuj_blyskanie() {
+      var aktualna_cyfra = cyfry_zmiany[indeks_cyfry];
+      if (aktualna_cyfra.getAttribute("wartosc") == " ") {
+        aktualna_cyfra.setAttribute("wartosc", wartosc_cyfry);
+      } else {
+        aktualna_cyfra.setAttribute("wartosc", " ");
       }
     }
 
-    pole_tekstowe.addEventListener('input', ustaw_natezenie);
+    function jest_cyfra(c) {
+      return c >= '0' && c <= '9';
+    }
+
+    function obsluz_klawisz(ev) {
+      ev = ev || window.event;
+      var kod = ev.keyCode;
+
+      if (kod) {
+        var znak = String.fromCharCode(kod);
+
+        if (jest_cyfra(znak)) {
+          if (indeks_cyfry == 2) {
+            znak = znak + '.';
+          }
+
+          if (indeks_cyfry + 1 == (cyfry_zmiany.length - 1)) {
+            cyfry_zmiany[indeks_cyfry].setAttribute("wartosc", znak);
+            wartosc_cyfry = znak;
+          } else {
+            clearInterval(interwal_id);
+            cyfry_zmiany[indeks_cyfry].setAttribute("wartosc", znak);
+            indeks_cyfry++;
+            wartosc_cyfry = cyfry_zmiany[indeks_cyfry].getAttribute("wartosc");
+            interwal_id = setInterval(inicjuj_blyskanie, 500);
+          }
+        } else if (kod == '37') { // Lewa strzałka
+          if (indeks_cyfry > 0) {
+            clearInterval(interwal_id);
+            cyfry_zmiany[indeks_cyfry].setAttribute("wartosc", wartosc_cyfry);
+            indeks_cyfry--;
+            wartosc_cyfry = cyfry_zmiany[indeks_cyfry].getAttribute("wartosc");
+            interwal_id = setInterval(inicjuj_blyskanie, 500);
+          }
+        } else if (kod == '39') { // Prawa strzałka
+          if (indeks_cyfry < cyfry_zmiany.length - 2) {
+            clearInterval(interwal_id);
+            cyfry_zmiany[indeks_cyfry].setAttribute("wartosc", wartosc_cyfry);
+            indeks_cyfry++;
+            wartosc_cyfry = cyfry_zmiany[indeks_cyfry].getAttribute("wartosc");
+            interwal_id = setInterval(inicjuj_blyskanie, 500);
+          }
+        }
+      }
+    }
+
+    function inicjuj_zmiany(ev) { // TODO nie wiecej niz jedno pole zmiany wyswietlane na raz!
+      obszar_na_zmiane_i_przyciski.style.visibility = "visible";
+
+      for (let i = 0; i < cyfry_zmiany.length; i++) {
+        var przepisanie = cyfry_natezenia[i].getAttribute("wartosc");
+
+        if (i != cyfry_zmiany.length - 1 && !jest_cyfra(przepisanie)) {
+          przepisanie = "0";
+        }
+
+        cyfry_zmiany[i].setAttribute("wartosc", przepisanie);
+      }
+
+      indeks_cyfry = 0;
+      wartosc_cyfry = cyfry_zmiany[indeks_cyfry].getAttribute("wartosc");
+      interwal_id = setInterval(inicjuj_blyskanie, 500);
+      window.addEventListener("keydown", obsluz_klawisz);
+    }
+
+    function koncz_zmiany() {
+      clearInterval(interwal_id);
+      interwal_id = undefined;
+      window.removeEventListener("keydown", obsluz_klawisz);
+      obszar_na_zmiane_i_przyciski.style.visibility = "hidden";
+    }
+
+    guzik_aplikacji.addEventListener("click", function(ev) {
+      var wiodace_zera = true;
+
+      for (let i = 0; i < cyfry_zmiany.length - 1; i++) {
+        var cyfra_teraz = cyfry_zmiany[i].getAttribute("wartosc");
+
+        if (i == indeks_cyfry) {
+          cyfra_teraz = wartosc_cyfry;
+        }
+
+        if (wiodace_zera == true && cyfra_teraz == 0 && i < 2) {
+          cyfra_teraz = " ";
+        } else {
+          wiodace_zera = false;
+        }
+
+        if (i == 2) {
+          cyfra_teraz = cyfra_teraz + '.';
+        }
+
+        cyfry_natezenia[i].setAttribute("wartosc", cyfra_teraz);
+      }
+
+      koncz_zmiany();
+      /* PRZEKAZAĆ USTAWIENIE DO SERWERA!!! */
+    });
+
+    guzik_anulowania.addEventListener("click", function(ev) {
+      koncz_zmiany();
+    });
+
+    obszar_na_natezenie.addEventListener("click", inicjuj_zmiany);
   }
 
-  return function(pole_tekstowe, max_natezenie, liczba_cyfr_po_przecinku) {
-    main(pole_tekstowe, max_natezenie, liczba_cyfr_po_przecinku);
+  return function(div_natezenia) {
+    main(div_natezenia);
   };
 }());
 
-var pola_tekstowe_na_wartosci_pradu = document.querySelectorAll('.pole-tekstowe-na-wartosc-pradu');
-pola_tekstowe_na_wartosci_pradu.forEach(x => PoleTekstoweNatezenia(x, 200, 1));
-
-document.getElementById("testowy").addEventListener("change", function(ev) {
-    console.log("zmiana");
-    document.getElementById("tt").setAttribute("wartosc", "7");
-    document.getElementById("tt").setAttribute("wartosc", "0.");
-});
-
+PoleNatezenia(document.getElementById("natezenie1"));
