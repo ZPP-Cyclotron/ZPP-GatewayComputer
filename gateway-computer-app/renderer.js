@@ -210,7 +210,10 @@ var PoleNatezenia = (function() {
     // Poniższe dotyczy błyskajacej cyfry do zmiany wartości.
     var indeks_cyfry;
     var wartosc_cyfry;
-    var interwal_id;
+
+    // interwal_id jest undefined tylko na początku i na końcu.
+    // Innymi słowy interwal_id jest defined wtw, gdy wyświetla się okienko zmiany.
+    var interwal_id = undefined;
 
     function inicjuj_blyskanie() {
       var aktualna_cyfra = cyfry_zmiany[indeks_cyfry];
@@ -267,23 +270,25 @@ var PoleNatezenia = (function() {
       }
     }
 
-    function inicjuj_zmiany(ev) { // TODO nie wiecej niz jedno pole zmiany wyswietlane na raz!
-      obszar_na_zmiane_i_przyciski.style.visibility = "visible";
+    function inicjuj_zmiany(ev) {
+      if (typeof interwal_id === 'undefined') {
+        obszar_na_zmiane_i_przyciski.style.visibility = "visible";
 
-      for (let i = 0; i < cyfry_zmiany.length; i++) {
-        var przepisanie = cyfry_natezenia[i].getAttribute("wartosc");
+        for (let i = 0; i < cyfry_zmiany.length; i++) {
+          var przepisanie = cyfry_natezenia[i].getAttribute("wartosc");
 
-        if (i != cyfry_zmiany.length - 1 && !jest_cyfra(przepisanie)) {
-          przepisanie = "0";
+          if (i != cyfry_zmiany.length - 1 && !jest_cyfra(przepisanie)) {
+            przepisanie = "0";
+          }
+
+          cyfry_zmiany[i].setAttribute("wartosc", przepisanie);
         }
 
-        cyfry_zmiany[i].setAttribute("wartosc", przepisanie);
+        indeks_cyfry = 0;
+        wartosc_cyfry = cyfry_zmiany[indeks_cyfry].getAttribute("wartosc");
+        interwal_id = setInterval(inicjuj_blyskanie, 500);
+        window.addEventListener("keydown", obsluz_klawisz);
       }
-
-      indeks_cyfry = 0;
-      wartosc_cyfry = cyfry_zmiany[indeks_cyfry].getAttribute("wartosc");
-      interwal_id = setInterval(inicjuj_blyskanie, 500);
-      window.addEventListener("keydown", obsluz_klawisz);
     }
 
     function koncz_zmiany() {
@@ -333,3 +338,5 @@ var PoleNatezenia = (function() {
 }());
 
 PoleNatezenia(document.getElementById("natezenie1"));
+PoleNatezenia(document.getElementById("natezenie2"));
+PoleNatezenia(document.getElementById("natezenie3"));
