@@ -28,30 +28,30 @@ body {
   padding: 0;
   width: 100vw;
   height: 100vh;
-  overflow: hidden;
+  overflow: auto;
   background-color: var(--tlo);
 }
 
 .podzial-panel-mapa {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 50px;
 }
 
 .obszar-mapy {
-  grid-column: 1;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .mapa-cyklotronu {
-  width: 100%;
-  filter: invert(75%);
+  width: 1300px;
+  /*filter: invert(75%);*/
 }
 
 .obszar-paneli {
-  grid-column: 2;
   /* background-image: url('background.svg'); */
   display: flex;
   flex-direction: column;
