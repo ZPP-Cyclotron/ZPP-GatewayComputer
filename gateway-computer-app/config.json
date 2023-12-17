@@ -1,0 +1,19 @@
+{
+  "suppliers": [
+    {
+      "name": "Supplier1",
+      "port": 1
+    },
+    {
+      "name": "Supplier2",
+      "port": 2
+    },
+    {
+      "name": "Supplier3",
+      "port": 3
+    }
+  ],
+  "system_info": {
+    "total_suppliers": 3
+  }
+}
