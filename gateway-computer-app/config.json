@@ -1,0 +1,23 @@
+{
+"suppliers": [
+    {"no": "2",
+    "port": "tty333",
+     "polarity": "mutable",
+     "maxCurrent": "100"},
+
+    {"no": "3",
+     "port": "tty77",
+     "polarity": "const",
+     "maxCurrent": "200"},
+
+    {"no": "5",
+     "port": "tty42",
+     "polarity": "mutable",
+     "maxCurrent": "100"},
+
+     {"no": "7",
+     "port": "tty444",
+     "polarity": "const",
+     "maxCurrent": "200"}
+]
+}

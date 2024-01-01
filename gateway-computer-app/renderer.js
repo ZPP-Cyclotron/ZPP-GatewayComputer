@@ -9,12 +9,6 @@ class Cyferka extends HTMLElement {
 
   constructor() {
     super();
-
-    this.kolor_tla = window.getComputedStyle(this).backgroundColor;
-    this.kolor_off = window.getComputedStyle(this).outlineColor;
-    this.kolor_on = window.getComputedStyle(this).color;
-    this.id = this.getAttribute("id");
-    this.wartosc = this.getAttribute("wartosc");
   }
 
   // Zwraca kolor atrybutu fill w zależności od kierunku k i this.wartosc.
@@ -176,6 +170,11 @@ class Cyferka extends HTMLElement {
   }
 
   connectedCallback() {
+    this.kolor_tla = window.getComputedStyle(this).backgroundColor;
+    this.kolor_off = window.getComputedStyle(this).outlineColor;
+    this.kolor_on = window.getComputedStyle(this).color;
+    this.id = this.getAttribute("id");
+    this.wartosc = this.getAttribute("wartosc");
     this.#zaktualizujWartosc();
   }
 
@@ -212,7 +211,7 @@ var PoleNatezenia = (function() {
     var wartosc_cyfry;
 
     // interwal_id jest undefined tylko na początku i na końcu.
-    // Innymi słowy interwal_id jest defined wtw, gdy wyświetla się okienko zmiany.
+    // Innymi słowy interwal_id jest defined wtw, gdy wyświetla sie okienko zmiany.
     var interwal_id = undefined;
 
     function inicjuj_blyskanie() {
@@ -337,6 +336,270 @@ var PoleNatezenia = (function() {
   };
 }());
 
-PoleNatezenia(document.getElementById("natezenie1"));
-PoleNatezenia(document.getElementById("natezenie2"));
-PoleNatezenia(document.getElementById("natezenie3"));
+function dopiszCyfry(obiekt, wartosci) {
+  wartosci.forEach(wartosc => {
+    var cyfra = document.createElement("moja-cyfra");
+    cyfra.classList.add('cyfra');
+    cyfra.setAttribute("wartosc", wartosc);
+    obiekt.appendChild(cyfra);});
+}
+
+window.addEventListener('load', async () => {
+  const konfiguracja = await window.electronAPI.otworzPlikKonfiguracyjny()
+  var obszarPaneli = document.getElementsByClassName("obszar-paneli")[0];
+
+  for(let i = 0; i < Object.keys(konfiguracja.suppliers).length; i++) {
+    var panel = document.createElement("div");
+    panel.classList.add('panel');
+    panel.setAttribute("id", "panel" + (i + 1));
+
+    // NAZWA
+
+      var obszarNazwa = document.createElement("div");
+      obszarNazwa.classList.add('obszar-na-naglowek-i-cos');
+
+        var obszarNazwaObszarNaNaglowek = document.createElement("div");
+        obszarNazwaObszarNaNaglowek.classList.add('obszar-na-naglowek');
+
+          var obszarNazwaNaglowek = document.createElement("p");
+          obszarNazwaNaglowek.classList.add('naglowek');
+          obszarNazwaNaglowek.innerText = "NAME";
+
+        obszarNazwaObszarNaNaglowek.appendChild(obszarNazwaNaglowek);
+
+        var obszarNaNazwe = document.createElement("div");
+        obszarNaNazwe.classList.add('obszar-na-nazwe-magnesu');
+
+          dopiszCyfry(obszarNaNazwe, ["M", konfiguracja.suppliers[i].no]);
+
+      obszarNazwa.appendChild(obszarNazwaObszarNaNaglowek);
+      obszarNazwa.appendChild(obszarNaNazwe);
+
+    panel.appendChild(obszarNazwa);
+
+    // ON/OFF
+
+      var obszarOnOff = document.createElement("div");
+      obszarOnOff.classList.add('obszar-na-naglowek-i-cos');
+
+        var obszarOnOffObszarNaNaglowek = document.createElement("div");
+        obszarOnOffObszarNaNaglowek.classList.add('obszar-na-naglowek');
+
+          var obszarOnOffNaglowek = document.createElement("p");
+          obszarOnOffNaglowek.classList.add('naglowek');
+          obszarOnOffNaglowek.innerText = "ON/OFF";
+
+        obszarOnOffObszarNaNaglowek.appendChild(obszarOnOffNaglowek);
+
+        var obszarNaGuzikOnOff = document.createElement("div");
+        obszarNaGuzikOnOff.classList.add('obszar-na-guzik-on-off');
+
+          var switchSwitchRound = document.createElement("label");
+          switchSwitchRound.classList.add('switch');
+          switchSwitchRound.classList.add('switch--round');
+
+            var switchInput = document.createElement("input");
+            switchInput.classList.add('switch__input');
+            switchInput.setAttribute("type", "checkbox");
+            switchInput.setAttribute("role", "switch");
+            switchInput.setAttribute("name", "round");
+
+            var switchBorder = document.createElement("span");
+            switchBorder.classList.add('switch__border');
+
+            var switchInside = document.createElement("span");
+            switchInside.classList.add('switch__inside');
+
+            var switchFlapa = document.createElement("span");
+            switchFlapa.classList.add('switch__flap-a');
+
+            var switchLabel = document.createElement("span");
+            switchLabel.classList.add('switch__label');
+            switchLabel.innerText = "Round";
+
+          switchSwitchRound.appendChild(switchInput);
+          switchSwitchRound.appendChild(switchBorder);
+          switchSwitchRound.appendChild(switchInside);
+          switchSwitchRound.appendChild(switchFlapa);
+          switchSwitchRound.appendChild(switchLabel);
+
+        obszarNaGuzikOnOff.appendChild(switchSwitchRound);
+
+      obszarOnOff.appendChild(obszarOnOffObszarNaNaglowek);
+      obszarOnOff.appendChild(obszarNaGuzikOnOff);
+
+    panel.appendChild(obszarOnOff);
+
+    // POLARYZACJA
+
+      var obszarPolaryzacja = document.createElement("div");
+      obszarPolaryzacja.classList.add('obszar-na-naglowek-i-cos');
+
+        var obszarPolaryzacjaObszarNaNaglowek = document.createElement("div");
+        obszarPolaryzacjaObszarNaNaglowek.classList.add('obszar-na-naglowek');
+
+          var obszarPolaryzacjaNaglowek = document.createElement("p");
+          obszarPolaryzacjaNaglowek.classList.add('naglowek');
+          obszarPolaryzacjaNaglowek.innerText = "POLARITY";
+
+        obszarPolaryzacjaObszarNaNaglowek.appendChild(obszarPolaryzacjaNaglowek);
+
+      obszarPolaryzacja.appendChild(obszarPolaryzacjaObszarNaNaglowek);
+
+        var obszarNaPolaryzacje = document.createElement("div");
+        obszarNaPolaryzacje.classList.add('obszar-na-polaryzacje');
+
+          var toggle = document.createElement("div");
+          toggle.classList.add('toggle');
+
+            var toggleInput = document.createElement("input");
+            toggleInput.classList.add('toggle-input');
+            toggleInput.setAttribute("type", "checkbox");
+
+            var toggleHandleWrapper = document.createElement("div");
+            toggleHandleWrapper.classList.add('toggle-handle-wrapper');
+
+              var toggleHandle = document.createElement("div");
+              toggleHandle.classList.add('toggle-handle');
+
+                var toggleHandleKnob = document.createElement("div");
+                toggleHandleKnob.classList.add('toggle-handle-knob');
+
+                var toggleHandleBarWrapper = document.createElement("div");
+                toggleHandleBarWrapper.classList.add('toggle-handle-bar-wrapper');
+
+                  var toggleHandleBar = document.createElement("div");
+                  toggleHandleBar.classList.add('toggle-handle-bar');
+
+                toggleHandleBarWrapper.appendChild(toggleHandleBar);
+
+              toggleHandle.appendChild(toggleHandleKnob);
+              toggleHandle.appendChild(toggleHandleBarWrapper);
+
+            toggleHandleWrapper.appendChild(toggleHandle);
+
+            var toggleBase = document.createElement("div");
+            toggleBase.classList.add('toggle-base');
+
+              var toggleBaseInside = document.createElement("div");
+              toggleBaseInside.classList.add('toggle-base-inside');
+
+            toggleBase.appendChild(toggleBaseInside);
+
+          toggle.appendChild(toggleInput);
+          toggle.appendChild(toggleHandleWrapper);
+          toggle.appendChild(toggleBase);
+
+        obszarNaPolaryzacje.appendChild(toggle);
+
+      obszarPolaryzacja.appendChild(obszarNaPolaryzacje);
+
+    panel.appendChild(obszarPolaryzacja);
+
+    // NAPIĘCIE
+
+      var obszarNapiecie = document.createElement("div");
+      obszarNapiecie.classList.add('obszar-na-naglowek-i-cos');
+
+        var obszarNapiecieObszarNaNaglowek = document.createElement("div");
+        obszarNapiecieObszarNaNaglowek.classList.add('obszar-na-naglowek');
+
+          var obszarNapiecieNaglowek = document.createElement("p");
+          obszarNapiecieNaglowek.classList.add('naglowek');
+          obszarNapiecieNaglowek.innerText = "VOLTAGE";
+
+        obszarNapiecieObszarNaNaglowek.appendChild(obszarNapiecieNaglowek);
+
+        var obszarNaNapiecie = document.createElement("div");
+        obszarNaNapiecie.classList.add('obszar-na-napiecie');
+
+          dopiszCyfry(obszarNaNapiecie, [" ", " ", " .", " ", "V"]);
+
+      obszarNapiecie.appendChild(obszarNapiecieObszarNaNaglowek);
+      obszarNapiecie.appendChild(obszarNaNapiecie);
+
+    panel.appendChild(obszarNapiecie);
+
+    // NATĘŻENIE
+
+      var obszarNatezenie = document.createElement("div");
+      obszarNatezenie.classList.add('obszar-na-naglowek-i-cos');
+      obszarNatezenie.setAttribute("id", "natezenie" + (i + 1));
+
+        var obszarNatezenieObszarNaNaglowek = document.createElement("div");
+        obszarNatezenieObszarNaNaglowek.classList.add('obszar-na-naglowek');
+
+          var obszarNatezenieNaglowek = document.createElement("p");
+          obszarNatezenieNaglowek.classList.add('naglowek');
+          obszarNatezenieNaglowek.innerText = "CURRENT";
+
+        obszarNatezenieObszarNaNaglowek.appendChild(obszarNatezenieNaglowek);
+
+        var obszarNaNatezenie = document.createElement("div");
+        obszarNaNatezenie.classList.add('obszar-na-natezenie');
+
+          dopiszCyfry(obszarNaNatezenie, [" ", " ", " .", " ", "A"]);
+
+        var obszarNaZmianeNatezeniaIGuziki = document.createElement("div");
+        obszarNaZmianeNatezeniaIGuziki.classList.add('obszar-na-zmiane-natezenia-i-guziki');
+
+          var obszarNaZmianeNatezenia = document.createElement("div");
+          obszarNaZmianeNatezenia.classList.add('obszar-na-zmiane-natezenia');
+
+            dopiszCyfry(obszarNaZmianeNatezenia, [" ", " ", " ", " ", " "]);
+
+          var obszarNaPrzyciski = document.createElement("div");
+          obszarNaPrzyciski.classList.add('obszar-na-przyciski');
+
+            var aplaj = document.createElement("input");
+            aplaj.setAttribute("type", "button");
+            aplaj.setAttribute("value", "Apply");
+
+            var kansel = document.createElement("input");
+            kansel.setAttribute("type", "button");
+            kansel.setAttribute("value", "Cancel");
+
+          obszarNaPrzyciski.appendChild(aplaj);
+          obszarNaPrzyciski.appendChild(kansel);
+
+        obszarNaZmianeNatezeniaIGuziki.appendChild(obszarNaZmianeNatezenia);
+        obszarNaZmianeNatezeniaIGuziki.appendChild(obszarNaPrzyciski);
+
+      obszarNatezenie.appendChild(obszarNatezenieObszarNaNaglowek);
+      obszarNatezenie.appendChild(obszarNaNatezenie);
+      obszarNatezenie.appendChild(obszarNaZmianeNatezeniaIGuziki);
+
+    panel.appendChild(obszarNatezenie);
+
+    // BŁĘDY
+
+    var obszarBledy = document.createElement("div");
+      obszarBledy.classList.add('obszar-na-naglowek-i-cos');
+
+        var obszarBledyObszarNaNaglowek = document.createElement("div");
+        obszarBledyObszarNaNaglowek.classList.add('obszar-na-naglowek');
+
+          var obszarBledyNaglowek = document.createElement("p");
+          obszarBledyNaglowek.classList.add('naglowek');
+          obszarBledyNaglowek.innerText = "ERROR CODE";
+
+        obszarBledyObszarNaNaglowek.appendChild(obszarBledyNaglowek);
+
+      obszarBledy.appendChild(obszarBledyObszarNaNaglowek);
+
+        for (let i = 0; i < 2; i++) {
+          var obszarNaBledy = document.createElement("div");
+          obszarNaBledy.classList.add('obszar-na-bledy');
+
+            dopiszCyfry(obszarNaBledy, [" ", " ", " ", " ", " ", " ", " "]);
+
+          obszarBledy.appendChild(obszarNaBledy);
+        }
+
+    panel.appendChild(obszarBledy);
+
+    obszarPaneli.appendChild(panel);
+
+    PoleNatezenia(document.getElementById("natezenie" + (i + 1)));
+  }
+});
