@@ -191,6 +191,107 @@ if (!customElements.get("moja-cyfra")) {
 }
 
 /****************************
+ *      Obsługa mapki.      *
+ ****************************/
+class Mapka extends HTMLElement {
+  static observedAttributes = ["konfiguracja"];
+
+  constructor() {
+    super();
+  }
+
+  #kolka() {
+    var tresc = "";
+
+    for(let i = 0; i < Object.keys(this.konfiguracja.suppliers).length; i++) {
+      var panel = document.getElementById("panel" + (i + 1));
+      var kolor = getComputedStyle(panel.getElementsByTagName("moja-cyfra")[0]).color;
+
+      tresc += `
+      <circle
+       style="fill:${kolor};fill-opacity:0.8;stroke:${kolor};stroke-width:0;stroke-dasharray:none;stroke-opacity:0.533333"
+       id="path1-7"
+       cx="${this.konfiguracja.suppliers[i].x}"
+       cy="${this.konfiguracja.suppliers[i].y}"
+       r="30.975769"
+       transform="rotate(-145)" />`
+    }
+
+    return tresc;
+  }
+
+  #zaktualizujKolka() {
+    this.innerHTML=`
+    <svg
+      version="1.1"
+      id="svg1"
+      width="1641.7025"
+      height="1092.3036"
+      viewBox="0 0 1641.7025 1092.3036"
+      xmlns="http://www.w3.org/2000/svg"
+      xmlns:svg="http://www.w3.org/2000/svg">
+      <defs
+        id="defs1" />
+      <g
+        id="layer1"
+        transform="rotate(145,1269.5516,1056.9368)">
+        <path
+          style="display:inline;fill:#000000;fill-opacity:0;stroke:#778899;stroke-width:24.5;stroke-dasharray:none;stroke-opacity:1"
+          d="M 1819.8264,2034.7208 971.86474,1765.6188 588.5396,1519.7486"
+          id="path6" />
+        <path
+          style="display:inline;fill:#000000;fill-opacity:0;stroke:#778899;stroke-width:24.5;stroke-dasharray:none;stroke-opacity:1"
+          d="m 983.48065,826.66583 576.92365,1128.67957 -170.3667,92.9273 -94.8633,284.5899"
+          id="path7" />
+        <path
+          style="fill:#000000;fill-opacity:0;stroke:#778899;stroke-width:24.5;stroke-dasharray:none;stroke-opacity:1"
+          d="M 1560.4043,1951.4734 989.28861,2081.1845"
+          id="path9" />
+        <path
+          style="fill:#000000;fill-opacity:0;stroke:#778899;stroke-width:24.5;stroke-dasharray:none;stroke-opacity:1"
+          d="M 685.8432,1927.4795 1245.7431,1853.5563 922.67129,1555.81"
+          id="path10" />
+        <path
+          style="fill:#696969;fill-opacity:1;stroke:#ffffff;stroke-width:8;stroke-dasharray:none;stroke-opacity:1"
+          d="m 1767.3125,1980.8685 -59.5492,-50.6511 70.5008,-80.0835 59.5493,50.6511 2.0534,25.3255 -23.9566,30.1169 z"
+          id="path11" />
+        <path
+          style="fill:#696969;fill-opacity:1;stroke:#ffffff;stroke-width:8;stroke-dasharray:none;stroke-opacity:1"
+          d="m 1843.9736,1876.1439 128.6812,1.369 v 65.025 l 15.7429,8.2137 -0.6845,78.0301 -17.7963,23.2721 -1.3689,71.1853 -126.6278,-0.6844 0.6845,-61.6027 -17.7963,-9.5827 -0.6845,-77.3456 18.4808,-20.5342 z"
+          id="path12" />
+        <path
+          style="fill:#696969;fill-opacity:1;stroke:#ffffff;stroke-width:8;stroke-dasharray:none;stroke-opacity:1"
+          d="m 1973.3393,2076.6949 26.6945,-29.4324 45.1753,-23.9566 58.1803,48.5977 -67.763,80.0835 -58.8648,-49.2822 z"
+          id="path13" />
+        <circle
+          style="fill:#000000;fill-opacity:0;stroke:#ffffff;stroke-width:8;stroke-dasharray:none;stroke-opacity:1"
+          id="path14"
+          cx="1908.3142"
+          cy="2004.1406"
+          r="54.073467" />
+        ${this.#kolka()}
+      </g>
+    </svg>`
+  }
+
+  connectedCallback() {
+    this.konfiguracja = JSON.parse(this.getAttribute("konfiguracja"));
+    this.#zaktualizujKolka();
+  }
+
+  attributeChangedCallback(nazwa, stare, nowe) {
+    if (nazwa == "konfiguracja") {
+      this.konfiguracja = JSON.parse(nowe);
+      this.#zaktualizujKolka();
+    }
+  }
+}
+
+if (!customElements.get("moja-mapka")) {
+  customElements.define("moja-mapka", Mapka);
+}
+
+/****************************
  * Obsługa pola tekstowego. *
  ****************************/
 var PoleNatezenia = (function() {
@@ -449,6 +550,7 @@ window.addEventListener('load', async () => {
         var obszarNaPolaryzacje = document.createElement("div");
         obszarNaPolaryzacje.classList.add('obszar-na-polaryzacje');
 
+        if (konfiguracja.suppliers[i].polarity == "mutable") {
           var toggle = document.createElement("div");
           toggle.classList.add('toggle');
 
@@ -490,7 +592,8 @@ window.addEventListener('load', async () => {
           toggle.appendChild(toggleHandleWrapper);
           toggle.appendChild(toggleBase);
 
-        obszarNaPolaryzacje.appendChild(toggle);
+          obszarNaPolaryzacje.appendChild(toggle);
+        }
 
       obszarPolaryzacja.appendChild(obszarNaPolaryzacje);
 
@@ -602,4 +705,9 @@ window.addEventListener('load', async () => {
 
     PoleNatezenia(document.getElementById("natezenie" + (i + 1)));
   }
+
+  // MAPKA
+  var mapka = document.createElement("moja-mapka");
+  mapka.setAttribute("konfiguracja", JSON.stringify(konfiguracja));
+  document.getElementsByClassName('obszar-mapy')[0].appendChild(mapka);
 });

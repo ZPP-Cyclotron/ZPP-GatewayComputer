@@ -2,8 +2,9 @@
 const { app, BrowserWindow, ipcMain, dialog } = require('electron/main')
 const fs = require('node:fs');
 const path = require('node:path');
+const { exec } = require('child_process'); // Może się przydać, ale jednak nie używam. (https://dev.to/alexdhaenens/how-to-execute-shell-commands-in-js-2j5j)
 
-async function obsluzOtworzeniePlikuKonfiguracyjnego() {
+function obsluzOtworzeniePlikuKonfiguracyjnego() {
   const konfiguracja = JSON.parse(fs.readFileSync('./config.json', 'utf-8'));
   return konfiguracja;
 }

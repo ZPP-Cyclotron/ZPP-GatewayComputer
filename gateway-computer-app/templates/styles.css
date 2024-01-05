@@ -28,6 +28,7 @@ body {
   width: 100vw;
   height: 100vh;
   overflow: auto;
+  overflow-x: hidden;
   background-color: var(--tlo);
 }
 
@@ -45,13 +46,7 @@ body {
   align-items: center;
 }
 
-.mapa-cyklotronu {
-  width: 1300px;
-  /*filter: invert(75%);*/
-}
-
 .obszar-paneli {
-  /* background-image: url('background.svg'); */
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -231,6 +226,12 @@ body {
   /* Te atrybuty są używane przez moja-cyfra w niedosłownym znaczeniu! */
   outline-color: #324274;
   color: #8BE9FD;
+}
+
+#panel5 .cyfra {
+  /* Te atrybuty są używane przez moja-cyfra w niedosłownym znaczeniu! */
+  outline-color: #4D2389;
+  color: #BD93F9;
 }
 
 /* Przełącznik. */
