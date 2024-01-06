@@ -1,19 +1,31 @@
 {
-  "suppliers": [
-    {
-      "name": "Supplier1",
-      "port": 1
-    },
-    {
-      "name": "Supplier2",
-      "port": 2
-    },
-    {
-      "name": "Supplier3",
-      "port": 3
-    }
-  ],
-  "system_info": {
-    "total_suppliers": 3
-  }
+"suppliers": [
+    {"no": "2",
+    "port": "tty333",
+     "polarity": "mutable",
+     "maxCurrent": "100",
+     "x": "-2403.3091",
+     "y": "-705.22424"},
+
+    {"no": "3",
+     "port": "tty77",
+     "polarity": "const",
+     "maxCurrent": "200",
+     "x": "-2314.1479",
+     "y": "-881.99066"},
+
+    {"no": "5",
+     "port": "tty42",
+     "polarity": "mutable",
+     "maxCurrent": "100",
+     "x": "-1820.3091",
+     "y": "-885.22424"},
+
+     {"no": "7",
+     "port": "tty444",
+     "polarity": "const",
+     "maxCurrent": "200",
+     "x": "-2083.7981",
+     "y": "-804.31189"}
+]
 }
