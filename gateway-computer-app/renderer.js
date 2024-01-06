@@ -379,6 +379,10 @@ var PoleNatezenia = (function() {
 
           if (i != cyfry_zmiany.length - 1 && !jest_cyfra(przepisanie)) {
             przepisanie = "0";
+
+            if (i == 2) {
+              przepisanie += ".";
+            }
           }
 
           cyfry_zmiany[i].setAttribute("wartosc", przepisanie);
