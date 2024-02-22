@@ -2,18 +2,21 @@
 const { app, BrowserWindow, ipcMain, dialog } = require("electron/main");
 const fs = require("node:fs");
 const path = require("node:path");
-const { spawn } = require("child_process"); // Może się przydać, ale jednak nie używam. (https://dev.to/alexdhaenens/how-to-execute-shell-commands-in-js-2j5j)
-const { SerialPort } = require("serialport");
+// const { spawn } = require("child_process"); // Może się przydać, ale jednak nie używam. (https://dev.to/alexdhaenens/how-to-execute-shell-commands-in-js-2j5j)
+// const { SerialPort } = require("serialport");
 
+const DEBUG = true;
+// const CONFIG_FILE_PATH = "./config.json";
+const CONFIG_FILE_PATH = "./test_config.json";
+
+/** TODO change to modbus-serial */
 // For creating and sending modbus dataframes:
 // https://github.com/tbarnhill/modbus
-const modbus = require("modbus");
+// const modbus = require("modbus");
 
+// https://github.com/yaacov/node-modbus-serial
 const ModbusRTU = require("modbus-serial");
-
-const client = new ModbusRTU();
-
-console.log(client);
+const { resourceLimits } = require("node:worker_threads");
 
 /****************************
  *  Server Implementation.  *
@@ -29,39 +32,170 @@ class PowerSupply {
     this.control_type = PowerSupply.MANUAL;
     this.polarity_mutable = polarity_mutable;
     this.maxCurrent = maxCurrent;
-    baudRate = 9600;
-    this.modbus_device = modbus(this.port, baudRate);
+    this.read_timeout = 1000;
+    this.baudRate = 9600;
+    this.timeout = 1000;
+    this.error = PowerSupply.ERR_NONE;
+    this.connected = false;
+
+    // modbus-serial library:
+    this.modbus_client = new ModbusRTU();
   }
 
+  // async connect_promise() {
+  //   let res = await this.modbus_client.connectRTUBuffered(this.port, {
+  //     baudRate: this.baudRate,
+  //   });
+  //   if (res) this.connected = true;
+  //   return this.connected;
+  // }
+
+  // connect() {
+  //   let res = this.connect_promise();
+  //   if (res) {
+  //     this.connected = true;
+  //     if (DEBUG) {
+  //       console.log("Connected to supplier.");
+  //       // send test message:
+  //       let r = this.modbus_client.writeCoil(0, true).then((res) => {
+  //         console.log(res);
+  //       });
+  //     }
+  //   }
+  //   return res;
+  // }
+
   turn_on() {
-    var PACKAGE = 1 << 2;
-    this.modbus_device.write("c0-2", PACKAGE);
+    console.log("Turning on supplier...");
+    // if (this.connected == false) {
+    //   if (DEBUG) console.log("Not connected.");
+    //   return PowerSupply.ERR_CONNECTION;
+    // }
+
+    // var PACKAGE = 1 << 2;
+
+    /** TODO change to modbus-serial */
+    // modbus library:
+    // this.modbus_device.write("c0-2", PACKAGE);
+
+    // modbus-serial library:
+    // return await this.modbus_client.writeCoils(0, [false, false, true]);
+    let client = new ModbusRTU();
+    client
+      .connectRTUBuffered(this.port, { baudRate: this.baudRate })
+      .then(() => {
+        client
+          .writeCoils(0, [true, false, false])
+          .then(() => {
+            console.log("Supplier turned on.");
+            return 1;
+          })
+          .catch((err) => {
+            console.log(err);
+            return 0;
+          });
+      });
   }
 
   turn_off() {
+    // if (!this.connected) {
+    //   return PowerSupply.ERR_CONNECTION;
+    // }
     var PACKAGE = 0;
-    this.modbus_device.write("c0-2", PACKAGE);
+
+    /** TODO change to modbus-serial */
+    // modbus library:
+    // this.modbus_device.write("c0-2", PACKAGE);
+
+    // modbus-serial library:
+    // return await this.modbus_client.writeCoils(0, [false, false, false]);
+    let client = new ModbusRTU();
+    client
+      .connectRTUBuffered(this.port, { baudRate: this.baudRate })
+      .then(() => {
+        client
+          .writeCoils(0, [false, false, false])
+          .then(() => {
+            console.log("Supplier turned off.");
+            return 1;
+          })
+          .catch((err) => {
+            console.log(err);
+            return 0;
+          });
+      });
   }
 
   set_current(new_val) {
+    if (!this.connected) {
+      return PowerSupply.ERR_CONNECTION;
+    }
     return 0;
   }
 
   set_polarity(new_val) {
+    // if (!this.connected) {
+    //   return PowerSupply.ERR_CONNECTION;
+    // }
     // convert new_val to integer:
     new_val = parseInt(new_val);
     if (new_val != 1 && new_val != 0) {
       return PowerSupply.ERR_BAD_ARG;
     }
     // Little endian format:
-    var PACKAGE = 0x1 | (new_val << 2);
-    this.modbus_device.write("c0-2", PACKAGE);
+    // var PACKAGE = 0x1 | (new_val << 2);
+
+    /** TODO change to modbus-serial */
+    // modbus library:
+    // this.modbus_device.write("c0-2", PACKAGE);
+
+    // modbus-serial library:
+    // return await this.modbus_client.writeCoils(0, [true, false, new_val]);
+    let client = new ModbusRTU();
+    client
+      .connectRTUBuffered(this.port, { baudRate: this.baudRate })
+      .then(() => {
+        client
+          .writeCoils(0, [true, false, new_val])
+          .then(() => {
+            console.log("polarity set.");
+            return 1;
+          })
+          .catch((err) => {
+            console.log(err);
+            return 0;
+          });
+      });
   }
 
   reset() {
+    // if (!this.connected) {
+    //   return PowerSupply.ERR_CONNECTION;
+    // }
     // Little endian format:
     var PACKAGE = 0x2 | (1 << 2);
-    this.modbus_device.write("c0-2", PACKAGE);
+
+    /** TODO change to modbus-serial */
+    // modbus library:
+    // this.modbus_device.write("c0-2", PACKAGE);
+
+    // modbus-serial library:
+    // return await this.modbus_client.writeCoils(0, [false, true, true]);
+    let client = new ModbusRTU();
+    client
+      .connectRTUBuffered(this.port, { baudRate: this.baudRate })
+      .then(() => {
+        client
+          .writeCoils(0, [false, true, true])
+          .then(() => {
+            console.log("reset done.");
+            return 1;
+          })
+          .catch((err) => {
+            console.log(err);
+            return 0;
+          });
+      });
   }
 
   // number of power supplies in the system
@@ -79,6 +213,9 @@ class PowerSupply {
   }
   static ERR_OTHER() {
     return 2;
+  }
+  static ERR_CONNECTION() {
+    return 4;
   }
 
   // polarity of supplier
@@ -113,12 +250,47 @@ class PowerSupply100A extends PowerSupply {
     super(name, port, 100, polarity_mutable);
   }
   set_current(new_val) {
+    // if (!this.connected) {
+    //   return PowerSupply.ERR_CONNECTION;
+    // }
     new_val = parseInt(new_val);
     if (new_val < 0 || new_val > this.maxCurrent) {
       return PowerSupply.ERR_BAD_ARG;
     }
     var PACKAGE = 0x3 | (new_val << 2);
-    this.modbus_device.write("c0-15", PACKAGE);
+
+    /** TODO change to modbus-serial */
+    // modbus library:
+    // this.modbus_device.write("c0-13", PACKAGE);
+
+    // modbus-serial library:
+    // transform new_val to binary array:
+    var binary_array = [true, true];
+    var div = 2;
+    for (var i = 0; i < 12; i++) {
+      binary_array.push(new_val % div);
+      new_val = Math.floor(new_val / div);
+    }
+    if (DEBUG) {
+      console.log("binary_array:");
+      console.log(binary_array);
+    }
+    // return await this.modbus_client.writeCoils(0, binary_array);
+    let client = new ModbusRTU();
+    client
+      .connectRTUBuffered(this.port, { baudRate: this.baudRate })
+      .then(() => {
+        client
+          .writeCoils(0, binary_array)
+          .then(() => {
+            console.log("current set.");
+            return 1;
+          })
+          .catch((err) => {
+            console.log(err);
+            return 0;
+          });
+      });
   }
 }
 
@@ -128,16 +300,52 @@ class PowerSupply200A extends PowerSupply {
   }
 
   set_current(new_val) {
+    if (!this.connected) {
+      return PowerSupply.ERR_CONNECTION;
+    }
     new_val = parseInt(new_val);
     if (new_val < 0 || new_val > this.maxCurrent) {
       return PowerSupply.ERR_BAD_ARG;
     }
     var PACKAGE = 0x3 | (new_val << 2);
-    this.modbus_device.write("c0-17", PACKAGE);
+
+    /** TODO change to modbus-serial */
+    // modbus library:
+    // this.modbus_device.write("c0-17", PACKAGE);
+
+    // modbus-serial library:
+    // transform new_val to binary array:
+    var binary_array = [true, true];
+    var div = 2;
+    for (var i = 0; i < 16; i++) {
+      binary_array.push(new_val % div);
+      new_val = Math.floor(new_val / div);
+    }
+    if (DEBUG) {
+      console.log("binary_array:");
+      console.log(binary_array);
+    }
+    // return await this.modbus_client.writeCoils(0, binary_array);
+    let client = new ModbusRTU();
+    client
+      .connectRTUBuffered(this.port, { baudRate: this.baudRate })
+      .then(() => {
+        client
+          .writeCoils(0, binary_array)
+          .then(() => {
+            console.log("current set.");
+            return 1;
+          })
+          .catch((err) => {
+            console.log(err);
+            return 0;
+          });
+      });
   }
 }
 
 function setup_suppliers_and_clients(config) {
+  // config is a JSON object.
   // create power supplies:
   const suppliers = [];
   for (const supplier of config.suppliers) {
@@ -149,6 +357,7 @@ function setup_suppliers_and_clients(config) {
         supplier.maxCurrent,
         supplier.polarity
       );
+      // splr.connect();
     } else if (supplier.maxCurrent == 200) {
       splr = new PowerSupply200A(
         supplier.name,
@@ -156,6 +365,7 @@ function setup_suppliers_and_clients(config) {
         supplier.maxCurrent,
         supplier.polarity
       );
+      // splr.connect();
     } else {
       console.log("Error: unknown maxCurrent value.");
     }
@@ -171,9 +381,17 @@ function server(config) {
   }
 }
 
+function test_server(config) {
+  for (const supplier of config) {
+    let r = supplier.turn_on().catch((err) => {
+      console.log(err);
+    });
+  }
+}
+
 function obsluzOtworzeniePlikuKonfiguracyjnego() {
   // console.log("Otwieram plik konfiguracyjny...");
-  const konfiguracja = JSON.parse(fs.readFileSync("./config.json", "utf-8"));
+  const konfiguracja = JSON.parse(fs.readFileSync(CONFIG_FILE_PATH, "utf-8"));
   return konfiguracja;
 }
 
@@ -203,7 +421,33 @@ app.whenReady().then(() => {
     obsluzOtworzeniePlikuKonfiguracyjnego
   );
 
-  createWindow();
+  // createWindow();
+
+  // console.log("Starting server...");
+
+  // config = suppliers = setup_suppliers_and_clients(
+  //   obsluzOtworzeniePlikuKonfiguracyjnego()
+  // );
+
+  // console.log("Server started. Config read.");
+
+  // testing basic sending to port:
+  // ModbusRTU.getPorts().then((ports) => {console.log(ports)});
+  let supply = new PowerSupply100A("test", "/dev/ttyUSB0", 100);
+  // if (supply.connect_promise()) {
+  //   console.log("Connected to supplier.");
+  //   supply.turn_on();
+  // } else {
+  //   console.log("Error: not connected.");
+  // }
+  // let res = supply.turn_on();
+  let res = supply.set_polarity(1);
+  // client.open(() => {
+
+  // });
+  // console.log(client);
+
+  // test_server(config);
 
   app.on("activate", () => {
     // On macOS it's common to re-create a window in the app when the
