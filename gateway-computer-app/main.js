@@ -1,7 +1,7 @@
 const { app, BrowserWindow, ipcMain, dialog } = require("electron/main");
 const fs = require("node:fs");
 const path = require("node:path");
-const readline = require('readline');
+const readline = require("readline");
 // const { spawn } = require("child_process"); // Może się przydać, ale jednak nie używam. (https://dev.to/alexdhaenens/how-to-execute-shell-commands-in-js-2j5j)
 // const { SerialPort } = require("serialport");
 
@@ -104,6 +104,25 @@ class PowerSupply {
       await client.writeCoils(0, [false, true, true]);
       if (DEBUG) {
         console.log("reset done.");
+      }
+    } catch (err) {
+      if (DEBUG) {
+        console.log(err);
+      }
+    } finally {
+      client.close();
+    }
+  }
+
+  async read_status() {
+    let client = new ModbusRTU();
+    client.setTimeout(this.timeout);
+    try {
+      await client.connectRTU(this.port, { baudRate: this.baudRate });
+      let status = await client.readInputRegisters(0, 32);
+      if (DEBUG) {
+        console.log("status:");
+        console.log(status);
       }
     } catch (err) {
       if (DEBUG) {
@@ -298,7 +317,16 @@ function text_server(suppliers) {
   console.log("idx set_current val - set current to val for supplier idx");
   console.log("idx set_polarity val - set polarity to val for supplier idx");
   console.log("idx reset - reset supplier idx");
-  console.log('ctrl - C to exit\n');
+  console.log("ctrl - C to exit\n");
+
+  let timer = null;
+  let interval = 5000;
+
+  async function  ask_suppliers() {
+    for (const supplier of suppliers) {
+      await supplier.read_status();
+    }
+  }
 
   const r1 = readline.createInterface({
     input: process.stdin,
@@ -327,7 +355,7 @@ function text_server(suppliers) {
 
     splr = suppliers[idx];
 
-    switch(cmd) {
+    switch (cmd) {
       case "turn_on":
         await splr.turn_on();
         break;
@@ -348,11 +376,14 @@ function text_server(suppliers) {
     }
   });
 
-  r1.on('SIGINT', () => {
-    if (DEBUG) console.log('exiting');
+  r1.on("SIGINT", () => {
+    if (DEBUG) console.log("exiting");
+    clearInterval(timer);
     r1.close();
     process.exit(0);
   });
+
+  timer = setInterval(ask_suppliers, interval);
 }
 
 function obsluzOtworzeniePlikuKonfiguracyjnego() {
