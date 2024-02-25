@@ -119,10 +119,11 @@ class PowerSupply {
     client.setTimeout(this.timeout);
     try {
       await client.connectRTU(this.port, { baudRate: this.baudRate });
-      let status = await client.readInputRegisters(0, 32);
+      let msg = await client.readInputRegisters(0, 2);
+      console.log(msg);
       if (DEBUG) {
         console.log("status:");
-        console.log(status);
+        console.log(type(msg));
       }
     } catch (err) {
       if (DEBUG) {
