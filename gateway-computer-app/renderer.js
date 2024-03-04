@@ -295,7 +295,7 @@ if (!customElements.get("moja-mapka")) {
  * Obsługa pola tekstowego. *
  ****************************/
 var PoleNatezenia = (function() {
-  function main(div_natezenia) {
+  function main(div_natezenia, panel_id) {
     var obszar_na_zmiane_i_przyciski = div_natezenia.querySelector(".obszar-na-zmiane-natezenia-i-guziki");
     var obszar_na_natezenie = div_natezenia.querySelector(".obszar-na-natezenie");
     var obszar_zmiany_natezenia = div_natezenia.querySelector(".obszar-na-zmiane-natezenia");
@@ -402,7 +402,7 @@ var PoleNatezenia = (function() {
       obszar_na_zmiane_i_przyciski.style.visibility = "hidden";
     }
 
-    guzik_aplikacji.addEventListener("click", function(ev) {
+    function ustaw_wartosc() {
       var wiodace_zera = true;
 
       for (let i = 0; i < cyfry_zmiany.length - 1; i++) {
@@ -424,9 +424,32 @@ var PoleNatezenia = (function() {
 
         cyfry_natezenia[i].setAttribute("wartosc", cyfra_teraz);
       }
+    }
 
-      koncz_zmiany();
+    guzik_aplikacji.addEventListener("click", function(ev) {
+      var wartosc_wyswietlacza = 0;
+
+      for (let i = 0; i < cyfry_zmiany.length - 1; i++) {
+        var cyfra_teraz = cyfry_zmiany[i].getAttribute("wartosc");
+
+        if (i == indeks_cyfry) {
+          cyfra_teraz = wartosc_cyfry;
+        }
+
+        wartosc_wyswietlacza = wartosc_wyswietlacza * 10 + parseInt(cyfra_teraz[0], 10);
+      }
+
+      wartosc_wyswietlacza = wartosc_wyswietlacza / 10.0;
+
       /* PRZEKAZAĆ USTAWIENIE DO SERWERA!!! */
+
+      console.log(wartosc_wyswietlacza);
+      console.log(panel_id);
+
+      /* ODEBRAĆ CZY OK, JEŚLI NIE TO return!!! */
+
+      ustaw_wartosc();
+      koncz_zmiany();
     });
 
     guzik_anulowania.addEventListener("click", function(ev) {
@@ -436,8 +459,8 @@ var PoleNatezenia = (function() {
     obszar_na_natezenie.addEventListener("click", inicjuj_zmiany);
   }
 
-  return function(div_natezenia) {
-    main(div_natezenia);
+  return function(div_natezenia, panel_id) {
+    main(div_natezenia, panel_id);
   };
 }());
 
@@ -509,6 +532,17 @@ window.addEventListener('load', async () => {
             switchInput.setAttribute("role", "switch");
             switchInput.setAttribute("name", "round");
 
+            switchInput.addEventListener('change', function() {
+              if (this.checked) {
+                console.log("Zmiana z OFF na ON");
+                console.log(i); // panel_id
+                // jeśli od serwera przyjdzie info, że nieaktywne to this.checked = false;
+              } else {
+                console.log("Zmiana z ON na OFF");
+                console.log(i); // panel_id
+              }
+            });
+
             var switchBorder = document.createElement("span");
             switchBorder.classList.add('switch__border');
 
@@ -561,6 +595,16 @@ window.addEventListener('load', async () => {
             var toggleInput = document.createElement("input");
             toggleInput.classList.add('toggle-input');
             toggleInput.setAttribute("type", "checkbox");
+
+            toggleInput.addEventListener('change', function() {
+              if (this.checked) {
+                console.log("Zmiana z - na +");
+                console.log(i); // panel_id
+              } else {
+                console.log("Zmiana z + na -");
+                console.log(i); // panel_id
+              }
+            });
 
             var toggleHandleWrapper = document.createElement("div");
             toggleHandleWrapper.classList.add('toggle-handle-wrapper');
@@ -707,7 +751,7 @@ window.addEventListener('load', async () => {
 
     obszarPaneli.appendChild(panel);
 
-    PoleNatezenia(document.getElementById("natezenie" + (i + 1)));
+    PoleNatezenia(document.getElementById("natezenie" + (i + 1)), i);
   }
 
   // MAPKA
