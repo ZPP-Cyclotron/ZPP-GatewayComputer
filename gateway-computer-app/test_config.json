@@ -2,7 +2,7 @@
     "suppliers": [    
          {
             "no": "88",
-            "port": "/dev/ttyUSB0",
+            "port": "/dev/pts/2",
             "polarity": "mutable",
             "maxCurrent": "100",
             "x": "-2137.7981",
