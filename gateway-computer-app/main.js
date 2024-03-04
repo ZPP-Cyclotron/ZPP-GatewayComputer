@@ -24,6 +24,7 @@ class PowerSupply {
     this.voltage = 0;
     this.current = 0;
     this.control_type = PowerSupply.MANUAL;
+    this.on = PowerSupply.TURNED_OFF;
     this.polarity_mutable = polarity_mutable;
     this.maxCurrent = maxCurrent;
     this.read_timeout = 1000;
@@ -48,6 +49,7 @@ class PowerSupply {
       if (DEBUG) {
         console.log("Supplier turned on.");
       }
+      this.on = PowerSupply.TURNING_ON;
     } catch (err) {
       console.log(err);
     } finally {
@@ -56,6 +58,12 @@ class PowerSupply {
   }
 
   async turn_off() {
+    if (
+      this.on == PowerSupply.TURNED_OFF ||
+      this.on == PowerSupply.TURNING_OFF
+    ) {
+      return;
+    }
     let client = new ModbusRTU();
     client.setTimeout(this.timeout);
     try {
@@ -64,6 +72,7 @@ class PowerSupply {
       if (DEBUG) {
         console.log("Supplier turned off.");
       }
+      this.on = PowerSupply.TURNING_OFF;
     } catch (err) {
       console.log(err);
     } finally {
@@ -120,10 +129,8 @@ class PowerSupply {
     try {
       await client.connectRTU(this.port, { baudRate: this.baudRate });
       let msg = await client.readInputRegisters(0, 2);
-      console.log(msg);
       if (DEBUG) {
-        console.log("status:");
-        console.log(type(msg));
+        // console.log(msg);
       }
     } catch (err) {
       if (DEBUG) {
@@ -177,6 +184,20 @@ class PowerSupply {
   }
   static REMOTE() {
     return 1;
+  }
+
+  static TURNED_OFF() {
+    return 0;
+  }
+  static TURNED_ON() {
+    return 1;
+  }
+
+  static TURNING_ON() {
+    return 2;
+  }
+  static TURNING_OFF() {
+    return 3;
   }
 }
 
@@ -323,7 +344,7 @@ function text_server(suppliers) {
   let timer = null;
   let interval = 5000;
 
-  async function  ask_suppliers() {
+  async function ask_suppliers() {
     for (const supplier of suppliers) {
       await supplier.read_status();
     }
@@ -396,8 +417,7 @@ function obsluzOtworzeniePlikuKonfiguracyjnego() {
 const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 1200,
-    height: 1000,
+    fullscreen: true,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
     },
@@ -419,7 +439,15 @@ app.whenReady().then(() => {
     obsluzOtworzeniePlikuKonfiguracyjnego
   );
 
-  // createWindow();
+  createWindow();
+  const electronApp = require("electron").app;
+
+  let appUserDataPath = electronApp.getPath("userData");
+
+  console.log(appUserDataPath);
+
+  // show path to userData on the window:
+  // alert(appUserDataPath);
 
   // console.log("Starting server...");
 
@@ -431,7 +459,12 @@ app.whenReady().then(() => {
   app.on("activate", () => {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
-    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+    // create full window
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow();
+      // set the window to full screen
+      mainWindow.maximize();
+    }
   });
 });
 
