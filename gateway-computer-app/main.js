@@ -6,8 +6,8 @@ const readline = require("readline");
 // const { SerialPort } = require("serialport");
 
 const DEBUG = true;
-// const CONFIG_FILE_PATH = "./config.json";
-const CONFIG_FILE_PATH = "./test_config.json";
+const CONFIG_FILE_PATH = "./config.json";
+// const CONFIG_FILE_PATH = "./test_config.json";
 
 // https://github.com/yaacov/node-modbus-serial
 const ModbusRTU = require("modbus-serial");
@@ -38,6 +38,9 @@ class PowerSupply {
   }
 
   async turn_on() {
+    if (DEBUG) {
+      console.log("Turning off supplier...");
+    }
     let client = new ModbusRTU();
     client.setTimeout(this.timeout);
     try {
@@ -54,16 +57,20 @@ class PowerSupply {
       console.log(err);
     } finally {
       client.close();
+      return "ups turn_on";
     }
   }
 
   async turn_off() {
-    if (
-      this.on == PowerSupply.TURNED_OFF ||
-      this.on == PowerSupply.TURNING_OFF
-    ) {
-      return;
+    if (DEBUG) {
+      console.log("Turning off supplier...");
     }
+    // if (
+    //   this.on == PowerSupply.TURNED_OFF ||
+    //   this.on == PowerSupply.TURNING_OFF
+    // ) {
+    //   return;
+    // }
     let client = new ModbusRTU();
     client.setTimeout(this.timeout);
     try {
@@ -77,6 +84,7 @@ class PowerSupply {
       console.log(err);
     } finally {
       client.close();
+      return "ups turnoff";
     }
   }
 
@@ -88,9 +96,13 @@ class PowerSupply {
   }
 
   async set_polarity(new_val) {
+    if (DEBUG) {
+      console.log("Setting polarity...");
+    }
     let client = new ModbusRTU();
     client.setTimeout(this.timeout);
     try {
+      
       await client.connectRTU(this.port, { baudRate: this.baudRate });
       await client.writeCoils(0, [true, false, new_val]);
       if (DEBUG) {
@@ -102,6 +114,7 @@ class PowerSupply {
       }
     } finally {
       client.close();
+      return "ups!";
     }
   }
 
@@ -132,12 +145,14 @@ class PowerSupply {
       if (DEBUG) {
         // console.log(msg);
       }
+      return msg;
     } catch (err) {
       if (DEBUG) {
         console.log(err);
       }
     } finally {
       client.close();
+      return "ups status";
     }
   }
 
@@ -207,6 +222,9 @@ class PowerSupply100A extends PowerSupply {
     super(name, port, 100, polarity_mutable);
   }
   async set_current(new_val) {
+    if (DEBUG) {
+      console.log("setting current to ..." + new_val + "A");
+    }
     new_val = parseInt(new_val);
     if (new_val < 0 || new_val > this.maxCurrent) {
       if (DEBUG) {
@@ -238,6 +256,7 @@ class PowerSupply100A extends PowerSupply {
       }
     } finally {
       client.close();
+      return "ups current set";
     }
   }
 }
@@ -248,6 +267,9 @@ class PowerSupply200A extends PowerSupply {
   }
 
   async set_current(new_val) {
+    if (DEBUG) {
+      console.log("setting current to ..." + new_val + "A");
+    }
     new_val = parseInt(new_val);
     if (new_val < 0 || new_val > this.maxCurrent) {
       if (DEBUG) {
@@ -279,6 +301,7 @@ class PowerSupply200A extends PowerSupply {
       }
     } finally {
       client.close();
+      return "ups current set 200A";
     }
   }
 }
@@ -346,7 +369,8 @@ function text_server(suppliers) {
 
   async function ask_suppliers() {
     for (const supplier of suppliers) {
-      await supplier.read_status();
+      let res = await supplier.read_status();
+
     }
   }
 
@@ -417,7 +441,7 @@ function obsluzOtworzeniePlikuKonfiguracyjnego() {
 const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    fullscreen: true,
+    // fullscreen: true,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
     },
@@ -428,6 +452,8 @@ const createWindow = () => {
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
+
+  return mainWindow;
 };
 
 // This method will be called when Electron has finished
@@ -438,8 +464,24 @@ app.whenReady().then(() => {
     "dialog:otworzPlikKonfiguracyjny",
     obsluzOtworzeniePlikuKonfiguracyjnego
   );
+  ipcMain.handle(
+    "dialog:set_polarity",
+    (event, new_val, supp_id) => suppliers[supp_id].set_polarity(new_val)
+  );
+  ipcMain.handle(
+    "dialog:set_current",
+    (event, new_val, supp_id) => suppliers[supp_id].set_current(new_val)
+  );
+  ipcMain.handle(
+    "dialog:turn_on",
+    (event, supp_id) => suppliers[supp_id].turn_on()
+  );
+  ipcMain.handle(
+    "dialog:turn_off",
+    (event, supp_id) => suppliers[supp_id].turn_off()
+  );
 
-  createWindow();
+  let mainWindow = createWindow();
   const electronApp = require("electron").app;
 
   let appUserDataPath = electronApp.getPath("userData");
@@ -455,7 +497,11 @@ app.whenReady().then(() => {
     obsluzOtworzeniePlikuKonfiguracyjnego()
   );
 
-  text_server(suppliers);
+  // text_server(suppliers);
+  setInterval(() => {
+    console.log("Sending new status...");
+    mainWindow.webContents.send('new-status', 15, 12345);
+  }, 5000);
   app.on("activate", () => {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
@@ -463,7 +509,7 @@ app.whenReady().then(() => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow();
       // set the window to full screen
-      mainWindow.maximize();
+      // mainWindow.maximize();
     }
   });
 });

@@ -426,7 +426,7 @@ var PoleNatezenia = (function() {
       }
     }
 
-    guzik_aplikacji.addEventListener("click", function(ev) {
+    guzik_aplikacji.addEventListener("click", async function(ev) {
       var wartosc_wyswietlacza = 0;
 
       for (let i = 0; i < cyfry_zmiany.length - 1; i++) {
@@ -441,10 +441,8 @@ var PoleNatezenia = (function() {
 
       wartosc_wyswietlacza = wartosc_wyswietlacza / 10.0;
 
-      /* PRZEKAZAĆ USTAWIENIE DO SERWERA!!! */
-
-      console.log(wartosc_wyswietlacza);
-      console.log(panel_id);
+      var odpowiedz = await window.electronAPI.set_current(wartosc_wyswietlacza, panel_id);
+      console.log(odpowiedz);
 
       /* ODEBRAĆ CZY OK, JEŚLI NIE TO return!!! */
 
@@ -473,7 +471,7 @@ function dopiszCyfry(obiekt, wartosci) {
 }
 
 window.addEventListener('load', async () => {
-  const konfiguracja = await window.electronAPI.otworzPlikKonfiguracyjny()
+  const konfiguracja = await window.electronAPI.otworzPlikKonfiguracyjny();
   var obszarPaneli = document.getElementsByClassName("obszar-paneli")[0];
 
   for(let i = 0; i < Object.keys(konfiguracja.suppliers).length; i++) {
@@ -532,14 +530,13 @@ window.addEventListener('load', async () => {
             switchInput.setAttribute("role", "switch");
             switchInput.setAttribute("name", "round");
 
-            switchInput.addEventListener('change', function() {
+            switchInput.addEventListener('change', async function() {
               if (this.checked) {
-                console.log("Zmiana z OFF na ON");
-                console.log(i); // panel_id
-                // jeśli od serwera przyjdzie info, że nieaktywne to this.checked = false;
+                var odpowiedz = await window.electronAPI.turn_on(i);
+                console.log(odpowiedz);
               } else {
-                console.log("Zmiana z ON na OFF");
-                console.log(i); // panel_id
+                var odpowiedz = await window.electronAPI.turn_off(i);
+                console.log(odpowiedz);
               }
             });
 
@@ -596,13 +593,13 @@ window.addEventListener('load', async () => {
             toggleInput.classList.add('toggle-input');
             toggleInput.setAttribute("type", "checkbox");
 
-            toggleInput.addEventListener('change', function() {
+            toggleInput.addEventListener('change', async function() {
               if (this.checked) {
-                console.log("Zmiana z - na +");
-                console.log(i); // panel_id
+                var odpowiedz = await window.electronAPI.set_polarity(1, i);
+                console.log(odpowiedz);
               } else {
-                console.log("Zmiana z + na -");
-                console.log(i); // panel_id
+                var odpowiedz = await window.electronAPI.set_polarity(0, i);
+                console.log(odpowiedz);
               }
             });
 
@@ -759,3 +756,6 @@ window.addEventListener('load', async () => {
   mapka.setAttribute("konfiguracja", JSON.stringify(konfiguracja));
   document.getElementsByClassName('obszar-mapy')[0].appendChild(mapka);
 });
+
+
+window.electronAPI.get_status(args => {console.log(args)});
