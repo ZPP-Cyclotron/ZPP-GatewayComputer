@@ -528,6 +528,12 @@ function dopiszCyfry(obiekt, wartosci) {
 
 window.addEventListener("load", async () => {
   const konfiguracja = await window.electronAPI.otworzPlikKonfiguracyjny();
+
+  if (typeof konfiguracja === "string") {
+    console.log(konfiguracja);
+    return;
+  }
+
   var obszarPaneli = document.getElementsByClassName("obszar-paneli")[0];
 
   for (let i = 0; i < Object.keys(konfiguracja.suppliers).length; i++) {

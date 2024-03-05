@@ -102,7 +102,6 @@ class PowerSupply {
     let client = new ModbusRTU();
     client.setTimeout(this.timeout);
     try {
-      
       await client.connectRTU(this.port, { baudRate: this.baudRate });
       await client.writeCoils(0, [true, false, new_val]);
       if (DEBUG) {
@@ -307,6 +306,10 @@ class PowerSupply200A extends PowerSupply {
 }
 
 function setup_suppliers_and_clients(config) {
+  if (typeof config ==="string") {
+    console.log("Error: bad config file.");
+    return;
+  }
   // config is a JSON object.
   // create power supplies:
   const suppliers = [];
@@ -370,7 +373,7 @@ function text_server(suppliers) {
   async function ask_suppliers() {
     for (const supplier of suppliers) {
       let res = await supplier.read_status();
-// wyslij 
+      // wyslij
     }
   }
 
@@ -434,8 +437,20 @@ function text_server(suppliers) {
 
 function obsluzOtworzeniePlikuKonfiguracyjnego() {
   // console.log("Otwieram plik konfiguracyjny...");
-  const konfiguracja = JSON.parse(fs.readFileSync(CONFIG_FILE_PATH, "utf-8"));
-  return konfiguracja;
+  try {
+    const konfiguracja = JSON.parse(fs.readFileSync(CONFIG_FILE_PATH, "utf-8"));
+    return konfiguracja;
+  } catch (err) {
+    // check error type
+    if (err.code === "ENOENT") {
+      console.log("File not found!");
+      return "File not found!";
+    }
+    if (err instanceof SyntaxError) {
+      console.log("File is not a valid JSON file!");
+      return "File is not a valid JSON file!";
+    }
+  }
 }
 
 const createWindow = () => {
@@ -464,21 +479,17 @@ app.whenReady().then(() => {
     "dialog:otworzPlikKonfiguracyjny",
     obsluzOtworzeniePlikuKonfiguracyjnego
   );
-  ipcMain.handle(
-    "dialog:set_polarity",
-    (event, new_val, supp_id) => suppliers[supp_id].set_polarity(new_val)
+  ipcMain.handle("dialog:set_polarity", (event, new_val, supp_id) =>
+    suppliers[supp_id].set_polarity(new_val)
   );
-  ipcMain.handle(
-    "dialog:set_current",
-    (event, new_val, supp_id) => suppliers[supp_id].set_current(new_val)
+  ipcMain.handle("dialog:set_current", (event, new_val, supp_id) =>
+    suppliers[supp_id].set_current(new_val)
   );
-  ipcMain.handle(
-    "dialog:turn_on",
-    (event, supp_id) => suppliers[supp_id].turn_on()
+  ipcMain.handle("dialog:turn_on", (event, supp_id) =>
+    suppliers[supp_id].turn_on()
   );
-  ipcMain.handle(
-    "dialog:turn_off",
-    (event, supp_id) => suppliers[supp_id].turn_off()
+  ipcMain.handle("dialog:turn_off", (event, supp_id) =>
+    suppliers[supp_id].turn_off()
   );
 
   let mainWindow = createWindow();
@@ -496,11 +507,18 @@ app.whenReady().then(() => {
   config = suppliers = setup_suppliers_and_clients(
     obsluzOtworzeniePlikuKonfiguracyjnego()
   );
-
+  // check if config is not undefined
+  if (config === undefined) {
+    console.log("Error: config is undefined.");
+  }
+  else {
+    // text_server(suppliers);
+    // server(config);
+  }
   // text_server(suppliers);
   setInterval(() => {
     console.log("Sending new status...");
-    mainWindow.webContents.send('new-status', 0, 12345);
+    mainWindow.webContents.send("new-status", 0, 12345);
   }, 5000);
   app.on("activate", () => {
     // On macOS it's common to re-create a window in the app when the
