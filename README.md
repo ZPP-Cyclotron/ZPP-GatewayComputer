@@ -20,3 +20,5 @@ npm run make
 
 
 installable files will be stored in directory ZPP-GATEWAYCOMPUTER/gateway-computer-app/out/make
+
+Once installation is complete, you should create config.json (or test_config.json, according to CONFIG_FILE_PATH in main.js) and put it in the same directory as the executable file.
