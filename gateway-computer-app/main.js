@@ -6,11 +6,12 @@ const readline = require("readline");
 // const { SerialPort } = require("serialport");
 
 const DEBUG = true;
-const CONFIG_FILE_PATH = "./config.json";
-// const CONFIG_FILE_PATH = "./test_config.json";
+// const CONFIG_FILE_PATH = "./config.json";
+const CONFIG_FILE_PATH = "./test_config.json";
 
 // https://github.com/yaacov/node-modbus-serial
 const ModbusRTU = require("modbus-serial");
+const { clear } = require("node:console");
 
 /****************************
  *  Server Implementation.  *
@@ -41,6 +42,12 @@ class PowerSupply {
     if (DEBUG) {
       console.log("Turning off supplier...");
     }
+    // if (
+    //   this.on == PowerSupply.TURNED_ON ||
+    //   this.on == PowerSupply.TURNING_ON
+    // ) {
+    //   return;
+    // }
     let client = new ModbusRTU();
     client.setTimeout(this.timeout);
     try {
@@ -56,7 +63,11 @@ class PowerSupply {
     } catch (err) {
       console.log(err);
     } finally {
-      client.close();
+      try {
+        client.close();
+      } catch (err) {
+        if (DEBUG) {console.log(err);}
+      }
       return "ups turn_on";
     }
   }
@@ -83,7 +94,11 @@ class PowerSupply {
     } catch (err) {
       console.log(err);
     } finally {
-      client.close();
+      try {
+        client.close();
+      } catch (err) {
+        if (DEBUG) {console.log(err);}
+      }
       return "ups turnoff";
     }
   }
@@ -112,7 +127,11 @@ class PowerSupply {
         console.log(err);
       }
     } finally {
-      client.close();
+      try {
+        client.close();
+      } catch (err) {
+        if (DEBUG) {console.log(err);}
+      }
       return "ups!";
     }
   }
@@ -131,7 +150,11 @@ class PowerSupply {
         console.log(err);
       }
     } finally {
-      client.close();
+      try {
+        client.close();
+      } catch (err) {
+        if (DEBUG) {console.log(err);}
+      }
     }
   }
 
@@ -142,7 +165,7 @@ class PowerSupply {
       await client.connectRTU(this.port, { baudRate: this.baudRate });
       let msg = await client.readInputRegisters(0, 2);
       if (DEBUG) {
-        // console.log(msg);
+        console.log(msg);
       }
       return msg;
     } catch (err) {
@@ -150,7 +173,11 @@ class PowerSupply {
         console.log(err);
       }
     } finally {
-      client.close();
+      try {
+        client.close();
+      } catch (err) {
+        if (DEBUG) {console.log(err);}
+      }
       return "ups status";
     }
   }
@@ -254,7 +281,11 @@ class PowerSupply100A extends PowerSupply {
         console.log(err);
       }
     } finally {
-      client.close();
+      try {
+        client.close();
+      } catch (err) {
+        if (DEBUG) {console.log(err);}
+      }
       return "ups current set";
     }
   }
@@ -299,7 +330,11 @@ class PowerSupply200A extends PowerSupply {
         console.log(err);
       }
     } finally {
-      client.close();
+      try {
+        client.close();
+      } catch (err) {
+        if (DEBUG) {console.log(err);}
+      }
       return "ups current set 200A";
     }
   }
@@ -373,7 +408,6 @@ function text_server(suppliers) {
   async function ask_suppliers() {
     for (const supplier of suppliers) {
       let res = await supplier.read_status();
-      // wyslij
     }
   }
 
@@ -471,6 +505,8 @@ const createWindow = () => {
   return mainWindow;
 };
 
+let timer = null;
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
@@ -515,9 +551,16 @@ app.whenReady().then(() => {
     // text_server(suppliers);
     // server(config);
   }
+
+  async function ask_suppliers() {
+    for (const supplier of suppliers) {
+      let res = await supplier.read_status();
+    }
+  }
   // text_server(suppliers);
-  setInterval(() => {
+  timer = setInterval(() => {
     console.log("Sending new status...");
+    ask_suppliers();
     mainWindow.webContents.send("new-status", 0, 12345);
   }, 5000);
   app.on("activate", () => {
@@ -536,5 +579,6 @@ app.whenReady().then(() => {
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on("window-all-closed", () => {
+  clearInterval(timer);
   if (process.platform !== "darwin") app.quit();
 });
