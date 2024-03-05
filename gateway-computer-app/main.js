@@ -370,7 +370,7 @@ function text_server(suppliers) {
   async function ask_suppliers() {
     for (const supplier of suppliers) {
       let res = await supplier.read_status();
-
+// wyslij 
     }
   }
 
@@ -500,7 +500,7 @@ app.whenReady().then(() => {
   // text_server(suppliers);
   setInterval(() => {
     console.log("Sending new status...");
-    mainWindow.webContents.send('new-status', 15, 12345);
+    mainWindow.webContents.send('new-status', 0, 12345);
   }, 5000);
   app.on("activate", () => {
     // On macOS it's common to re-create a window in the app when the

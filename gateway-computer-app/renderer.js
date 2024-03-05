@@ -14,59 +14,100 @@ class Cyferka extends HTMLElement {
   // Zwraca kolor atrybutu fill w zależności od kierunku k i this.wartosc.
   #f(k) {
     if (this.wartosc[0] == " ") {
-        if (k != "k") { return this.kolor_off; }
+      if (k != "k") {
+        return this.kolor_off;
+      }
     } else if (this.wartosc[0] == "0") {
-        const zero = ["bse", "bes", "bnw", "bwn", "bws", "bsw", "bne", "ben"];
-        if (zero.includes(k)) { return this.kolor_on; }
+      const zero = ["bse", "bes", "bnw", "bwn", "bws", "bsw", "bne", "ben"];
+      if (zero.includes(k)) {
+        return this.kolor_on;
+      }
     } else if (this.wartosc[0] == "1") {
-        const jeden = ["bes", "ben"];
-        if (jeden.includes(k)) { return this.kolor_on; }
+      const jeden = ["bes", "ben"];
+      if (jeden.includes(k)) {
+        return this.kolor_on;
+      }
     } else if (this.wartosc[0] == "2") {
-        const dwa = ["bse", "bnw", "bws", "bsw", "bne", "ben", "w3", "w9"];
-        if (dwa.includes(k)) { return this.kolor_on; }
+      const dwa = ["bse", "bnw", "bws", "bsw", "bne", "ben", "w3", "w9"];
+      if (dwa.includes(k)) {
+        return this.kolor_on;
+      }
     } else if (this.wartosc[0] == "3") {
-        const trzy = ["bse", "bes", "bnw", "bsw", "bne", "ben", "w3", "w9"];
-        if (trzy.includes(k)) { return this.kolor_on; }
+      const trzy = ["bse", "bes", "bnw", "bsw", "bne", "ben", "w3", "w9"];
+      if (trzy.includes(k)) {
+        return this.kolor_on;
+      }
     } else if (this.wartosc[0] == "4") {
-        const cztery = ["bes", "bwn", "ben", "w3", "w9"];
-        if (cztery.includes(k)) { return this.kolor_on; }
+      const cztery = ["bes", "bwn", "ben", "w3", "w9"];
+      if (cztery.includes(k)) {
+        return this.kolor_on;
+      }
     } else if (this.wartosc[0] == "5") {
-        const piec = ["bse", "bes", "bnw", "bwn", "bsw", "bne", "w3", "w9"];
-        if (piec.includes(k)) { return this.kolor_on; }
+      const piec = ["bse", "bes", "bnw", "bwn", "bsw", "bne", "w3", "w9"];
+      if (piec.includes(k)) {
+        return this.kolor_on;
+      }
     } else if (this.wartosc[0] == "6") {
-        const szesc = ["bse", "bes", "bwn", "bws", "bsw", "w3", "w9"];
-        if (szesc.includes(k)) { return this.kolor_on; }
+      const szesc = ["bse", "bes", "bwn", "bws", "bsw", "w3", "w9"];
+      if (szesc.includes(k)) {
+        return this.kolor_on;
+      }
     } else if (this.wartosc[0] == "7") {
-        const siedem = ["bes", "ben", "bne", "bnw"];
-        if (siedem.includes(k)) { return this.kolor_on; }
+      const siedem = ["bes", "ben", "bne", "bnw"];
+      if (siedem.includes(k)) {
+        return this.kolor_on;
+      }
     } else if (this.wartosc[0] == "8") {
-        const osiem = ["bse", "bes", "bnw", "bwn", "bws", "bsw", "bne", "ben", "w3", "w9"];
-        if (osiem.includes(k)) { return this.kolor_on; }
+      const osiem = [
+        "bse",
+        "bes",
+        "bnw",
+        "bwn",
+        "bws",
+        "bsw",
+        "bne",
+        "ben",
+        "w3",
+        "w9",
+      ];
+      if (osiem.includes(k)) {
+        return this.kolor_on;
+      }
     } else if (this.wartosc[0] == "9") {
-        const dziewiec = ["bes", "bnw", "bwn", "bne", "ben", "w3", "w9"];
-        if (dziewiec.includes(k)) { return this.kolor_on; }
+      const dziewiec = ["bes", "bnw", "bwn", "bne", "ben", "w3", "w9"];
+      if (dziewiec.includes(k)) {
+        return this.kolor_on;
+      }
     } else if (this.wartosc[0] == "A") {
-        const a = ["bes", "bnw", "bwn", "bws", "bne", "ben", "w3", "w9"];
-        if (a.includes(k)) { return this.kolor_on; }
+      const a = ["bes", "bnw", "bwn", "bws", "bne", "ben", "w3", "w9"];
+      if (a.includes(k)) {
+        return this.kolor_on;
+      }
     } else if (this.wartosc[0] == "V") {
-        const v = ["bws", "bwn", "w8", "w2"];
-        if (v.includes(k)) { return this.kolor_on; }
+      const v = ["bws", "bwn", "w8", "w2"];
+      if (v.includes(k)) {
+        return this.kolor_on;
+      }
     } else if (this.wartosc[0] == "M") {
-        const m = ["bws", "bwn", "bes", "ben", "w2", "w10"];
-        if (m.includes(k)) { return this.kolor_on; }
+      const m = ["bws", "bwn", "bes", "ben", "w2", "w10"];
+      if (m.includes(k)) {
+        return this.kolor_on;
+      }
     }
 
     // Kropka.
-    if (this.wartosc.length > 1 && this.wartosc[1] == '.' && k == "k") {
-        return this.kolor_on;
+    if (this.wartosc.length > 1 && this.wartosc[1] == "." && k == "k") {
+      return this.kolor_on;
     }
 
     return this.kolor_off;
   }
 
   #zaktualizujWartosc() {
-    this.innerHTML=`
-      <svg id="wyswietlacz-svg${this.id}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1052 1361.9982">
+    this.innerHTML = `
+      <svg id="wyswietlacz-svg${
+        this.id
+      }" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1052 1361.9982">
       <g
         id="wyswietlacz"
         transform="translate(665,172.63912)">
@@ -83,90 +124,90 @@ class Cyferka extends HTMLElement {
                 d="m 490,1200 -52.5,40 35,42.5 H 690 l 32.5,-30 L 675,1200 Z"
                 transform="translate(-665,-172.64)"
                 id="bse"
-                style="fill:${this.#f('bse')};fill-opacity:1"/>
+                style="fill:${this.#f("bse")};fill-opacity:1"/>
             <path
                 d="m 180,1200 -67.5,60 22.5,22.5 h 217.5 l 50,-47.5 -30,-35 z"
                 transform="translate(-665,-172.64)"
                 id="bsw"
-                style="fill:${this.#f('bsw')};fill-opacity:1"/>
+                style="fill:${this.#f("bsw")};fill-opacity:1"/>
             <path
                 d="m 220,692.5 -55,47.5 -90,475 27.5,25 70,-60 82.5,-445 z"
                 transform="translate(-665,-172.64)"
                 id="bws"
-                style="fill:${this.#f('bws')};fill-opacity:1"/>
+                style="fill:${this.#f("bws")};fill-opacity:1"/>
             <path
                 d="m 822.5,690 -55,50 -75,445 47.5,52.5 37.5,-30 L 860,730 Z"
                 transform="translate(-665,-172.64)"
                 id="bes"
-                style="fill:${this.#f('bes')};fill-opacity:1"/>
+                style="fill:${this.#f("bes")};fill-opacity:1"/>
             <path
                 d="m 615,637.5 -75,40 52.5,42.5 h 165 l 52.5,-47.5 -32.5,-35 z"
                 transform="translate(-665,-172.64)"
                 id="w3"
-                style="fill:${this.#f('w3')};fill-opacity:1"/>
+                style="fill:${this.#f("w3")};fill-opacity:1"/>
             <path
                 d="M 285,637.5 237.5,680 270,720 H 427.5 L 505,675 457.5,637.5 Z"
                 transform="translate(-665,-172.64)"
                 id="w9"
-                style="fill:${this.#f('w9')};fill-opacity:1"/>
+                style="fill:${this.#f("w9")};fill-opacity:1"/>
             <path
                 d="m 945,117.5 -65,60 -85,445 35,40 52.5,-47.5 90,-465 z"
                 transform="translate(-665,-172.64)"
                 id="ben"
-                style="fill:${this.#f('ben')};fill-opacity:1"/>
+                style="fill:${this.#f("ben")};fill-opacity:1"/>
             <path
                 d="m 305,115 -32.5,32.5 -85,475 37.5,40 52.5,-45 80,-445 z"
                 transform="translate(-665,-172.64)"
                 id="bwn"
-                style="fill:${this.#f('bwn')};fill-opacity:1"/>
+                style="fill:${this.#f("bwn")};fill-opacity:1"/>
             <path
                 d="m 700,75 -55,45 40,40 h 180 l 70,-60 -25,-25 z"
                 transform="translate(-665,-172.64)"
                 id="bne"
-                style="fill:${this.#f('bne')};fill-opacity:1"/>
+                style="fill:${this.#f("bne")};fill-opacity:1"/>
             <path
                 d="m 360,75 -35,30 50,55 h 190 l 50,-45 -35,-40 z"
                 transform="translate(-665,-172.64)"
                 id="bnw"
-                style="fill:${this.#f('bnw')};fill-opacity:1"/>
+                style="fill:${this.#f("bnw")};fill-opacity:1"/>
             <path
                 d="m 927,1187 a 50,50 0 0 0 -50,50 50,50 0 0 0 50,50 50,50 0 0 0 50,-50 50,50 0 0 0 -50,-50 z"
                 transform="translate(-665,-172.64)"
                 id="k"
-                style="fill:${this.#f('k')};fill-opacity:1"/>
+                style="fill:${this.#f("k")};fill-opacity:1"/>
             <path
                 d="M 520,699.79 440,870 l -55,310 37.5,42.5 57.5,-45 54.43,-329.07 z"
                 transform="translate(-665,-172.64)"
                 id="w6"
-                style="fill:${this.#f('w6')};fill-opacity:1"/>
+                style="fill:${this.#f("w6")};fill-opacity:1"/>
             <path
                 d="m 530,682.5 17.5,187.5 85,237.5 52.5,67.5 20,-125 -117.5,-320 z"
                 transform="translate(-665,-172.64)"
                 id="w4"
-                style="fill:${this.#f('w4')};fill-opacity:1"/>
+                style="fill:${this.#f("w4")};fill-opacity:1"/>
             <path
                 d="M 516.71,681.57 422.99,735.14 210,1035 l -20,130 85,-75 140,-200 z"
                 transform="translate(-665,-172.64)"
                 id="w8"
-                style="fill:${this.#f('w8')};fill-opacity:1"/>
+                style="fill:${this.#f("w8")};fill-opacity:1"/>
             <path
                 d="M 865,185 775,260 640.58,445.7 530,670 625,615 840,315 Z"
                 transform="translate(-665,-172.64)"
                 id="w2"
-                style="fill:${this.#f('w2')};fill-opacity:1"/>
+                style="fill:${this.#f("w2")};fill-opacity:1"/>
             <path
                 d="M 365,185 345,310 455,620 515,670 500,490 420,245 Z"
                 transform="translate(-665,-172.64)"
                 id="w10"
-                style="fill:${this.#f('w10')};fill-opacity:1"/>
+                style="fill:${this.#f("w10")};fill-opacity:1"/>
             <path
                 d="m 625,130 -55,50 -60,305 15,170 80,-165 60,-320 z"
                 transform="translate(-665,-172.64)"
                 id="w2"
-                style="fill:${this.#f('w12')};fill-opacity:1"/>
+                style="fill:${this.#f("w12")};fill-opacity:1"/>
         </g>
     </g>
-    </svg>`
+    </svg>`;
   }
 
   connectedCallback() {
@@ -203,9 +244,11 @@ class Mapka extends HTMLElement {
   #kolka() {
     var tresc = "";
 
-    for(let i = 0; i < Object.keys(this.konfiguracja.suppliers).length; i++) {
+    for (let i = 0; i < Object.keys(this.konfiguracja.suppliers).length; i++) {
       var panel = document.getElementById("panel" + (i + 1));
-      var kolor = getComputedStyle(panel.getElementsByTagName("moja-cyfra")[0]).color;
+      var kolor = getComputedStyle(
+        panel.getElementsByTagName("moja-cyfra")[0]
+      ).color;
 
       tresc += `
       <circle
@@ -214,14 +257,14 @@ class Mapka extends HTMLElement {
        cx="${this.konfiguracja.suppliers[i].x}"
        cy="${this.konfiguracja.suppliers[i].y}"
        r="30.975769"
-       transform="rotate(-145)" />`
+       transform="rotate(-145)" />`;
     }
 
     return tresc;
   }
 
   #zaktualizujKolka() {
-    this.innerHTML=`
+    this.innerHTML = `
     <svg
       version="1.1"
       id="svg1"
@@ -271,7 +314,7 @@ class Mapka extends HTMLElement {
           r="54.073467" />
         ${this.#kolka()}
       </g>
-    </svg>`
+    </svg>`;
   }
 
   connectedCallback() {
@@ -294,16 +337,22 @@ if (!customElements.get("moja-mapka")) {
 /****************************
  * Obsługa pola tekstowego. *
  ****************************/
-var PoleNatezenia = (function() {
+var PoleNatezenia = (function () {
   function main(div_natezenia, panel_id) {
-    var obszar_na_zmiane_i_przyciski = div_natezenia.querySelector(".obszar-na-zmiane-natezenia-i-guziki");
-    var obszar_na_natezenie = div_natezenia.querySelector(".obszar-na-natezenie");
-    var obszar_zmiany_natezenia = div_natezenia.querySelector(".obszar-na-zmiane-natezenia");
+    var obszar_na_zmiane_i_przyciski = div_natezenia.querySelector(
+      ".obszar-na-zmiane-natezenia-i-guziki"
+    );
+    var obszar_na_natezenie = div_natezenia.querySelector(
+      ".obszar-na-natezenie"
+    );
+    var obszar_zmiany_natezenia = div_natezenia.querySelector(
+      ".obszar-na-zmiane-natezenia"
+    );
     var obszar_przyciskow = div_natezenia.querySelector(".obszar-na-przyciski");
 
-    var cyfry_natezenia = obszar_na_natezenie.querySelectorAll('.cyfra');
-    var cyfry_zmiany = obszar_zmiany_natezenia.querySelectorAll('.cyfra');
-    var guziki = obszar_przyciskow.querySelectorAll('input');
+    var cyfry_natezenia = obszar_na_natezenie.querySelectorAll(".cyfra");
+    var cyfry_zmiany = obszar_zmiany_natezenia.querySelectorAll(".cyfra");
+    var guziki = obszar_przyciskow.querySelectorAll("input");
     var guzik_aplikacji = guziki[0];
     var guzik_anulowania = guziki[1];
 
@@ -325,7 +374,7 @@ var PoleNatezenia = (function() {
     }
 
     function jest_cyfra(c) {
-      return c >= '0' && c <= '9';
+      return c >= "0" && c <= "9";
     }
 
     function obsluz_klawisz(ev) {
@@ -337,10 +386,10 @@ var PoleNatezenia = (function() {
 
         if (jest_cyfra(znak)) {
           if (indeks_cyfry == 2) {
-            znak = znak + '.';
+            znak = znak + ".";
           }
 
-          if (indeks_cyfry + 1 == (cyfry_zmiany.length - 1)) {
+          if (indeks_cyfry + 1 == cyfry_zmiany.length - 1) {
             cyfry_zmiany[indeks_cyfry].setAttribute("wartosc", znak);
             wartosc_cyfry = znak;
           } else {
@@ -350,7 +399,8 @@ var PoleNatezenia = (function() {
             wartosc_cyfry = cyfry_zmiany[indeks_cyfry].getAttribute("wartosc");
             interwal_id = setInterval(inicjuj_blyskanie, 500);
           }
-        } else if (kod == '37') { // Lewa strzałka
+        } else if (kod == "37") {
+          // Lewa strzałka
           if (indeks_cyfry > 0) {
             clearInterval(interwal_id);
             cyfry_zmiany[indeks_cyfry].setAttribute("wartosc", wartosc_cyfry);
@@ -358,7 +408,8 @@ var PoleNatezenia = (function() {
             wartosc_cyfry = cyfry_zmiany[indeks_cyfry].getAttribute("wartosc");
             interwal_id = setInterval(inicjuj_blyskanie, 500);
           }
-        } else if (kod == '39') { // Prawa strzałka
+        } else if (kod == "39") {
+          // Prawa strzałka
           if (indeks_cyfry < cyfry_zmiany.length - 2) {
             clearInterval(interwal_id);
             cyfry_zmiany[indeks_cyfry].setAttribute("wartosc", wartosc_cyfry);
@@ -371,7 +422,7 @@ var PoleNatezenia = (function() {
     }
 
     function inicjuj_zmiany(ev) {
-      if (typeof interwal_id === 'undefined') {
+      if (typeof interwal_id === "undefined") {
         obszar_na_zmiane_i_przyciski.style.visibility = "visible";
 
         for (let i = 0; i < cyfry_zmiany.length; i++) {
@@ -419,14 +470,14 @@ var PoleNatezenia = (function() {
         }
 
         if (i == 2) {
-          cyfra_teraz = cyfra_teraz + '.';
+          cyfra_teraz = cyfra_teraz + ".";
         }
 
         cyfry_natezenia[i].setAttribute("wartosc", cyfra_teraz);
       }
     }
 
-    guzik_aplikacji.addEventListener("click", async function(ev) {
+    guzik_aplikacji.addEventListener("click", async function (ev) {
       var wartosc_wyswietlacza = 0;
 
       for (let i = 0; i < cyfry_zmiany.length - 1; i++) {
@@ -436,12 +487,16 @@ var PoleNatezenia = (function() {
           cyfra_teraz = wartosc_cyfry;
         }
 
-        wartosc_wyswietlacza = wartosc_wyswietlacza * 10 + parseInt(cyfra_teraz[0], 10);
+        wartosc_wyswietlacza =
+          wartosc_wyswietlacza * 10 + parseInt(cyfra_teraz[0], 10);
       }
 
       wartosc_wyswietlacza = wartosc_wyswietlacza / 10.0;
 
-      var odpowiedz = await window.electronAPI.set_current(wartosc_wyswietlacza, panel_id);
+      var odpowiedz = await window.electronAPI.set_current(
+        wartosc_wyswietlacza,
+        panel_id
+      );
       console.log(odpowiedz);
 
       /* ODEBRAĆ CZY OK, JEŚLI NIE TO return!!! */
@@ -450,312 +505,321 @@ var PoleNatezenia = (function() {
       koncz_zmiany();
     });
 
-    guzik_anulowania.addEventListener("click", function(ev) {
+    guzik_anulowania.addEventListener("click", function (ev) {
       koncz_zmiany();
     });
 
     obszar_na_natezenie.addEventListener("click", inicjuj_zmiany);
   }
 
-  return function(div_natezenia, panel_id) {
+  return function (div_natezenia, panel_id) {
     main(div_natezenia, panel_id);
   };
-}());
+})();
 
 function dopiszCyfry(obiekt, wartosci) {
-  wartosci.forEach(wartosc => {
+  wartosci.forEach((wartosc) => {
     var cyfra = document.createElement("moja-cyfra");
-    cyfra.classList.add('cyfra');
+    cyfra.classList.add("cyfra");
     cyfra.setAttribute("wartosc", wartosc);
-    obiekt.appendChild(cyfra);});
+    obiekt.appendChild(cyfra);
+  });
 }
 
-window.addEventListener('load', async () => {
+window.addEventListener("load", async () => {
   const konfiguracja = await window.electronAPI.otworzPlikKonfiguracyjny();
   var obszarPaneli = document.getElementsByClassName("obszar-paneli")[0];
 
-  for(let i = 0; i < Object.keys(konfiguracja.suppliers).length; i++) {
+  for (let i = 0; i < Object.keys(konfiguracja.suppliers).length; i++) {
     var panel = document.createElement("div");
-    panel.classList.add('panel');
+    panel.classList.add("panel");
     panel.setAttribute("id", "panel" + (i + 1));
 
     // NAZWA
 
-      var obszarNazwa = document.createElement("div");
-      obszarNazwa.classList.add('obszar-na-naglowek-i-cos');
+    var obszarNazwa = document.createElement("div");
+    obszarNazwa.classList.add("obszar-na-naglowek-i-cos");
 
-        var obszarNazwaObszarNaNaglowek = document.createElement("div");
-        obszarNazwaObszarNaNaglowek.classList.add('obszar-na-naglowek');
+    var obszarNazwaObszarNaNaglowek = document.createElement("div");
+    obszarNazwaObszarNaNaglowek.classList.add("obszar-na-naglowek");
 
-          var obszarNazwaNaglowek = document.createElement("p");
-          obszarNazwaNaglowek.classList.add('naglowek');
-          obszarNazwaNaglowek.innerText = "NAME";
+    var obszarNazwaNaglowek = document.createElement("p");
+    obszarNazwaNaglowek.classList.add("naglowek");
+    obszarNazwaNaglowek.innerText = "NAME";
 
-        obszarNazwaObszarNaNaglowek.appendChild(obszarNazwaNaglowek);
+    obszarNazwaObszarNaNaglowek.appendChild(obszarNazwaNaglowek);
 
-        var obszarNaNazwe = document.createElement("div");
-        obszarNaNazwe.classList.add('obszar-na-nazwe-magnesu');
+    var obszarNaNazwe = document.createElement("div");
+    obszarNaNazwe.classList.add("obszar-na-nazwe-magnesu");
 
-          dopiszCyfry(obszarNaNazwe, ["M", konfiguracja.suppliers[i].no]);
+    dopiszCyfry(obszarNaNazwe, ["M", konfiguracja.suppliers[i].no]);
 
-      obszarNazwa.appendChild(obszarNazwaObszarNaNaglowek);
-      obszarNazwa.appendChild(obszarNaNazwe);
+    obszarNazwa.appendChild(obszarNazwaObszarNaNaglowek);
+    obszarNazwa.appendChild(obszarNaNazwe);
 
     panel.appendChild(obszarNazwa);
 
     // ON/OFF
 
-      var obszarOnOff = document.createElement("div");
-      obszarOnOff.classList.add('obszar-na-naglowek-i-cos');
+    var obszarOnOff = document.createElement("div");
+    obszarOnOff.classList.add("obszar-na-naglowek-i-cos");
 
-        var obszarOnOffObszarNaNaglowek = document.createElement("div");
-        obszarOnOffObszarNaNaglowek.classList.add('obszar-na-naglowek');
+    var obszarOnOffObszarNaNaglowek = document.createElement("div");
+    obszarOnOffObszarNaNaglowek.classList.add("obszar-na-naglowek");
 
-          var obszarOnOffNaglowek = document.createElement("p");
-          obszarOnOffNaglowek.classList.add('naglowek');
-          obszarOnOffNaglowek.innerText = "ON/OFF";
+    var obszarOnOffNaglowek = document.createElement("p");
+    obszarOnOffNaglowek.classList.add("naglowek");
+    obszarOnOffNaglowek.innerText = "ON/OFF";
 
-        obszarOnOffObszarNaNaglowek.appendChild(obszarOnOffNaglowek);
+    obszarOnOffObszarNaNaglowek.appendChild(obszarOnOffNaglowek);
 
-        var obszarNaGuzikOnOff = document.createElement("div");
-        obszarNaGuzikOnOff.classList.add('obszar-na-guzik-on-off');
+    var obszarNaGuzikOnOff = document.createElement("div");
+    obszarNaGuzikOnOff.classList.add("obszar-na-guzik-on-off");
 
-          var switchSwitchRound = document.createElement("label");
-          switchSwitchRound.classList.add('switch');
-          switchSwitchRound.classList.add('switch--round');
+    var switchSwitchRound = document.createElement("label");
+    switchSwitchRound.classList.add("switch");
+    switchSwitchRound.classList.add("switch--round");
 
-            var switchInput = document.createElement("input");
-            switchInput.classList.add('switch__input');
-            switchInput.setAttribute("type", "checkbox");
-            switchInput.setAttribute("role", "switch");
-            switchInput.setAttribute("name", "round");
+    var switchInput = document.createElement("input");
+    switchInput.classList.add("switch__input");
+    switchInput.setAttribute("type", "checkbox");
+    switchInput.setAttribute("role", "switch");
+    switchInput.setAttribute("name", "round");
 
-            switchInput.addEventListener('change', async function() {
-              if (this.checked) {
-                var odpowiedz = await window.electronAPI.turn_on(i);
-                console.log(odpowiedz);
-              } else {
-                var odpowiedz = await window.electronAPI.turn_off(i);
-                console.log(odpowiedz);
-              }
-            });
+    switchInput.addEventListener("change", async function () {
+      if (this.checked) {
+        var odpowiedz = await window.electronAPI.turn_on(i);
+        console.log(odpowiedz);
+      } else {
+        var odpowiedz = await window.electronAPI.turn_off(i);
+        console.log(odpowiedz);
+      }
+    });
 
-            var switchBorder = document.createElement("span");
-            switchBorder.classList.add('switch__border');
+    var switchBorder = document.createElement("span");
+    switchBorder.classList.add("switch__border");
 
-            var switchInside = document.createElement("span");
-            switchInside.classList.add('switch__inside');
+    var switchInside = document.createElement("span");
+    switchInside.classList.add("switch__inside");
 
-            var switchFlapa = document.createElement("span");
-            switchFlapa.classList.add('switch__flap-a');
+    var switchFlapa = document.createElement("span");
+    switchFlapa.classList.add("switch__flap-a");
 
-            var switchLabel = document.createElement("span");
-            switchLabel.classList.add('switch__label');
-            switchLabel.innerText = "Round";
+    var switchLabel = document.createElement("span");
+    switchLabel.classList.add("switch__label");
+    switchLabel.innerText = "Round";
 
-          switchSwitchRound.appendChild(switchInput);
-          switchSwitchRound.appendChild(switchBorder);
-          switchSwitchRound.appendChild(switchInside);
-          switchSwitchRound.appendChild(switchFlapa);
-          switchSwitchRound.appendChild(switchLabel);
+    switchSwitchRound.appendChild(switchInput);
+    switchSwitchRound.appendChild(switchBorder);
+    switchSwitchRound.appendChild(switchInside);
+    switchSwitchRound.appendChild(switchFlapa);
+    switchSwitchRound.appendChild(switchLabel);
 
-        obszarNaGuzikOnOff.appendChild(switchSwitchRound);
+    obszarNaGuzikOnOff.appendChild(switchSwitchRound);
 
-      obszarOnOff.appendChild(obszarOnOffObszarNaNaglowek);
-      obszarOnOff.appendChild(obszarNaGuzikOnOff);
+    obszarOnOff.appendChild(obszarOnOffObszarNaNaglowek);
+    obszarOnOff.appendChild(obszarNaGuzikOnOff);
 
     panel.appendChild(obszarOnOff);
 
     // POLARYZACJA
 
-      var obszarPolaryzacja = document.createElement("div");
-      obszarPolaryzacja.classList.add('obszar-na-naglowek-i-cos');
+    var obszarPolaryzacja = document.createElement("div");
+    obszarPolaryzacja.classList.add("obszar-na-naglowek-i-cos");
 
-        var obszarPolaryzacjaObszarNaNaglowek = document.createElement("div");
-        obszarPolaryzacjaObszarNaNaglowek.classList.add('obszar-na-naglowek');
+    var obszarPolaryzacjaObszarNaNaglowek = document.createElement("div");
+    obszarPolaryzacjaObszarNaNaglowek.classList.add("obszar-na-naglowek");
 
-          var obszarPolaryzacjaNaglowek = document.createElement("p");
-          obszarPolaryzacjaNaglowek.classList.add('naglowek');
-          obszarPolaryzacjaNaglowek.innerText = "POLARITY";
+    var obszarPolaryzacjaNaglowek = document.createElement("p");
+    obszarPolaryzacjaNaglowek.classList.add("naglowek");
+    obszarPolaryzacjaNaglowek.innerText = "POLARITY";
 
-        obszarPolaryzacjaObszarNaNaglowek.appendChild(obszarPolaryzacjaNaglowek);
+    obszarPolaryzacjaObszarNaNaglowek.appendChild(obszarPolaryzacjaNaglowek);
 
-      obszarPolaryzacja.appendChild(obszarPolaryzacjaObszarNaNaglowek);
+    obszarPolaryzacja.appendChild(obszarPolaryzacjaObszarNaNaglowek);
 
-        var obszarNaPolaryzacje = document.createElement("div");
-        obszarNaPolaryzacje.classList.add('obszar-na-polaryzacje');
+    var obszarNaPolaryzacje = document.createElement("div");
+    obszarNaPolaryzacje.classList.add("obszar-na-polaryzacje");
 
-        if (konfiguracja.suppliers[i].polarity == "mutable") {
-          var toggle = document.createElement("div");
-          toggle.classList.add('toggle');
+    if (konfiguracja.suppliers[i].polarity == "mutable") {
+      var toggle = document.createElement("div");
+      toggle.classList.add("toggle");
 
-            var toggleInput = document.createElement("input");
-            toggleInput.classList.add('toggle-input');
-            toggleInput.setAttribute("type", "checkbox");
+      var toggleInput = document.createElement("input");
+      toggleInput.classList.add("toggle-input");
+      toggleInput.setAttribute("type", "checkbox");
 
-            toggleInput.addEventListener('change', async function() {
-              if (this.checked) {
-                var odpowiedz = await window.electronAPI.set_polarity(1, i);
-                console.log(odpowiedz);
-              } else {
-                var odpowiedz = await window.electronAPI.set_polarity(0, i);
-                console.log(odpowiedz);
-              }
-            });
-
-            var toggleHandleWrapper = document.createElement("div");
-            toggleHandleWrapper.classList.add('toggle-handle-wrapper');
-
-              var toggleHandle = document.createElement("div");
-              toggleHandle.classList.add('toggle-handle');
-
-                var toggleHandleKnob = document.createElement("div");
-                toggleHandleKnob.classList.add('toggle-handle-knob');
-
-                var toggleHandleBarWrapper = document.createElement("div");
-                toggleHandleBarWrapper.classList.add('toggle-handle-bar-wrapper');
-
-                  var toggleHandleBar = document.createElement("div");
-                  toggleHandleBar.classList.add('toggle-handle-bar');
-
-                toggleHandleBarWrapper.appendChild(toggleHandleBar);
-
-              toggleHandle.appendChild(toggleHandleKnob);
-              toggleHandle.appendChild(toggleHandleBarWrapper);
-
-            toggleHandleWrapper.appendChild(toggleHandle);
-
-            var toggleBase = document.createElement("div");
-            toggleBase.classList.add('toggle-base');
-
-              var toggleBaseInside = document.createElement("div");
-              toggleBaseInside.classList.add('toggle-base-inside');
-
-            toggleBase.appendChild(toggleBaseInside);
-
-          toggle.appendChild(toggleInput);
-          toggle.appendChild(toggleHandleWrapper);
-          toggle.appendChild(toggleBase);
-
-          obszarNaPolaryzacje.appendChild(toggle);
+      toggleInput.addEventListener("change", async function () {
+        if (this.checked) {
+          var odpowiedz = await window.electronAPI.set_polarity(1, i);
+          console.log(odpowiedz);
+        } else {
+          var odpowiedz = await window.electronAPI.set_polarity(0, i);
+          console.log(odpowiedz);
         }
+      });
 
-      obszarPolaryzacja.appendChild(obszarNaPolaryzacje);
+      var toggleHandleWrapper = document.createElement("div");
+      toggleHandleWrapper.classList.add("toggle-handle-wrapper");
+
+      var toggleHandle = document.createElement("div");
+      toggleHandle.classList.add("toggle-handle");
+
+      var toggleHandleKnob = document.createElement("div");
+      toggleHandleKnob.classList.add("toggle-handle-knob");
+
+      var toggleHandleBarWrapper = document.createElement("div");
+      toggleHandleBarWrapper.classList.add("toggle-handle-bar-wrapper");
+
+      var toggleHandleBar = document.createElement("div");
+      toggleHandleBar.classList.add("toggle-handle-bar");
+
+      toggleHandleBarWrapper.appendChild(toggleHandleBar);
+
+      toggleHandle.appendChild(toggleHandleKnob);
+      toggleHandle.appendChild(toggleHandleBarWrapper);
+
+      toggleHandleWrapper.appendChild(toggleHandle);
+
+      var toggleBase = document.createElement("div");
+      toggleBase.classList.add("toggle-base");
+
+      var toggleBaseInside = document.createElement("div");
+      toggleBaseInside.classList.add("toggle-base-inside");
+
+      toggleBase.appendChild(toggleBaseInside);
+
+      toggle.appendChild(toggleInput);
+      toggle.appendChild(toggleHandleWrapper);
+      toggle.appendChild(toggleBase);
+
+      obszarNaPolaryzacje.appendChild(toggle);
+    }
+
+    obszarPolaryzacja.appendChild(obszarNaPolaryzacje);
 
     panel.appendChild(obszarPolaryzacja);
 
     // NAPIĘCIE
 
-      var obszarNapiecie = document.createElement("div");
-      obszarNapiecie.classList.add('obszar-na-naglowek-i-cos');
+    var obszarNapiecie = document.createElement("div");
+    obszarNapiecie.classList.add("obszar-na-naglowek-i-cos");
 
-        var obszarNapiecieObszarNaNaglowek = document.createElement("div");
-        obszarNapiecieObszarNaNaglowek.classList.add('obszar-na-naglowek');
+    var obszarNapiecieObszarNaNaglowek = document.createElement("div");
+    obszarNapiecieObszarNaNaglowek.classList.add("obszar-na-naglowek");
 
-          var obszarNapiecieNaglowek = document.createElement("p");
-          obszarNapiecieNaglowek.classList.add('naglowek');
-          obszarNapiecieNaglowek.innerText = "VOLTAGE";
+    var obszarNapiecieNaglowek = document.createElement("p");
+    obszarNapiecieNaglowek.classList.add("naglowek");
+    obszarNapiecieNaglowek.innerText = "VOLTAGE";
 
-        obszarNapiecieObszarNaNaglowek.appendChild(obszarNapiecieNaglowek);
+    obszarNapiecieObszarNaNaglowek.appendChild(obszarNapiecieNaglowek);
 
-        var obszarNaNapiecie = document.createElement("div");
-        obszarNaNapiecie.classList.add('obszar-na-napiecie');
+    var obszarNaNapiecie = document.createElement("div");
+    obszarNaNapiecie.classList.add("obszar-na-napiecie");
 
-          dopiszCyfry(obszarNaNapiecie, [" ", " ", " .", " ", "V"]);
+    dopiszCyfry(obszarNaNapiecie, [" ", " ", " .", " ", "V"]);
 
-      obszarNapiecie.appendChild(obszarNapiecieObszarNaNaglowek);
-      obszarNapiecie.appendChild(obszarNaNapiecie);
+    obszarNapiecie.appendChild(obszarNapiecieObszarNaNaglowek);
+    obszarNapiecie.appendChild(obszarNaNapiecie);
 
     panel.appendChild(obszarNapiecie);
 
     // NATĘŻENIE
 
-      var obszarNatezenie = document.createElement("div");
-      obszarNatezenie.classList.add('obszar-na-naglowek-i-cos');
-      obszarNatezenie.setAttribute("id", "natezenie" + (i + 1));
+    var obszarNatezenie = document.createElement("div");
+    obszarNatezenie.classList.add("obszar-na-naglowek-i-cos");
+    obszarNatezenie.setAttribute("id", "natezenie" + (i + 1));
 
-        var obszarNatezenieObszarNaNaglowek = document.createElement("div");
-        obszarNatezenieObszarNaNaglowek.classList.add('obszar-na-naglowek');
+    var obszarNatezenieObszarNaNaglowek = document.createElement("div");
+    obszarNatezenieObszarNaNaglowek.classList.add("obszar-na-naglowek");
 
-          var obszarNatezenieNaglowek = document.createElement("p");
-          obszarNatezenieNaglowek.classList.add('naglowek');
-          obszarNatezenieNaglowek.innerText = "CURRENT";
+    var obszarNatezenieNaglowek = document.createElement("p");
+    obszarNatezenieNaglowek.classList.add("naglowek");
+    obszarNatezenieNaglowek.innerText = "CURRENT";
 
-        obszarNatezenieObszarNaNaglowek.appendChild(obszarNatezenieNaglowek);
+    obszarNatezenieObszarNaNaglowek.appendChild(obszarNatezenieNaglowek);
 
-        var obszarNaNatezenie = document.createElement("div");
-        obszarNaNatezenie.classList.add('obszar-na-natezenie');
+    var obszarNaNatezenie = document.createElement("div");
+    obszarNaNatezenie.classList.add("obszar-na-natezenie");
 
-          dopiszCyfry(obszarNaNatezenie, [" ", " ", " .", " ", "A"]);
+    dopiszCyfry(obszarNaNatezenie, [" ", " ", " .", " ", "A"]);
 
-        var obszarNaZmianeNatezeniaIGuziki = document.createElement("div");
-        obszarNaZmianeNatezeniaIGuziki.classList.add('obszar-na-zmiane-natezenia-i-guziki');
+    var obszarNaZmianeNatezeniaIGuziki = document.createElement("div");
+    obszarNaZmianeNatezeniaIGuziki.classList.add(
+      "obszar-na-zmiane-natezenia-i-guziki"
+    );
 
-          var obszarNaZmianeNatezenia = document.createElement("div");
-          obszarNaZmianeNatezenia.classList.add('obszar-na-zmiane-natezenia');
+    var obszarNaZmianeNatezenia = document.createElement("div");
+    obszarNaZmianeNatezenia.classList.add("obszar-na-zmiane-natezenia");
 
-            dopiszCyfry(obszarNaZmianeNatezenia, [" ", " ", " ", " ", " "]);
+    dopiszCyfry(obszarNaZmianeNatezenia, [" ", " ", " ", " ", " "]);
 
-          var obszarNaPrzyciski = document.createElement("div");
-          obszarNaPrzyciski.classList.add('obszar-na-przyciski');
+    var obszarNaPrzyciski = document.createElement("div");
+    obszarNaPrzyciski.classList.add("obszar-na-przyciski");
 
-            var aplaj = document.createElement("input");
-            aplaj.setAttribute("type", "button");
-            aplaj.setAttribute("value", "Apply");
+    var aplaj = document.createElement("input");
+    aplaj.setAttribute("type", "button");
+    aplaj.setAttribute("value", "Apply");
 
-            var kansel = document.createElement("input");
-            kansel.setAttribute("type", "button");
-            kansel.setAttribute("value", "Cancel");
+    var kansel = document.createElement("input");
+    kansel.setAttribute("type", "button");
+    kansel.setAttribute("value", "Cancel");
 
-          obszarNaPrzyciski.appendChild(aplaj);
-          obszarNaPrzyciski.appendChild(kansel);
+    obszarNaPrzyciski.appendChild(aplaj);
+    obszarNaPrzyciski.appendChild(kansel);
 
-        obszarNaZmianeNatezeniaIGuziki.appendChild(obszarNaZmianeNatezenia);
-        obszarNaZmianeNatezeniaIGuziki.appendChild(obszarNaPrzyciski);
+    obszarNaZmianeNatezeniaIGuziki.appendChild(obszarNaZmianeNatezenia);
+    obszarNaZmianeNatezeniaIGuziki.appendChild(obszarNaPrzyciski);
 
-      obszarNatezenie.appendChild(obszarNatezenieObszarNaNaglowek);
-      obszarNatezenie.appendChild(obszarNaNatezenie);
-      obszarNatezenie.appendChild(obszarNaZmianeNatezeniaIGuziki);
+    obszarNatezenie.appendChild(obszarNatezenieObszarNaNaglowek);
+    obszarNatezenie.appendChild(obszarNaNatezenie);
+    obszarNatezenie.appendChild(obszarNaZmianeNatezeniaIGuziki);
 
     panel.appendChild(obszarNatezenie);
 
     // BŁĘDY
 
     var obszarBledy = document.createElement("div");
-      obszarBledy.classList.add('obszar-na-naglowek-i-cos');
+    obszarBledy.classList.add("obszar-na-naglowek-i-cos");
 
-        var obszarBledyObszarNaNaglowek = document.createElement("div");
-        obszarBledyObszarNaNaglowek.classList.add('obszar-na-naglowek');
+    var obszarBledyObszarNaNaglowek = document.createElement("div");
+    obszarBledyObszarNaNaglowek.classList.add("obszar-na-naglowek");
 
-          var obszarBledyNaglowek = document.createElement("p");
-          obszarBledyNaglowek.classList.add('naglowek');
-          obszarBledyNaglowek.innerText = "ERROR CODE";
+    var obszarBledyNaglowek = document.createElement("p");
+    obszarBledyNaglowek.classList.add("naglowek");
+    obszarBledyNaglowek.innerText = "ERROR CODE";
 
-        obszarBledyObszarNaNaglowek.appendChild(obszarBledyNaglowek);
+    obszarBledyObszarNaNaglowek.appendChild(obszarBledyNaglowek);
 
-      obszarBledy.appendChild(obszarBledyObszarNaNaglowek);
+    obszarBledy.appendChild(obszarBledyObszarNaNaglowek);
 
-        for (let i = 0; i < 2; i++) {
-          var obszarNaBledy = document.createElement("div");
-          obszarNaBledy.classList.add('obszar-na-bledy');
+    for (let i = 0; i < 2; i++) {
+      var obszarNaBledy = document.createElement("div");
+      obszarNaBledy.classList.add("obszar-na-bledy");
 
-            dopiszCyfry(obszarNaBledy, [" ", " ", " ", " ", " ", " ", " "]);
+      dopiszCyfry(obszarNaBledy, [" ", " ", " ", " ", " ", " ", " "]);
 
-          obszarBledy.appendChild(obszarNaBledy);
-        }
+      obszarBledy.appendChild(obszarNaBledy);
+    }
 
     panel.appendChild(obszarBledy);
 
     obszarPaneli.appendChild(panel);
 
     PoleNatezenia(document.getElementById("natezenie" + (i + 1)), i);
+
+    window.electronAPI.get_status((args) => {
+      if (args == i) {
+        console.log("robimy_cos " + i);
+      }
+      else {
+        console.log("nie robimy nic " + i);
+      }
+    });
   }
 
   // MAPKA
   var mapka = document.createElement("moja-mapka");
   mapka.setAttribute("konfiguracja", JSON.stringify(konfiguracja));
-  document.getElementsByClassName('obszar-mapy')[0].appendChild(mapka);
+  document.getElementsByClassName("obszar-mapy")[0].appendChild(mapka);
 });
-
-
-window.electronAPI.get_status(args => {console.log(args)});
