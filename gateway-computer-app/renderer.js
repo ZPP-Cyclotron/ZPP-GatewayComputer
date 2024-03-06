@@ -452,13 +452,13 @@ var PoleNatezenia = (function () {
       obszar_na_zmiane_i_przyciski.style.visibility = "hidden";
     }
 
-    function ustaw_wartosc(cyfry_pom, czy_rozkaz) {
+    function ustaw_wartosc() {
       var wiodace_zera = true;
 
-      for (let i = 0; i < cyfry_pom.length - 1; i++) {
-        var cyfra_teraz = cyfry_pom[i].getAttribute("wartosc");
+      for (let i = 0; i < cyfry_zmiany.length - 1; i++) {
+        var cyfra_teraz = cyfry_zmiany[i].getAttribute("wartosc");
 
-        if (czy_rozkaz == false && i == indeks_cyfry) {
+        if (i == indeks_cyfry) {
           cyfra_teraz = wartosc_cyfry;
         }
 
@@ -502,7 +502,7 @@ var PoleNatezenia = (function () {
         return;
       }
 
-      ustaw_wartosc(cyfry_zmiany, false);
+      ustaw_wartosc();
       koncz_zmiany();
     });
 
@@ -510,9 +510,33 @@ var PoleNatezenia = (function () {
       koncz_zmiany();
     });
 
+    function ustaw_wartosc() {
+      var wiodace_zera = true;
+
+      for (let i = 0; i < cyfry_zmiany.length - 1; i++) {
+        var cyfra_teraz = cyfry_zmiany[i].getAttribute("wartosc");
+
+        if (i == indeks_cyfry) {
+          cyfra_teraz = wartosc_cyfry;
+        }
+
+        if (wiodace_zera == true && cyfra_teraz == 0 && i < 2) {
+          cyfra_teraz = " ";
+        } else {
+          wiodace_zera = false;
+        }
+
+        if (i == 2) {
+          cyfra_teraz = cyfra_teraz + ".";
+        }
+
+        cyfry_natezenia[i].setAttribute("wartosc", cyfra_teraz);
+      }
+    }
+
     window.electronAPI.get_current((i, nowe_cyfry) => {
       if (panel_id == i) {
-        ustaw_wartosc(nowe_cyfry, true);
+        console.log(nowe_cyfry);
       }
     });
 
