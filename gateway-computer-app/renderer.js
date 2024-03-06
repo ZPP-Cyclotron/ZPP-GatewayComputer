@@ -105,8 +105,7 @@ class Cyferka extends HTMLElement {
 
   #zaktualizujWartosc() {
     this.innerHTML = `
-      <svg id="wyswietlacz-svg${
-        this.id
+      <svg id="wyswietlacz-svg${this.id
       }" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1052 1361.9982">
       <g
         id="wyswietlacz"
@@ -602,6 +601,12 @@ window.addEventListener("load", async () => {
       }
     });
 
+    window.electronAPI.get_on_off((panel_id, state) => {
+      if (panel_id == i) {
+        switchInput.checked = state;
+      }
+    });
+
     var switchBorder = document.createElement("span");
     switchBorder.classList.add("switch__border");
 
@@ -657,11 +662,17 @@ window.addEventListener("load", async () => {
 
       toggleInput.addEventListener("change", async function () {
         if (this.checked) {
-          var odpowiedz = await window.electronAPI.set_polarity(1, i);
+          var odpowiedz = await window.electronAPI.set_polarity(i, true);
           console.log(odpowiedz);
         } else {
-          var odpowiedz = await window.electronAPI.set_polarity(0, i);
+          var odpowiedz = await window.electronAPI.set_polarity(i, false);
           console.log(odpowiedz);
+        }
+      });
+
+      window.electronAPI.get_polarity((panel_id, state) => {
+        if (panel_id == i) {
+          toggleInput.checked = state;
         }
       });
 
@@ -730,6 +741,12 @@ window.addEventListener("load", async () => {
 
     panel.appendChild(obszarNapiecie);
 
+    window.electronAPI.get_voltage((panel_id, value) => {
+      if (panel_id == i) {
+        console.log("new voltage is " + value);
+      }
+    });
+
     // NATĘŻENIE
 
     var obszarNatezenie = document.createElement("div");
@@ -783,6 +800,12 @@ window.addEventListener("load", async () => {
 
     panel.appendChild(obszarNatezenie);
 
+    window.electronAPI.get_current((panel_id, value) => {
+      if (panel_id == i) {
+        console.log("new current is " + value);
+      }
+    });
+
     // BŁĘDY
 
     var obszarBledy = document.createElement("div");
@@ -810,18 +833,15 @@ window.addEventListener("load", async () => {
 
     panel.appendChild(obszarBledy);
 
+    window.electronAPI.get_error((panel_id, message) => {
+      if (panel_id == i) {
+        console.log("error is " + message);
+      }
+    });
+
     obszarPaneli.appendChild(panel);
 
     PoleNatezenia(document.getElementById("natezenie" + (i + 1)), i);
-
-    window.electronAPI.get_status((args) => {
-      if (args == i) {
-        console.log("robimy_cos " + i);
-      }
-      else {
-        console.log("nie robimy nic " + i);
-      }
-    });
   }
 
   // MAPKA

@@ -66,7 +66,7 @@ class PowerSupply {
       try {
         client.close();
       } catch (err) {
-        if (DEBUG) {console.log(err);}
+        if (DEBUG) { console.log(err); }
       }
       return "ups turn_on";
     }
@@ -97,7 +97,7 @@ class PowerSupply {
       try {
         client.close();
       } catch (err) {
-        if (DEBUG) {console.log(err);}
+        if (DEBUG) { console.log(err); }
       }
       return "ups turnoff";
     }
@@ -130,7 +130,7 @@ class PowerSupply {
       try {
         client.close();
       } catch (err) {
-        if (DEBUG) {console.log(err);}
+        if (DEBUG) { console.log(err); }
       }
       return "ups!";
     }
@@ -153,7 +153,7 @@ class PowerSupply {
       try {
         client.close();
       } catch (err) {
-        if (DEBUG) {console.log(err);}
+        if (DEBUG) { console.log(err); }
       }
     }
   }
@@ -176,7 +176,7 @@ class PowerSupply {
       try {
         client.close();
       } catch (err) {
-        if (DEBUG) {console.log(err);}
+        if (DEBUG) { console.log(err); }
       }
       return "ups status";
     }
@@ -284,7 +284,7 @@ class PowerSupply100A extends PowerSupply {
       try {
         client.close();
       } catch (err) {
-        if (DEBUG) {console.log(err);}
+        if (DEBUG) { console.log(err); }
       }
       return "ups current set";
     }
@@ -333,7 +333,7 @@ class PowerSupply200A extends PowerSupply {
       try {
         client.close();
       } catch (err) {
-        if (DEBUG) {console.log(err);}
+        if (DEBUG) { console.log(err); }
       }
       return "ups current set 200A";
     }
@@ -341,7 +341,7 @@ class PowerSupply200A extends PowerSupply {
 }
 
 function setup_suppliers_and_clients(config) {
-  if (typeof config ==="string") {
+  if (typeof config === "string") {
     console.log("Error: bad config file.");
     return;
   }
@@ -403,7 +403,7 @@ function text_server(suppliers) {
   console.log("ctrl - C to exit\n");
 
   let timer = null;
-  let interval = 5000;
+  let interval = 50000;
 
   async function ask_suppliers() {
     for (const supplier of suppliers) {
@@ -562,7 +562,7 @@ app.whenReady().then(() => {
     console.log("Sending new status...");
     ask_suppliers();
     mainWindow.webContents.send("new-status", 0, 12345);
-  }, 5000);
+  }, 50000);
   app.on("activate", () => {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
