@@ -7,7 +7,7 @@ const readline = require("readline");
 
 const DEBUG = true;
 // const CONFIG_FILE_PATH = "./config.json";
-const CONFIG_FILE_PATH = "./test_config.json";
+const CONFIG_FILE_PATH = "./test12_config.json";
 
 // https://github.com/yaacov/node-modbus-serial
 const ModbusRTU = require("modbus-serial");
@@ -477,12 +477,12 @@ function obsluzOtworzeniePlikuKonfiguracyjnego() {
   } catch (err) {
     // check error type
     if (err.code === "ENOENT") {
-      console.log("File not found!");
-      return "File not found!";
+      console.log("Config file not found!");
+      return "Config file not found!";
     }
     if (err instanceof SyntaxError) {
-      console.log("File is not a valid JSON file!");
-      return "File is not a valid JSON file!";
+      console.log("Config file is not a valid JSON file!");
+      return "Config file is not a valid JSON file!";
     }
   }
 }
@@ -515,10 +515,10 @@ app.whenReady().then(() => {
     "dialog:otworzPlikKonfiguracyjny",
     obsluzOtworzeniePlikuKonfiguracyjnego
   );
-  ipcMain.handle("dialog:set_polarity", (event, new_val, supp_id) =>
+  ipcMain.handle("dialog:set_polarity", (event,  supp_id, new_val) =>
     suppliers[supp_id].set_polarity(new_val)
   );
-  ipcMain.handle("dialog:set_current", (event, new_val, supp_id) =>
+  ipcMain.handle("dialog:set_current", (event,  supp_id, new_val) =>
     suppliers[supp_id].set_current(new_val)
   );
   ipcMain.handle("dialog:turn_on", (event, supp_id) =>
@@ -546,23 +546,38 @@ app.whenReady().then(() => {
   // check if config is not undefined
   if (config === undefined) {
     console.log("Error: config is undefined.");
+    return;
   }
   else {
     // text_server(suppliers);
     // server(config);
   }
+  var sprintf = require('sprintf-js').sprintf,
+    vsprintf = require('sprintf-js').vsprintf
 
   async function ask_suppliers() {
-    for (const supplier of suppliers) {
-      let res = await supplier.read_status();
+    for (let i = 0; i < suppliers.length; i++) {
+      let supplier = suppliers[i];
+      // let res = await supplier.read_status();
+      // if (DEBUG) {
+      //   console.log(res);
+      // }
+      // convert res.data[0] to string and send it to renderer:
+      let str_current = sprintf("%05.1f", i);
+      if (str_current.length < 3) {
+
+      }
+      mainWindow.webContents.send("new-current", i, str_current);
+      mainWindow.webContents.send("new-on-off", i, i % 2);
+      mainWindow.webContents.send("new-polarity", i, !(i % 2));
     }
   }
   // text_server(suppliers);
   timer = setInterval(() => {
     console.log("Sending new status...");
     ask_suppliers();
-    mainWindow.webContents.send("new-status", 0, 12345);
-  }, 50000);
+    // mainWindow.webContents.send("new-status", 0, 12345);
+  }, 5000);
   app.on("activate", () => {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.

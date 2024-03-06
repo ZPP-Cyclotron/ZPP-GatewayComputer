@@ -14,7 +14,16 @@ contextBridge.exposeInMainWorld("electronAPI", {
   set_control_mode: (new_val) =>
     ipcRenderer.invoke("dialog:set_control_mode", new_val),
 
-  get_status: (callback) => {
-    ipcRenderer.on('new-status', (event, ...args) => {callback(...args);});
-  }
+  // get_status: (callback) => {
+  //   ipcRenderer.on('new-status', (event, ...args) => {callback(...args);});
+  // }
+  get_current: (callback) => {
+    ipcRenderer.on('new-current', (event, supp_id, new_val) => {callback(supp_id, new_val);});
+  },
+  get_on_off: (callback) => {
+    ipcRenderer.on('new-on-off', (event, supp_id, isOn) => {callback(supp_id, isOn);});
+  },
+  get_polarity: (callback) => {
+    ipcRenderer.on('new-polarity', (event, supp_id, isPositive) => {callback(supp_id, isPositive);});
+  },
 });
