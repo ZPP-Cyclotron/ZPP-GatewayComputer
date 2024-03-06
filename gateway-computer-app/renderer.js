@@ -452,13 +452,13 @@ var PoleNatezenia = (function () {
       obszar_na_zmiane_i_przyciski.style.visibility = "hidden";
     }
 
-    function ustaw_wartosc() {
+    function ustaw_wartosc(cyfry_pom, czy_rozkaz) {
       var wiodace_zera = true;
 
-      for (let i = 0; i < cyfry_zmiany.length - 1; i++) {
-        var cyfra_teraz = cyfry_zmiany[i].getAttribute("wartosc");
+      for (let i = 0; i < cyfry_pom.length - 1; i++) {
+        var cyfra_teraz = cyfry_pom[i].getAttribute("wartosc");
 
-        if (i == indeks_cyfry) {
+        if (czy_rozkaz == false && i == indeks_cyfry) {
           cyfra_teraz = wartosc_cyfry;
         }
 
@@ -496,16 +496,24 @@ var PoleNatezenia = (function () {
         wartosc_wyswietlacza,
         panel_id
       );
-      console.log(odpowiedz);
 
-      /* ODEBRAĆ CZY OK, JEŚLI NIE TO return!!! */
+      if (odpowiedz !== "OK") {
+        alert(odpowiedz);
+        return;
+      }
 
-      ustaw_wartosc();
+      ustaw_wartosc(cyfry_zmiany, false);
       koncz_zmiany();
     });
 
     guzik_anulowania.addEventListener("click", function (ev) {
       koncz_zmiany();
+    });
+
+    window.electronAPI.get_current((i, nowe_cyfry) => {
+      if (panel_id == i) {
+        ustaw_wartosc(nowe_cyfry, true);
+      }
     });
 
     obszar_na_natezenie.addEventListener("click", inicjuj_zmiany);
@@ -529,7 +537,7 @@ window.addEventListener("load", async () => {
   const konfiguracja = await window.electronAPI.otworzPlikKonfiguracyjny();
 
   if (typeof konfiguracja === "string") {
-    console.log(konfiguracja);
+    alert(konfiguracja);
     return;
   }
 
@@ -600,7 +608,6 @@ window.addEventListener("load", async () => {
         console.log(odpowiedz);
       }
     });
-
     window.electronAPI.get_on_off((panel_id, state) => {
       if (panel_id == i) {
         switchInput.checked = state;
@@ -669,7 +676,6 @@ window.addEventListener("load", async () => {
           console.log(odpowiedz);
         }
       });
-
       window.electronAPI.get_polarity((panel_id, state) => {
         if (panel_id == i) {
           toggleInput.checked = state;
@@ -740,13 +746,13 @@ window.addEventListener("load", async () => {
     obszarNapiecie.appendChild(obszarNaNapiecie);
 
     panel.appendChild(obszarNapiecie);
-
-    window.electronAPI.get_voltage((panel_id, value) => {
-      if (panel_id == i) {
-        console.log("new voltage is " + value);
-      }
-    });
-
+    /*
+        window.electronAPI.get_voltage((panel_id, value) => {
+          if (panel_id == i) {
+            console.log("new voltage is " + value);
+          }
+        });
+    */
     // NATĘŻENIE
 
     var obszarNatezenie = document.createElement("div");
@@ -800,12 +806,6 @@ window.addEventListener("load", async () => {
 
     panel.appendChild(obszarNatezenie);
 
-    window.electronAPI.get_current((panel_id, value) => {
-      if (panel_id == i) {
-        console.log("new current is " + value);
-      }
-    });
-
     // BŁĘDY
 
     var obszarBledy = document.createElement("div");
@@ -832,13 +832,13 @@ window.addEventListener("load", async () => {
     }
 
     panel.appendChild(obszarBledy);
-
+    /*
     window.electronAPI.get_error((panel_id, message) => {
       if (panel_id == i) {
         console.log("error is " + message);
       }
     });
-
+*/
     obszarPaneli.appendChild(panel);
 
     PoleNatezenia(document.getElementById("natezenie" + (i + 1)), i);
