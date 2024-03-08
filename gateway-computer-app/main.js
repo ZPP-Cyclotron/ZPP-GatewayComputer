@@ -6,8 +6,8 @@ const readline = require("readline");
 // const { SerialPort } = require("serialport");
 
 const DEBUG = true;
-// const CONFIG_FILE_PATH = "./config.json";
-const CONFIG_FILE_PATH = "./test12_config.json";
+const CONFIG_FILE_PATH = "./config.json";
+// const CONFIG_FILE_PATH = "./test12_config.json";
 
 // https://github.com/yaacov/node-modbus-serial
 const ModbusRTU = require("modbus-serial");
@@ -515,10 +515,10 @@ app.whenReady().then(() => {
     "dialog:otworzPlikKonfiguracyjny",
     obsluzOtworzeniePlikuKonfiguracyjnego
   );
-  ipcMain.handle("dialog:set_polarity", (event,  supp_id, new_val) =>
+  ipcMain.handle("dialog:set_polarity", (event, supp_id, new_val) =>
     suppliers[supp_id].set_polarity(new_val)
   );
-  ipcMain.handle("dialog:set_current", (event,  supp_id, new_val) =>
+  ipcMain.handle("dialog:set_current", (event, supp_id, new_val) =>
     suppliers[supp_id].set_current(new_val)
   );
   ipcMain.handle("dialog:turn_on", (event, supp_id) =>

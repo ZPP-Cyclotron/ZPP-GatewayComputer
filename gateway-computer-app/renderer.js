@@ -537,6 +537,25 @@ var PoleNatezenia = (function () {
     window.electronAPI.get_current((i, nowe_cyfry) => {
       if (panel_id == i) {
         console.log(nowe_cyfry);
+
+        var tablica = [nowe_cyfry[0], nowe_cyfry[1], nowe_cyfry[2], nowe_cyfry[4]];
+        var wiodace_zera = true;
+
+        for (let i = 0; i < tablica.length; i++) {
+          var cyfra_teraz = tablica[i];
+
+          if (wiodace_zera == true && cyfra_teraz == 0 && i < 2) {
+            cyfra_teraz = " ";
+          } else {
+            wiodace_zera = false;
+          }
+
+          if (i == 2) {
+            cyfra_teraz = cyfra_teraz + ".";
+          }
+
+          cyfry_natezenia[i].setAttribute("wartosc", cyfra_teraz);
+        }
       }
     });
 
@@ -545,6 +564,44 @@ var PoleNatezenia = (function () {
 
   return function (div_natezenia, panel_id) {
     main(div_natezenia, panel_id);
+  };
+})();
+
+/**************************
+ * Obsługa pola napięcia. *
+ **************************/
+var PoleNapiecia = (function () {
+  function main(obszar_na_napiecie, panel_id) {
+    var cyfry_napiecia = obszar_na_napiecie.querySelectorAll(".cyfra");
+
+    window.electronAPI.get_current((i, nowe_cyfry) => {
+      if (panel_id == i) {
+        console.log(nowe_cyfry);
+
+        var tablica = [nowe_cyfry[0], nowe_cyfry[1], nowe_cyfry[2], nowe_cyfry[4]];
+        var wiodace_zera = true;
+
+        for (let i = 0; i < tablica.length; i++) {
+          var cyfra_teraz = tablica[i];
+
+          if (wiodace_zera == true && cyfra_teraz == 0 && i < 2) {
+            cyfra_teraz = " ";
+          } else {
+            wiodace_zera = false;
+          }
+
+          if (i == 2) {
+            cyfra_teraz = cyfra_teraz + ".";
+          }
+
+          cyfry_napiecia[i].setAttribute("wartosc", cyfra_teraz);
+        }
+      }
+    });
+  }
+
+  return function (obszar_na_napiecie, panel_id) {
+    main(obszar_na_napiecie, panel_id);
   };
 })();
 
@@ -770,13 +827,7 @@ window.addEventListener("load", async () => {
     obszarNapiecie.appendChild(obszarNaNapiecie);
 
     panel.appendChild(obszarNapiecie);
-    /*
-        window.electronAPI.get_voltage((panel_id, value) => {
-          if (panel_id == i) {
-            console.log("new voltage is " + value);
-          }
-        });
-    */
+
     // NATĘŻENIE
 
     var obszarNatezenie = document.createElement("div");
@@ -856,15 +907,17 @@ window.addEventListener("load", async () => {
     }
 
     panel.appendChild(obszarBledy);
-    /*
+
+    // wydmuszka obsługi błędów
     window.electronAPI.get_error((panel_id, message) => {
       if (panel_id == i) {
         console.log("error is " + message);
       }
     });
-*/
+
     obszarPaneli.appendChild(panel);
 
+    PoleNapiecia(obszarNaNapiecie, i);
     PoleNatezenia(document.getElementById("natezenie" + (i + 1)), i);
   }
 
