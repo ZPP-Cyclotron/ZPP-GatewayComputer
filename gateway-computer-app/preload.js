@@ -4,9 +4,9 @@ contextBridge.exposeInMainWorld("electronAPI", {
   otworzPlikKonfiguracyjny: () =>
     ipcRenderer.invoke("dialog:otworzPlikKonfiguracyjny"),
   set_polarity: (new_val, supp_id) =>
-    ipcRenderer.invoke("dialog:set_polarity", new_val, supp_id),
+    ipcRenderer.invoke("dialog:set_polarity", supp_id, new_val),
   set_current: (new_val, supp_id) =>
-    ipcRenderer.invoke("dialog:set_current", new_val, supp_id),
+    ipcRenderer.invoke("dialog:set_current", supp_id, new_val),
   turn_on: (supp_id) => ipcRenderer.invoke("dialog:turn_on", supp_id),
   turn_off: (supp_id) => ipcRenderer.invoke("dialog:turn_off", supp_id),
   reset: (supp_id) => ipcRenderer.invoke("dialog:reset", supp_id),

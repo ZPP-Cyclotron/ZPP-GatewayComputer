@@ -4,7 +4,7 @@
             "no": "88",
             "port": "/dev/pts/2",
             "polarity": "mutable",
-            "maxCurrent": "100",
+            "maxCurrent": "200",
             "x": "-2137.7981",
             "y": "6969"
          }
