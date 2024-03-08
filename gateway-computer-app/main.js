@@ -7,12 +7,15 @@ const readline = require("readline");
 
 const DEBUG = true;
 // const CONFIG_FILE_PATH = "./config.json";
-const CONFIG_FILE_PATH = "./test12_config.json";
+const CONFIG_FILE_PATH = "./test_config.json";
 
 // https://github.com/yaacov/node-modbus-serial
 const ModbusRTU = require("modbus-serial");
-const { clear } = require("node:console");
+const { clear, assert } = require("node:console");
 
+function get_err_msg(err) {
+  return "name: " + err.name + ": " + err.message + ", errno: " + err.errno + "\n";
+}
 /****************************
  *  Server Implementation.  *
  ****************************/
@@ -33,6 +36,7 @@ class PowerSupply {
     this.timeout = 1000;
     this.error = PowerSupply.ERR_NONE;
     this.connected = false;
+    this.setting_current_n_bits = null;
 
     // modbus-serial library:
     this.modbus_client = new ModbusRTU();
@@ -103,11 +107,85 @@ class PowerSupply {
     }
   }
 
-  set_current(new_val) {
-    if (!this.connected) {
-      return PowerSupply.ERR_CONNECTION;
+  async set_current(new_val) {
+    if (DEBUG) {
+      console.log("setting current to " + new_val + "A");
     }
-    return 0;
+    
+    // new val is a float with 1 decimal point
+    new_val = parseInt(new_val * 10);
+    // convert to float:
+    new_val = new_val / 10;
+    if (new_val < 0 || new_val > this.maxCurrent) {
+      if (DEBUG) {
+        console.log("Error: bad argument.");
+      }
+      return "Error: bad argument\n new_val = " + new_val + "A. Minimal value is 0A, maximal value is " + this.maxCurrent + "A.";
+    }
+    if (DEBUG) {
+      console.log(new_val);
+    }
+    let scaled_val = new_val * (1 << this.setting_current_n_bits) / this.maxCurrent;
+    scaled_val = Math.floor(scaled_val);
+    if(DEBUG) {
+      console.log("scaled_val:");
+      console.log(scaled_val);
+    }
+    var code_array = [true, true];
+    var binary_val_array = [];
+    var div = 2;
+    let tmp_scaled = scaled_val;
+    for (var i = 0; i < this.setting_current_n_bits; i++) {
+      binary_val_array.push(tmp_scaled % div);
+      tmp_scaled = Math.floor(tmp_scaled / div);
+    }
+    binary_val_array = binary_val_array.reverse();
+    if (DEBUG) {
+      console.log("binary_val_array:");
+      console.log(binary_val_array);
+    }
+    if (DEBUG) {
+      // check if binary_val_array is correct:
+      let tmp = "";
+      for (let i = 0; i < binary_val_array.length; i++) {
+        tmp += binary_val_array[i];
+      }
+      let dec_val = parseInt(tmp, 2); 
+      console.log("tmp: "+tmp);
+      console.log("dec_val: "+dec_val);
+      console.log("scaled_val: "+scaled_val);
+      assert(dec_val == scaled_val);
+    }
+    const message_to_supplier = code_array.concat(binary_val_array);
+    if (DEBUG) {
+      console.log("message_to_supplier:");
+      console.log(message_to_supplier);
+    }
+    let client = new ModbusRTU();
+    client.setTimeout(this.timeout);
+    let errors = "";
+    try {
+      await client.connectRTU(this.port, { baudRate: this.baudRate });
+      await client.writeCoils(0, message_to_supplier);
+      if (DEBUG) {
+        console.log("current set.");
+      }
+    } catch (err) {
+      errors += get_err_msg(err);
+      if (DEBUG) {
+        console.log(err);
+      }
+    } finally {
+      try {
+        client.close();
+      } catch (err) {
+        errors += get_err_msg(err);
+        if (DEBUG) { console.log(err); }
+      }
+      let ret_ok = "current set to "+ new_val;
+      let ret_err = "Error: " + errors;
+      return errors.length == 0 ? ret_ok : ret_err;
+    }
   }
 
   async set_polarity(new_val) {
@@ -246,99 +324,18 @@ class PowerSupply {
 class PowerSupply100A extends PowerSupply {
   constructor(name, port, maxCurrent, polarity_mutable = true) {
     super(name, port, 100, polarity_mutable);
-  }
-  async set_current(new_val) {
-    if (DEBUG) {
-      console.log("setting current to ..." + new_val + "A");
-    }
-    new_val = parseInt(new_val);
-    if (new_val < 0 || new_val > this.maxCurrent) {
-      if (DEBUG) {
-        console.log("Error: bad argument.");
-      }
-      return PowerSupply.ERR_BAD_ARG;
-    }
-    var binary_array = [true, true];
-    var div = 2;
-    for (var i = 0; i < 12; i++) {
-      binary_array.push(new_val % div);
-      new_val = Math.floor(new_val / div);
-    }
-    if (DEBUG) {
-      console.log("binary_array:");
-      console.log(binary_array);
-    }
-    let client = new ModbusRTU();
-    client.setTimeout(this.timeout);
-    try {
-      await client.connectRTU(this.port, { baudRate: this.baudRate });
-      await client.writeCoils(0, binary_array);
-      if (DEBUG) {
-        console.log("current set.");
-      }
-    } catch (err) {
-      if (DEBUG) {
-        console.log(err);
-      }
-    } finally {
-      try {
-        client.close();
-      } catch (err) {
-        if (DEBUG) { console.log(err); }
-      }
-      return "ups current set";
-    }
+    this.setting_current_n_bits = 12;
   }
 }
 
 class PowerSupply200A extends PowerSupply {
   constructor(name, port, maxCurrent, polarity_mutable = true) {
     super(name, port, 200, polarity_mutable);
-  }
-
-  async set_current(new_val) {
-    if (DEBUG) {
-      console.log("setting current to ..." + new_val + "A");
-    }
-    new_val = parseInt(new_val);
-    if (new_val < 0 || new_val > this.maxCurrent) {
-      if (DEBUG) {
-        console.log("Error: bad argument.");
-      }
-      return PowerSupply.ERR_BAD_ARG;
-    }
-    var binary_array = [true, true];
-    var div = 2;
-    for (var i = 0; i < 16; i++) {
-      binary_array.push(new_val % div);
-      new_val = Math.floor(new_val / div);
-    }
-    if (DEBUG) {
-      console.log("binary_array:");
-      console.log(binary_array);
-    }
-    let client = new ModbusRTU();
-    client.setTimeout(this.timeout);
-    try {
-      await client.connectRTU(this.port, { baudRate: this.baudRate });
-      await client.writeCoils(0, binary_array);
-      if (DEBUG) {
-        console.log("current set.");
-      }
-    } catch (err) {
-      if (DEBUG) {
-        console.log(err);
-      }
-    } finally {
-      try {
-        client.close();
-      } catch (err) {
-        if (DEBUG) { console.log(err); }
-      }
-      return "ups current set 200A";
-    }
+    this.setting_current_n_bits = 16;
   }
 }
+
+module.exports = PowerSupply;
 
 function setup_suppliers_and_clients(config) {
   if (typeof config === "string") {
