@@ -17,12 +17,12 @@ class Cyferka extends HTMLElement {
       if (k != "k") {
         return this.kolor_off;
       }
-    } else if (this.wartosc[0] == "0") {
+    } else if (this.wartosc[0] == "0" || this.wartosc[0] == "D" || this.wartosc[0] == "O") {
       const zero = ["bse", "bes", "bnw", "bwn", "bws", "bsw", "bne", "ben"];
       if (zero.includes(k)) {
         return this.kolor_on;
       }
-    } else if (this.wartosc[0] == "1") {
+    } else if (this.wartosc[0] == "1" || this.wartosc[0] == "I") {
       const jeden = ["bes", "ben"];
       if (jeden.includes(k)) {
         return this.kolor_on;
@@ -42,7 +42,7 @@ class Cyferka extends HTMLElement {
       if (cztery.includes(k)) {
         return this.kolor_on;
       }
-    } else if (this.wartosc[0] == "5") {
+    } else if (this.wartosc[0] == "5" || this.wartosc[0] == "S") {
       const piec = ["bse", "bes", "bnw", "bwn", "bsw", "bne", "w3", "w9"];
       if (piec.includes(k)) {
         return this.kolor_on;
@@ -57,19 +57,8 @@ class Cyferka extends HTMLElement {
       if (siedem.includes(k)) {
         return this.kolor_on;
       }
-    } else if (this.wartosc[0] == "8") {
-      const osiem = [
-        "bse",
-        "bes",
-        "bnw",
-        "bwn",
-        "bws",
-        "bsw",
-        "bne",
-        "ben",
-        "w3",
-        "w9",
-      ];
+    } else if (this.wartosc[0] == "8" || this.wartosc[0] == "B") {
+      const osiem = ["bse", "bes", "bnw", "bwn", "bws", "bsw", "bne", "ben", "w3", "w9"];
       if (osiem.includes(k)) {
         return this.kolor_on;
       }
@@ -91,6 +80,91 @@ class Cyferka extends HTMLElement {
     } else if (this.wartosc[0] == "M") {
       const m = ["bws", "bwn", "bes", "ben", "w2", "w10"];
       if (m.includes(k)) {
+        return this.kolor_on;
+      }
+    } else if (this.wartosc[0] == "C") {
+      const c = ["bse", "bnw", "bwn", "bws", "bsw", "bne"];
+      if (c.includes(k)) {
+        return this.kolor_on;
+      }
+    } else if (this.wartosc[0] == "E") {
+      const e = ["bse", "bnw", "bwn", "bws", "bsw", "bne", "w3", "w9"];
+      if (e.includes(k)) {
+        return this.kolor_on;
+      }
+    } else if (this.wartosc[0] == "F") {
+      const f = ["bnw", "bwn", "bws", "bne", "w3", "w9"];
+      if (f.includes(k)) {
+        return this.kolor_on;
+      }
+    } else if (this.wartosc[0] == "G") {
+      const g = ["bse", "bnw", "bwn", "bws", "bsw", "bne", "bes", "w3"];
+      if (g.includes(k)) {
+        return this.kolor_on;
+      }
+    } else if (this.wartosc[0] == "H") {
+      const h = ["bwn", "bws", "bes", "ben", "w3", "w9"];
+      if (h.includes(k)) {
+        return this.kolor_on;
+      }
+    } else if (this.wartosc[0] == "J") {
+      const j = ["bse", "bes", "bnw", "bws", "bsw", "bne", "ben"];
+      if (j.includes(k)) {
+        return this.kolor_on;
+      }
+    } else if (this.wartosc[0] == "K") { // do poprawy
+      const kk = ["bse", "bes", "bnw", "bws", "bsw", "bne", "ben"];
+      if (kk.includes(k)) {
+        return this.kolor_on;
+      }
+    } else if (this.wartosc[0] == "L") {
+      const l = ["bse", "bwn", "bws", "bsw"];
+      if (l.includes(k)) {
+        return this.kolor_on;
+      }
+    } else if (this.wartosc[0] == "N") {
+      const n = ["bws", "bwn", "bes", "ben", "w10", "w4"];
+      if (n.includes(k)) {
+        return this.kolor_on;
+      }
+    } else if (this.wartosc[0] == "P") {
+      const p = ["bnw", "bwn", "bws", "bne", "ben", "w3", "w9"];
+      if (p.includes(k)) {
+        return this.kolor_on;
+      }
+    } else if (this.wartosc[0] == "R") {
+      const r = ["bnw", "bwn", "bws", "bne", "ben", "w3", "w4", "w9"];
+      if (r.includes(k)) {
+        return this.kolor_on;
+      }
+    } else if (this.wartosc[0] == "T") {
+      const t = ["bnw", "bne", "w12", "w6"];
+      if (t.includes(k)) {
+        return this.kolor_on;
+      }
+    } else if (this.wartosc[0] == "U") {
+      const u = ["bse", "bes", "bwn", "bws", "bsw", "ben"];
+      if (u.includes(k)) {
+        return this.kolor_on;
+      }
+    } else if (this.wartosc[0] == "W") {
+      const w = ["bws", "bwn", "bes", "ben", "w8", "w4"];
+      if (w.includes(k)) {
+        return this.kolor_on;
+      }
+    } else if (this.wartosc[0] == "X") {
+      const x = ["w8", "w4", "w2", "w10"];
+      if (x.includes(k)) {
+        return this.kolor_on;
+      }
+    } else if (this.wartosc[0] == "Y") {
+      const y = ["w6", "w2", "w10"];
+      if (y.includes(k)) {
+        return this.kolor_on;
+      }
+    } else if (this.wartosc[0] == "Z") {
+      const z = ["bnw", "bne", "bsw", "bse", "w2", "w8"];
+      if (z.includes(k)) {
         return this.kolor_on;
       }
     }
@@ -605,6 +679,35 @@ var PoleNapiecia = (function () {
   };
 })();
 
+/***********************
+ * Obsługa pola błędów *
+ ***********************/
+var PoleBledow = (function () {
+  function main(obszar_na_bledy, panel_id) {
+    var cyfry_bledow = obszar_na_bledy.querySelectorAll(".cyfra");
+
+    window.electronAPI.get_error((i, nowe_cyfry) => {
+      if (panel_id == i) {
+        console.log(nowe_cyfry);
+        var i = 0;
+
+        for (; i < nowe_cyfry.length; i++) {
+          var cyfra_teraz = nowe_cyfry[i];
+          cyfry_bledow[i].setAttribute("wartosc", cyfra_teraz);
+        }
+
+        for (; i < cyfry_bledow.length; i++) {
+          cyfry_bledow[i].setAttribute("wartosc", " ");
+        }
+      }
+    });
+  }
+
+  return function (obszar_na_bledy, panel_id) {
+    main(obszar_na_bledy, panel_id);
+  };
+})();
+
 function dopiszCyfry(obiekt, wartosci) {
   wartosci.forEach((wartosc) => {
     var cyfra = document.createElement("moja-cyfra");
@@ -908,17 +1011,11 @@ window.addEventListener("load", async () => {
 
     panel.appendChild(obszarBledy);
 
-    // wydmuszka obsługi błędów
-    window.electronAPI.get_error((panel_id, message) => {
-      if (panel_id == i) {
-        console.log("error is " + message);
-      }
-    });
-
     obszarPaneli.appendChild(panel);
 
     PoleNapiecia(obszarNaNapiecie, i);
     PoleNatezenia(document.getElementById("natezenie" + (i + 1)), i);
+    PoleBledow(obszarBledy, i);
   }
 
   // MAPKA
