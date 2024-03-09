@@ -3,7 +3,7 @@ const { contextBridge, ipcRenderer } = require("electron/renderer");
 contextBridge.exposeInMainWorld("electronAPI", {
   otworzPlikKonfiguracyjny: () =>
     ipcRenderer.invoke("dialog:otworzPlikKonfiguracyjny"),
-  set_polarity: (new_val, supp_id) =>
+  set_polarity: (supp_id, new_val) =>
     ipcRenderer.invoke("dialog:set_polarity", supp_id, new_val),
   set_current: (new_val, supp_id) =>
     ipcRenderer.invoke("dialog:set_current", supp_id, new_val),
@@ -27,6 +27,9 @@ contextBridge.exposeInMainWorld("electronAPI", {
     ipcRenderer.on('new-polarity', (event, supp_id, isPositive) => {callback(supp_id, isPositive);});
   },
   get_error: (callback) => {
-    ipcRenderer.on('new-polarity', (event, supp_id, message) => {callback(supp_id, message);});
+    ipcRenderer.on('new-error', (event, supp_id, message) => {callback(supp_id, message);});
+  },
+  get_voltage: (callback) => {
+    ipcRenderer.on('new-voltage', (event, supp_id, new_val) => {callback(supp_id, new_val);});
   },
 });

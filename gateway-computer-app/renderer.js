@@ -497,7 +497,7 @@ var PoleNatezenia = (function () {
         panel_id
       );
 
-      if (odpowiedz !== "OK") {
+      if (odpowiedz !== "") {
         alert(odpowiedz);
         return;
       }
@@ -574,7 +574,7 @@ var PoleNapiecia = (function () {
   function main(obszar_na_napiecie, panel_id) {
     var cyfry_napiecia = obszar_na_napiecie.querySelectorAll(".cyfra");
 
-    window.electronAPI.get_current((i, nowe_cyfry) => {
+    window.electronAPI.get_voltage((i, nowe_cyfry) => {
       if (panel_id == i) {
         console.log(nowe_cyfry);
 
