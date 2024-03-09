@@ -26,4 +26,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
   get_polarity: (callback) => {
     ipcRenderer.on('new-polarity', (event, supp_id, isPositive) => {callback(supp_id, isPositive);});
   },
+  get_error: (callback) => {
+    ipcRenderer.on('new-polarity', (event, supp_id, message) => {callback(supp_id, message);});
+  },
 });
