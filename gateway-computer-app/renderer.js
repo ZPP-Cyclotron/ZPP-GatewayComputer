@@ -834,7 +834,7 @@ window.addEventListener("load", async () => {
 
     var obszarPolaryzacjaNaglowek = document.createElement("p");
     obszarPolaryzacjaNaglowek.classList.add("naglowek");
-    obszarPolaryzacjaNaglowek.innerText = "POLARITY";
+    obszarPolaryzacjaNaglowek.innerText = "POLARITY N/P";
 
     obszarPolaryzacjaObszarNaNaglowek.appendChild(obszarPolaryzacjaNaglowek);
 

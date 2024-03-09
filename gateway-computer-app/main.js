@@ -6,8 +6,8 @@ const readline = require("readline");
 // const { SerialPort } = require("serialport");
 
 const DEBUG = true;
-// const CONFIG_FILE_PATH = "./config.json";
-const CONFIG_FILE_PATH = "./test_config.json";
+const CONFIG_FILE_PATH = "./config.json";
+// const CONFIG_FILE_PATH = "./test_config.json";
 
 // https://github.com/yaacov/node-modbus-serial
 const ModbusRTU = require("modbus-serial");
@@ -367,7 +367,7 @@ class PowerSupply {
         errors += get_err_msg(err);
       }
       if (errors.length > 0) {
-      return get_return_msg(errors, "read_status");
+        return get_return_msg(errors, "read_status");
       }
       this.current = ret.current;
       this.is_on = ret.is_on;
@@ -672,7 +672,7 @@ app.whenReady().then(() => {
       if (res.errors != 0) {
         mainWindow.webContents.send("new-error", i, res.errors);
       }
-      
+
       // let str_current = sprintf("%05.1f", i);
       // mainWindow.webContents.send("new-current", i, str_current);
       // mainWindow.webContents.send("new-on-off", i, i % 2);
