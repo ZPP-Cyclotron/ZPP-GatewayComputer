@@ -2,16 +2,13 @@ const { app, BrowserWindow, ipcMain, dialog } = require("electron/main");
 const fs = require("node:fs");
 const path = require("node:path");
 const readline = require("readline");
-// const { spawn } = require("child_process"); // Może się przydać, ale jednak nie używam. (https://dev.to/alexdhaenens/how-to-execute-shell-commands-in-js-2j5j)
-// const { SerialPort } = require("serialport");
 
 const DEBUG = true;
 const CONFIG_FILE_PATH = "./config.json";
 // const CONFIG_FILE_PATH = "./test_config.json";
 
-// https://github.com/yaacov/node-modbus-serial
 const ModbusRTU = require("modbus-serial");
-const { clear, assert } = require("node:console");
+const { assert } = require("node:console");
 
 function get_err_msg(err) {
   return (
@@ -46,9 +43,6 @@ class PowerSupply {
     this.reading_current_n_bits = 12;
     this.reading_voltage_n_bits = 12;
     this.maxVoltage = 100;
-
-    // modbus-serial library:
-    this.modbus_client = new ModbusRTU();
   }
 
   async turn_on() {
@@ -74,7 +68,7 @@ class PowerSupply {
       return get_return_msg(get_err_msg(err), "turn_on");
     }
     try {
-      await client.writeCoils(0, [true, false, false]);
+      await client.writeCoils(0, [ false, false, true]);
       if (DEBUG) {
         console.log("Supplier turned on.");
       }
@@ -140,10 +134,7 @@ class PowerSupply {
     if (DEBUG) {
       console.log("setting current to " + new_val + "A");
     }
-
-    // new val is a float with 1 decimal point
     new_val = parseInt(new_val * 10);
-    // convert to float:
     new_val = new_val / 10;
     if (new_val < 0 || new_val > this.maxCurrent) {
       if (DEBUG) {
@@ -315,7 +306,6 @@ class PowerSupply {
     let client = new ModbusRTU();
     client.setTimeout(this.timeout);
     let errors = "";
-    let msg = null;
     let ret = null;
     try {
       await client.connectRTU(this.port, { baudRate: this.baudRate });
@@ -440,7 +430,6 @@ class PowerSupply {
   }
 }
 
-// inherited class: PowerSupply100A:
 class PowerSupply100A extends PowerSupply {
   constructor(name, port, maxCurrent, polarity_mutable = true) {
     super(name, port, 100, polarity_mutable);
@@ -462,8 +451,7 @@ function setup_suppliers_and_clients(config) {
     console.log("Error: bad config file.");
     return;
   }
-  // config is a JSON object.
-  // create power supplies:
+  
   const suppliers = [];
   for (const supplier of config.suppliers) {
     var splr;
@@ -487,21 +475,6 @@ function setup_suppliers_and_clients(config) {
     suppliers.push(splr);
   }
   return suppliers;
-}
-
-function server(config) {
-  const suppliers = setup_suppliers_and_clients(config);
-  while (true) {
-    /** Handle requests from renderer. */
-  }
-}
-
-function test_server(config) {
-  for (const supplier of config) {
-    let r = supplier.turn_on().catch((err) => {
-      console.log(err);
-    });
-  }
 }
 
 function text_server(suppliers) {
@@ -585,15 +558,13 @@ function text_server(suppliers) {
 }
 
 function obsluzOtworzeniePlikuKonfiguracyjnego() {
-  // console.log("Otwieram plik konfiguracyjny...");
   try {
     const konfiguracja = JSON.parse(fs.readFileSync(CONFIG_FILE_PATH, "utf-8"));
     return konfiguracja;
   } catch (err) {
-    // check error type
     if (err.code === "ENOENT") {
-      console.log("Config file not found!");
-      return "Config file not found!";
+      console.log("Config file" +  CONFIG_FILE_PATH + "not found!");
+      return "Config file " +  CONFIG_FILE_PATH + " not found!";
     }
     if (err instanceof SyntaxError) {
       console.log("Config file is not a valid JSON file!");
@@ -603,7 +574,6 @@ function obsluzOtworzeniePlikuKonfiguracyjnego() {
 }
 
 const createWindow = () => {
-  // Create the browser window.
   const mainWindow = new BrowserWindow({
     // fullscreen: true,
     webPreferences: {
@@ -639,7 +609,6 @@ app.whenReady().then(() => {
   );
 
   let mainWindow = createWindow();
-  const electronApp = require("electron").app;
 
   config = suppliers = setup_suppliers_and_clients(
     obsluzOtworzeniePlikuKonfiguracyjnego()
@@ -672,14 +641,8 @@ app.whenReady().then(() => {
       if (res.errors != 0) {
         mainWindow.webContents.send("new-error", i, res.errors);
       }
-
-      // let str_current = sprintf("%05.1f", i);
-      // mainWindow.webContents.send("new-current", i, str_current);
-      // mainWindow.webContents.send("new-on-off", i, i % 2);
-      // mainWindow.webContents.send("new-polarity", i, !(i % 2));
     }
   }
-  // text_server(suppliers);
   timer = setInterval(() => {
     console.log("Sending new status...");
     ask_suppliers();
