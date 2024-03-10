@@ -4,8 +4,8 @@ const path = require("node:path");
 const readline = require("readline");
 
 const DEBUG = true;
-const CONFIG_FILE_PATH = "./config.json";
-// const CONFIG_FILE_PATH = "./test_config.json";
+// const CONFIG_FILE_PATH = "./config.json";
+const CONFIG_FILE_PATH = "./test_config.json";
 
 const ModbusRTU = require("modbus-serial");
 const { assert } = require("node:console");
@@ -43,6 +43,7 @@ class PowerSupply {
     this.reading_current_n_bits = 12;
     this.reading_voltage_n_bits = 12;
     this.maxVoltage = 100;
+    this.n_error_bits = 4;
   }
 
   async turn_on() {
@@ -68,7 +69,7 @@ class PowerSupply {
       return get_return_msg(get_err_msg(err), "turn_on");
     }
     try {
-      await client.writeCoils(0, [ false, false, true]);
+      await client.writeCoils(0, [false, false, true]);
       if (DEBUG) {
         console.log("Supplier turned on.");
       }
@@ -321,18 +322,32 @@ class PowerSupply {
         console.log(msg);
       }
       let first_reg = msg.data[0];
-      let second_reg = msg.data[1];
       let current_mask = (1 << this.reading_current_n_bits) - 1;
       let current_scaled = first_reg & current_mask;
+      if (DEBUG) {
+        console.log("read current_scaled:" + current_scaled);
+      }
       let current = (current_scaled * this.maxCurrent) / current_mask;
-      let is_on = (first_reg >> this.reading_current_n_bits) & 1;
-      let polarity = (first_reg >> (this.reading_current_n_bits + 1)) & 1;
-      let reset = (first_reg >> (this.reading_current_n_bits + 2)) & 1;
-      let control_type = (first_reg >> (this.reading_current_n_bits + 3)) & 1;
+      if (DEBUG) {
+        console.log("read current:" + current);
+      }
+      first_reg = first_reg >> this.reading_current_n_bits;
+      let is_on = first_reg & 1;
+      first_reg = first_reg >> 1;
+      let polarity = first_reg & 1;
+      first_reg = first_reg >> 1;
+      let reset = first_reg & 1;
+      let control_type = first_reg >> 1;
+      let second_reg = msg.data[1];
       let voltage_mask = (1 << this.reading_voltage_n_bits) - 1;
       let voltage_scaled = second_reg & voltage_mask;
+      if (DEBUG) {
+        console.log("read voltage_scaled:" + voltage_scaled);
+      }
       let voltage = (voltage_scaled * this.maxVoltage) / voltage_mask;
-      let errors = second_reg >> this.reading_voltage_n_bits;
+      if (DEBUG) {
+        console.log("read voltage:" + voltage);
+      }
       ret = {
         current: current,
         is_on: is_on,
@@ -356,16 +371,22 @@ class PowerSupply {
         }
         errors += get_err_msg(err);
       }
-      if (errors.length > 0) {
-        return get_return_msg(errors, "read_status");
+      // if (errors.length > 0) {
+      //   return get_return_msg(errors, "read_status");
+      // }
+
+      if (ret != null) {
+        this.current = ret.current;
+        this.is_on = ret.is_on;
+        this.polarity = ret.polarity;
+        // this.reset = ret.reset;
+        this.control_type = ret.control_type;
+        this.voltage = ret.voltage;
+        this.errors = ret.errors;
+      } else {
+        ret = get_return_msg(errors, "read_status");
       }
-      this.current = ret.current;
-      this.is_on = ret.is_on;
-      this.polarity = ret.polarity;
-      this.reset = ret.reset;
-      this.control_type = ret.control_type;
-      this.voltage = ret.voltage;
-      this.errors = ret.errors;
+
       return ret;
     }
   }
@@ -451,7 +472,7 @@ function setup_suppliers_and_clients(config) {
     console.log("Error: bad config file.");
     return;
   }
-  
+
   const suppliers = [];
   for (const supplier of config.suppliers) {
     var splr;
@@ -563,8 +584,8 @@ function obsluzOtworzeniePlikuKonfiguracyjnego() {
     return konfiguracja;
   } catch (err) {
     if (err.code === "ENOENT") {
-      console.log("Config file" +  CONFIG_FILE_PATH + "not found!");
-      return "Config file " +  CONFIG_FILE_PATH + " not found!";
+      console.log("Config file" + CONFIG_FILE_PATH + "not found!");
+      return "Config file " + CONFIG_FILE_PATH + " not found!";
     }
     if (err instanceof SyntaxError) {
       console.log("Config file is not a valid JSON file!");
@@ -629,17 +650,28 @@ app.whenReady().then(() => {
         console.log(res);
       }
 
-      let str_current = sprintf("%05.1f", res.current);
-      mainWindow.webContents.send("new-current", i, str_current);
-      let isOn = res.is_on;
-      mainWindow.webContents.send("new-on-off", i, isOn);
-      if (supplier.polarity_mutable) {
-        mainWindow.webContents.send("new-polarity", i, res.polarity);
-      }
-      let str_voltage = sprintf("%05.1f", res.voltage);
-      mainWindow.webContents.send("new-voltage", i, str_voltage);
-      if (res.errors != 0) {
-        mainWindow.webContents.send("new-error", i, res.errors);
+      // check if res is a json object
+      if (typeof res === "object") {
+        let str_current = sprintf("%05.1f", res.current);
+        mainWindow.webContents.send("new-current", i, str_current);
+        let isOn = res.is_on;
+        mainWindow.webContents.send("new-on-off", i, isOn);
+        if (supplier.polarity_mutable) {
+          mainWindow.webContents.send("new-polarity", i, res.polarity);
+        }
+        let str_voltage = sprintf("%05.1f", res.voltage);
+        mainWindow.webContents.send("new-voltage", i, str_voltage);
+        if (res.errors != 0) {
+          mainWindow.webContents.send("new-error", i, res.errors);
+        }
+      } else {
+        console.log("Error: ret is not json object.");
+        mainWindow.webContents.send("new-error", i, "failed to read status");
+        // send default values to frontend:
+        mainWindow.webContents.send("new-current", i, "000.0");
+        mainWindow.webContents.send("new-on-off", i, 0);
+        mainWindow.webContents.send("new-polarity", i, 0);
+        mainWindow.webContents.send("new-voltage", i, "000.0");
       }
     }
   }
