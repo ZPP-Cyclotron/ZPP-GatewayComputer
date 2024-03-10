@@ -50,12 +50,6 @@ class PowerSupply {
     if (DEBUG) {
       console.log("Turning on supplier...");
     }
-    // if (
-    //   this.on == PowerSupply.TURNED_ON ||
-    //   this.on == PowerSupply.TURNING_ON
-    // ) {
-    //   return;
-    // }
     let client = new ModbusRTU();
     client.setTimeout(this.timeout);
     let errors = "";
@@ -66,7 +60,7 @@ class PowerSupply {
       await client.connectRTU(this.port, { baudRate: this.baudRate });
     } catch (err) {
       console.log(err);
-      return get_return_msg(get_err_msg(err), "turn_on");
+      return "bad port open";
     }
     try {
       await client.writeCoils(0, [false, false, true]);
@@ -76,7 +70,7 @@ class PowerSupply {
       this.on = PowerSupply.TURNING_ON;
     } catch (err) {
       console.log(err);
-      errors += get_err_msg(err);
+      errors += "modbus_error";
     } finally {
       try {
         client.close();
@@ -84,9 +78,9 @@ class PowerSupply {
         if (DEBUG) {
           console.log(err);
         }
-        errors += get_err_msg(err);
+        errors += "bad port close";
       }
-      return get_return_msg(errors, "turn_on");
+      return errors;
     }
   }
 
@@ -94,12 +88,6 @@ class PowerSupply {
     if (DEBUG) {
       console.log("Turning off supplier...");
     }
-    // if (
-    //   this.on == PowerSupply.TURNED_OFF ||
-    //   this.on == PowerSupply.TURNING_OFF
-    // ) {
-    //   return;
-    // }
     let client = new ModbusRTU();
     client.setTimeout(this.timeout);
     let errors = "";
@@ -107,7 +95,7 @@ class PowerSupply {
       await client.connectRTU(this.port, { baudRate: this.baudRate });
     } catch (err) {
       console.log(err);
-      return get_return_msg(get_err_msg(err), "turn_off");
+      return "bad port open";
     }
     try {
       await client.writeCoils(0, [false, false, false]);
@@ -117,7 +105,7 @@ class PowerSupply {
       this.on = PowerSupply.TURNING_OFF;
     } catch (err) {
       console.log(err);
-      errors += get_err_msg(err);
+      errors += err.errno;
     } finally {
       try {
         client.close();
@@ -125,9 +113,9 @@ class PowerSupply {
         if (DEBUG) {
           console.log(err);
         }
-        errors += get_err_msg(err);
+        errors += "bad port close";
       }
-      return get_return_msg(errors, "turn_off");
+      return errors;
     }
   }
 
@@ -196,7 +184,7 @@ class PowerSupply {
       if (DEBUG) {
         console.log(err);
       }
-      return get_return_msg(get_err_msg(err), "set_current");
+      return "bad port open";
     }
     try {
       await client.writeCoils(0, message_to_supplier);
@@ -204,7 +192,7 @@ class PowerSupply {
         console.log("current set.");
       }
     } catch (err) {
-      errors += get_err_msg(err);
+      errors += err.errno;
       if (DEBUG) {
         console.log(err);
       }
@@ -212,12 +200,12 @@ class PowerSupply {
       try {
         client.close();
       } catch (err) {
-        errors += get_err_msg(err);
+        errors += "bad port close";
         if (DEBUG) {
           console.log(err);
         }
       }
-      return get_return_msg(errors, "set_current");
+      return errors;
     }
   }
 
@@ -243,7 +231,7 @@ class PowerSupply {
       if (DEBUG) {
         console.log(err);
       }
-      return get_return_msg(get_err_msg(err), "set_polarity");
+      return "bad port open";
     }
     try {
       await client.writeCoils(0, [true, false, new_val]);
@@ -254,7 +242,7 @@ class PowerSupply {
       if (DEBUG) {
         console.log(err);
       }
-      errors += get_err_msg(err);
+      errors += err.errno;
     } finally {
       try {
         client.close();
@@ -262,9 +250,9 @@ class PowerSupply {
         if (DEBUG) {
           console.log(err);
         }
-        errors += get_err_msg(err);
+        errors += "bad port close";
       }
-      return get_return_msg(errors, "set_polarity");
+      return errors;
     }
   }
 
@@ -278,7 +266,7 @@ class PowerSupply {
       if (DEBUG) {
         console.log(err);
       }
-      return get_return_msg(get_err_msg(err), "reset");
+      return "bad port open";
     }
     try {
       await client.writeCoils(0, [false, true, true]);
@@ -289,7 +277,7 @@ class PowerSupply {
       if (DEBUG) {
         console.log(err);
       }
-      errors += get_err_msg(err);
+      errors +=err.errno;
     } finally {
       try {
         client.close();
@@ -297,10 +285,10 @@ class PowerSupply {
         if (DEBUG) {
           console.log(err);
         }
-        errors += get_err_msg(err);
+        errors += "bad port close";
       }
     }
-    return get_return_msg(errors, "reset");
+    return errors;
   }
 
   async read_status() {
@@ -314,7 +302,7 @@ class PowerSupply {
       if (DEBUG) {
         console.log(err);
       }
-      return get_return_msg(get_err_msg(err), "read_status");
+      return "bad port open";
     }
     try {
       let msg = await client.readInputRegisters(0, 2);
@@ -361,7 +349,7 @@ class PowerSupply {
       if (DEBUG) {
         console.log(err);
       }
-      errors += get_err_msg(err);
+      errors += err.errno;
     } finally {
       try {
         client.close();
@@ -369,11 +357,8 @@ class PowerSupply {
         if (DEBUG) {
           console.log(err);
         }
-        errors += get_err_msg(err);
+        errors += "bad port close";
       }
-      // if (errors.length > 0) {
-      //   return get_return_msg(errors, "read_status");
-      // }
 
       if (ret != null) {
         this.current = ret.current;
@@ -384,7 +369,7 @@ class PowerSupply {
         this.voltage = ret.voltage;
         this.errors = ret.errors;
       } else {
-        ret = get_return_msg(errors, "read_status");
+        ret = errors;
       }
 
       return ret;
@@ -662,11 +647,11 @@ app.whenReady().then(() => {
         let str_voltage = sprintf("%05.1f", res.voltage);
         mainWindow.webContents.send("new-voltage", i, str_voltage);
         if (res.errors != 0) {
-          mainWindow.webContents.send("new-error", i, res.errors);
+          mainWindow.webContents.send("new-error", i, "splr_err");
         }
       } else {
         console.log("Error: ret is not json object.");
-        mainWindow.webContents.send("new-error", i, "failed to read status");
+        mainWindow.webContents.send("new-error", i, res);
         // send default values to frontend:
         mainWindow.webContents.send("new-current", i, "000.0");
         mainWindow.webContents.send("new-on-off", i, 0);
