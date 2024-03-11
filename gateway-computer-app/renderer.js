@@ -584,30 +584,6 @@ var PoleNatezenia = (function () {
       koncz_zmiany();
     });
 
-    function ustaw_wartosc() {
-      var wiodace_zera = true;
-
-      for (let i = 0; i < cyfry_zmiany.length - 1; i++) {
-        var cyfra_teraz = cyfry_zmiany[i].getAttribute("wartosc");
-
-        if (i == indeks_cyfry) {
-          cyfra_teraz = wartosc_cyfry;
-        }
-
-        if (wiodace_zera == true && cyfra_teraz == 0 && i < 2) {
-          cyfra_teraz = " ";
-        } else {
-          wiodace_zera = false;
-        }
-
-        if (i == 2) {
-          cyfra_teraz = cyfra_teraz + ".";
-        }
-
-        cyfry_natezenia[i].setAttribute("wartosc", cyfra_teraz);
-      }
-    }
-
     window.electronAPI.get_current((i, nowe_cyfry) => {
       if (panel_id == i) {
         var tablica = [nowe_cyfry[0], nowe_cyfry[1], nowe_cyfry[2], nowe_cyfry[4]];
@@ -683,6 +659,11 @@ var PoleBledow = (function () {
     var cyfry_bledow = obszar_na_bledy.querySelectorAll(".cyfra");
 
     window.electronAPI.get_error((i, nowe_cyfry) => {
+      if (nowe_cyfry.length > 14) {
+        console.log("Za długi komunikat");
+        return;
+      }
+
       nowe_cyfry = nowe_cyfry.toUpperCase();
       if (panel_id == i) {
         var i = 0;
