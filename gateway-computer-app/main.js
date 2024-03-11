@@ -10,15 +10,6 @@ const CONFIG_FILE_PATH = "./test_config.json";
 const ModbusRTU = require("modbus-serial");
 const { assert } = require("node:console");
 
-function get_err_msg(err) {
-  return (
-    "name: " + err.name + ": " + err.message + ", errno: " + err.errno + "\n"
-  );
-}
-
-function get_return_msg(errors, fname) {
-  return errors.length == 0 ? "" : "Error " + fname + ": " + errors;
-}
 /****************************
  *  Server Implementation.  *
  ****************************/
@@ -34,11 +25,11 @@ class PowerSupply {
     PowerSupply.N_supplies++;
     this.name = name;
     this.port = port;
-    this.polarity = PowerSupply.POLARITY_UNDEFINED;
+    this.polarity = PowerSupply.POLARITY_UNDEFINED();
     this.voltage = 0;
     this.current = 0;
-    this.control_type = PowerSupply.MANUAL;
-    this.on = PowerSupply.TURNED_OFF;
+    this.control_type = PowerSupply.MANUAL();
+    this.on = PowerSupply.TURNED_OFF();
     this.polarity_mutable = polarity_mutable;
     this.maxCurrent = maxCurrent;
     this.read_timeout = modbusTimeout;
@@ -56,65 +47,30 @@ class PowerSupply {
     this.n_error_bits = 4;
   }
 
-  async turn_on() {
-    if (DEBUG) {
-      console.log("Turning on supplier...");
-    }
+  async get_connected_client() {
     let client = new ModbusRTU();
     client.setTimeout(this.timeout);
-    let errors = "";
-    try {
-      if (DEBUG) {
-        console.log("Turning on supplier...");
-      }
-      await client.connectRTU(this.port, { baudRate: this.baudRate });
-    } catch (err) {
-      console.log(err);
-      return "bad port open";
-    }
-    try {
-      await client.writeCoils(0, [false, false, true]);
-      if (DEBUG) {
-        console.log("Supplier turned on.");
-      }
-      this.on = PowerSupply.TURNING_ON;
-    } catch (err) {
-      console.log(err);
-      errors += "modbus_error";
-    } finally {
-      try {
-        client.close();
-      } catch (err) {
-        if (DEBUG) {
-          console.log(err);
-        }
-        errors += "bad port close";
-      }
-      return errors;
-    }
+    await client.connectRTU(this.port, { baudRate: this.baudRate });
+    return client;
   }
 
-  async turn_off() {
-    if (DEBUG) {
-      console.log("Turning off supplier...");
-    }
-    let client = new ModbusRTU();
-    client.setTimeout(this.timeout);
+  async send_frame_to_supplier(frame) {
+    let client = null;
     let errors = "";
     try {
-      await client.connectRTU(this.port, { baudRate: this.baudRate });
+      client = await this.get_connected_client();
     } catch (err) {
-      console.log(err);
-      return "bad port open";
+      if (DEBUG) {
+        console.log(err);
+      }
+      throw "bad port open";
     }
     try {
-      await client.writeCoils(0, [false, false, false]);
-      if (DEBUG) {
-        console.log("Supplier turned off.");
-      }
-      this.on = PowerSupply.TURNING_OFF;
+      await client.writeCoils(0, frame);
     } catch (err) {
-      console.log(err);
+      if (DEBUG) {
+        console.log(err);
+      }
       errors += err.errno;
     } finally {
       try {
@@ -125,7 +81,57 @@ class PowerSupply {
         }
         errors += "bad port close";
       }
-      return errors;
+      if (errors.length > 0) {
+        throw errors;
+      }
+    }
+  }
+
+  async turn_on() {
+    if (DEBUG) {
+      console.log("Turning on supplier...");
+    }
+    if (this.on === PowerSupply.TURNED_ON()) {
+      if (DEBUG) {
+        console.log("Supplier " + this.name + " is already on.");
+      }
+      return "Supplier " + this.name + " is already on.";
+    }
+    try {
+      await this.send_frame_to_supplier([false, false, true]);
+      if (DEBUG) {
+        console.log("Supplier turned on.");
+      }
+      return "";
+    } catch (errors) {
+      if (DEBUG) {
+        console.log(errors);
+      }
+      throw errors;
+    }
+  }
+
+  async turn_off() {
+    if (DEBUG) {
+      console.log("Turning off supplier...");
+    }
+    if (this.on === PowerSupply.TURNED_OFF()) {
+      if (DEBUG) {
+        console.log("Supplier " + this.name + " is already off.");
+      }
+      return "Supplier " + this.name + " is already off.";
+    }
+    try {
+      await this.send_frame_to_supplier([false, false, false]);
+      if (DEBUG) {
+        console.log("Supplier turned off.");
+      }
+      return "";
+    } catch (errors) {
+      if (DEBUG) {
+        console.log(errors);
+      }
+      throw errors;
     }
   }
 
@@ -135,6 +141,12 @@ class PowerSupply {
     }
     new_val = parseInt(new_val * 10);
     new_val = new_val / 10;
+    if (this.on === PowerSupply.TURNED_OFF()) {
+      if (DEBUG) {
+        console.log("Supplier is off.");
+      }
+      return "Error setting current: supplier " + this.name + " is off.";
+    }
     if (new_val < 0 || new_val > this.maxCurrent) {
       if (DEBUG) {
         console.log("Error: bad argument.");
@@ -185,43 +197,31 @@ class PowerSupply {
       console.log("message_to_supplier:");
       console.log(message_to_supplier);
     }
-    let client = new ModbusRTU();
-    client.setTimeout(this.timeout);
-    let errors = "";
+
     try {
-      await client.connectRTU(this.port, { baudRate: this.baudRate });
-    } catch (err) {
+      await this.send_frame_to_supplier(message_to_supplier);
       if (DEBUG) {
-        console.log(err);
+        console.log("Current set.");
       }
-      return "bad port open";
-    }
-    try {
-      await client.writeCoils(0, message_to_supplier);
+      return "";
+    } catch (errors) {
       if (DEBUG) {
-        console.log("current set.");
+        console.log(errors);
       }
-    } catch (err) {
-      errors += err.errno;
-      if (DEBUG) {
-        console.log(err);
-      }
-    } finally {
-      try {
-        client.close();
-      } catch (err) {
-        errors += "bad port close";
-        if (DEBUG) {
-          console.log(err);
-        }
-      }
-      return errors;
+      throw errors;
     }
   }
 
   async set_polarity(new_val) {
     if (DEBUG) {
       console.log("Setting polarity...");
+      console.log(this.on);
+    }
+    if (this.on === PowerSupply.TURNED_OFF()) {
+      if (DEBUG) {
+        console.log("Supplier is off.");
+      }
+      return "Error setting polarity: supplier " + this.name + " is off.";
     }
     if (!this.polarity_mutable) {
       return "Error setting polarity: polarity is not mutable.";
@@ -230,75 +230,39 @@ class PowerSupply {
       new_val != PowerSupply.POLARITY_POSITIVE() &&
       new_val != PowerSupply.POLARITY_NEGATIVE()
     ) {
-      return "Error setting polarity: bad argument.";
-    }
-    let client = new ModbusRTU();
-    client.setTimeout(this.timeout);
-    let errors = "";
-    try {
-      await client.connectRTU(this.port, { baudRate: this.baudRate });
-    } catch (err) {
-      if (DEBUG) {
-        console.log(err);
-      }
-      return "bad port open";
+      return (
+        "Error setting polarity: bad argument. Got " +
+        new_val +
+        ". Expected 0 or 1"
+      );
     }
     try {
-      await client.writeCoils(0, [true, false, new_val]);
+      await this.send_frame_to_supplier([true, false, new_val]);
       if (DEBUG) {
-        console.log("polarity set.");
+        console.log("Supplier turned off.");
       }
-    } catch (err) {
+      return "";
+    } catch (errors) {
       if (DEBUG) {
-        console.log(err);
+        console.log(errors);
       }
-      errors += err.errno;
-    } finally {
-      try {
-        client.close();
-      } catch (err) {
-        if (DEBUG) {
-          console.log(err);
-        }
-        errors += "bad port close";
-      }
-      return errors;
+      throw errors;
     }
   }
 
   async reset() {
-    let client = new ModbusRTU();
-    client.setTimeout(this.timeout);
-    let errors = "";
     try {
-      await client.connectRTU(this.port, { baudRate: this.baudRate });
-    } catch (err) {
+      await this.send_frame_to_supplier([false, true, true]);
       if (DEBUG) {
-        console.log(err);
+        console.log("Supplier turned off.");
       }
-      return "bad port open";
+      return "";
+    } catch (errors) {
+      if (DEBUG) {
+        console.log(errors);
+      }
+      throw errors;
     }
-    try {
-      await client.writeCoils(0, [false, true, true]);
-      if (DEBUG) {
-        console.log("reset done.");
-      }
-    } catch (err) {
-      if (DEBUG) {
-        console.log(err);
-      }
-      errors += err.errno;
-    } finally {
-      try {
-        client.close();
-      } catch (err) {
-        if (DEBUG) {
-          console.log(err);
-        }
-        errors += "bad port close";
-      }
-    }
-    return errors;
   }
 
   async read_status() {
@@ -372,7 +336,7 @@ class PowerSupply {
 
       if (ret != null) {
         this.current = ret.current;
-        this.is_on = ret.is_on;
+        this.on = ret.is_on;
         this.polarity = ret.polarity;
         // this.reset = ret.reset;
         this.control_type = ret.control_type;
@@ -414,7 +378,7 @@ class PowerSupply {
     return 0;
   }
   static POLARITY_UNDEFINED() {
-    return 0;
+    return -1;
   }
 
   // port of supplier
@@ -632,42 +596,67 @@ app.whenReady().then(() => {
     obsluzOtworzeniePlikuKonfiguracyjnego
   );
   ipcMain.handle("dialog:set_polarity", async (event, supp_id, new_val) => {
-    console.log("setting polarity to " + new_val);
-    console.log("supp_id: " + supp_id);
-    let res = await suppliers[supp_id].set_polarity(new_val);
-    if (res !== "") {
-      mainWindow.webContents.send("new-error", supp_id, res);
+    let res = "";
+    try {
+      res = await suppliers[supp_id].set_polarity(new_val);
+      if (res === "") mainWindow.webContents.send("new-error", supp_id, "");
+    } catch (err) {
+      if (DEBUG) {
+        console.log("sending new-error:");
+        console.log(err);
+      }
+      mainWindow.webContents.send("new-error", supp_id, err);
+    } finally {
+      return res;
     }
-    return res;
   });
   ipcMain.handle("dialog:set_current", async (event, supp_id, new_val) => {
-    let res = await suppliers[supp_id].set_current(new_val);
-    if (res !== "") {
-      mainWindow.webContents.send("new-error", supp_id, res);
+    let res = "";
+    try {
+      res = await suppliers[supp_id].set_current(new_val);
+      if (res === "") mainWindow.webContents.send("new-error", supp_id, "");
+    } catch (err) {
+      if (DEBUG) {
+        console.log("sending new-error:");
+        console.log(err);
+      }
+      mainWindow.webContents.send("new-error", supp_id, err);
+    } finally {
+      return res;
     }
-    return res;
   });
   ipcMain.handle("dialog:turn_on", async (event, supp_id) => {
-    let res = await suppliers[supp_id].turn_on();
-    if (res !== "") {
-      mainWindow.webContents.send("new-error", supp_id, res);
+    let res = "";
+    try {
+      res = await suppliers[supp_id].turn_on();
+      if (res === "") mainWindow.webContents.send("new-error", supp_id, "");
+    } catch (err) {
+      if (DEBUG) {
+        console.log("sending new-error:");
+        console.log(err);
+      }
+      mainWindow.webContents.send("new-error", supp_id, err);
+    } finally {
+      return res;
     }
-    return res;
   });
   ipcMain.handle("dialog:turn_off", async (event, supp_id) => {
-    let res = await suppliers[supp_id].turn_off();
-    if (res !== "") {
-      mainWindow.webContents.send("new-error", supp_id, res);
+    let res = "";
+    try {
+      res = await suppliers[supp_id].turn_off();
+      if (res === "") mainWindow.webContents.send("new-error", supp_id, "");
+    } catch (err) {
+      if (DEBUG) {
+        console.log("sending new-error:");
+        console.log(err);
+      }
+      mainWindow.webContents.send("new-error", supp_id, err);
+    } finally {
+      return res;
     }
-    return res;
-  }
-  );
+  });
 
   config = obsluzOtworzeniePlikuKonfiguracyjnego();
-
-  // if (DEBUG) {
-  //   console.log(config);
-  // }
 
   if (config === undefined) {
     console.log("Error: config is undefined.");
@@ -702,11 +691,6 @@ app.whenReady().then(() => {
       } else {
         console.log("Error: ret is not json object.");
         mainWindow.webContents.send("new-error", i, res);
-        // send default values to frontend:
-        mainWindow.webContents.send("new-current", i, "   . ");
-        mainWindow.webContents.send("new-on-off", i, 0);
-        mainWindow.webContents.send("new-polarity", i, 0);
-        mainWindow.webContents.send("new-voltage", i, "   . ");
       }
     }
   }
