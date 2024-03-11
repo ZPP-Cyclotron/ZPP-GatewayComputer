@@ -606,7 +606,7 @@ app.whenReady().then(() => {
         console.log(err);
       }
       mainWindow.webContents.send("new-error", supp_id, err);
-      res = "fail";
+      res = "failed. Check the box on the right for more info.";
     } finally {
       return res;
     }
@@ -637,7 +637,7 @@ app.whenReady().then(() => {
         console.log(err);
       }
       mainWindow.webContents.send("new-error", supp_id, err);
-      res = "fail";
+      res = "failed. Check the box on the right for more info.";
     } finally {
       return res;
     }
@@ -653,7 +653,7 @@ app.whenReady().then(() => {
         console.log(err);
       }
       mainWindow.webContents.send("new-error", supp_id, err);
-      res = "fail";
+      res = "failed. Check the box on the right for more info.";
     } finally {
       return res;
     }
