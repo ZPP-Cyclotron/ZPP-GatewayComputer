@@ -687,6 +687,7 @@ var PoleBledow = (function () {
     var cyfry_bledow = obszar_na_bledy.querySelectorAll(".cyfra");
 
     window.electronAPI.get_error((i, nowe_cyfry) => {
+      nowe_cyfry = nowe_cyfry.toUpperCase();
       if (panel_id == i) {
         console.log(nowe_cyfry);
         var i = 0;

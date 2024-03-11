@@ -9,5 +9,8 @@
             "x": "-2137.7981",
             "y": "6969"
          }
-    ]
+    ],
+
+    "refreshInterval": 25000,
+    "modbusTimeout": 500
 }

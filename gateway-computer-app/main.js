@@ -23,7 +23,14 @@ function get_return_msg(errors, fname) {
  *  Server Implementation.  *
  ****************************/
 class PowerSupply {
-  constructor(name, port, maxCurrent, polarity_mutable = true, baudRate) {
+  constructor(
+    name,
+    port,
+    maxCurrent,
+    polarity_mutable = true,
+    baudRate,
+    modbusTimeout
+  ) {
     PowerSupply.N_supplies++;
     this.name = name;
     this.port = port;
@@ -34,12 +41,12 @@ class PowerSupply {
     this.on = PowerSupply.TURNED_OFF;
     this.polarity_mutable = polarity_mutable;
     this.maxCurrent = maxCurrent;
-    this.read_timeout = 1000;
+    this.read_timeout = modbusTimeout;
     this.baudRate = parseInt(baudRate);
     if (DEBUG) {
       console.log("baudRate: " + this.baudRate);
     }
-    this.timeout = 1000;
+    this.timeout = modbusTimeout;
     this.errors = PowerSupply.ERR_NONE;
     this.connected = false;
     this.setting_current_n_bits = null;
@@ -280,7 +287,7 @@ class PowerSupply {
       if (DEBUG) {
         console.log(err);
       }
-      errors +=err.errno;
+      errors += err.errno;
     } finally {
       try {
         client.close();
@@ -440,15 +447,29 @@ class PowerSupply {
 }
 
 class PowerSupply100A extends PowerSupply {
-  constructor(name, port, maxCurrent, polarity_mutable = true, baudRate) {
-    super(name, port, 100, polarity_mutable, baudRate);
+  constructor(
+    name,
+    port,
+    maxCurrent,
+    polarity_mutable = true,
+    baudRate,
+    modbusTimeout
+  ) {
+    super(name, port, 100, polarity_mutable, baudRate, modbusTimeout);
     this.setting_current_n_bits = 12;
   }
 }
 
 class PowerSupply200A extends PowerSupply {
-  constructor(name, port, maxCurrent, polarity_mutable = true, baudRate) {
-    super(name, port, 200, polarity_mutable, baudRate);
+  constructor(
+    name,
+    port,
+    maxCurrent,
+    polarity_mutable = true,
+    baudRate,
+    modbusTimeout
+  ) {
+    super(name, port, 200, polarity_mutable, baudRate, modbusTimeout);
     this.setting_current_n_bits = 16;
   }
 }
@@ -465,7 +486,7 @@ function setup_suppliers_and_clients(config) {
   for (const supplier of config.suppliers) {
     var splr;
     if (DEBUG) {
-      console.log(typeof(supplier.baudRate));
+      console.log(typeof supplier.baudRate);
     }
     if (supplier.maxCurrent == 100) {
       splr = new PowerSupply100A(
@@ -473,7 +494,8 @@ function setup_suppliers_and_clients(config) {
         supplier.port,
         supplier.maxCurrent,
         supplier.polarity,
-        supplier.baudRate
+        supplier.baudRate,
+        config.modbusTimeout
       );
     } else if (supplier.maxCurrent == 200) {
       splr = new PowerSupply200A(
@@ -481,7 +503,8 @@ function setup_suppliers_and_clients(config) {
         supplier.port,
         supplier.maxCurrent,
         supplier.polarity,
-        supplier.baudRate
+        supplier.baudRate,
+        config.modbusTimeout
       );
     } else {
       console.log("Error: unknown maxCurrent value.");
@@ -603,35 +626,54 @@ const createWindow = () => {
 let timer = null;
 
 app.whenReady().then(() => {
+  let mainWindow = createWindow();
   ipcMain.handle(
     "dialog:otworzPlikKonfiguracyjny",
     obsluzOtworzeniePlikuKonfiguracyjnego
   );
-  ipcMain.handle("dialog:set_polarity", (event, supp_id, new_val) => {
+  ipcMain.handle("dialog:set_polarity", async (event, supp_id, new_val) => {
     console.log("setting polarity to " + new_val);
     console.log("supp_id: " + supp_id);
-    return suppliers[supp_id].set_polarity(new_val);
+    let res = await suppliers[supp_id].set_polarity(new_val);
+    if (res !== "") {
+      mainWindow.webContents.send("new-error", supp_id, res);
+    }
+    return res;
   });
-  ipcMain.handle("dialog:set_current", (event, supp_id, new_val) =>
-    suppliers[supp_id].set_current(new_val)
-  );
-  ipcMain.handle("dialog:turn_on", (event, supp_id) =>
-    suppliers[supp_id].turn_on()
-  );
-  ipcMain.handle("dialog:turn_off", (event, supp_id) =>
-    suppliers[supp_id].turn_off()
+  ipcMain.handle("dialog:set_current", async (event, supp_id, new_val) => {
+    let res = await suppliers[supp_id].set_current(new_val);
+    if (res !== "") {
+      mainWindow.webContents.send("new-error", supp_id, res);
+    }
+    return res;
+  });
+  ipcMain.handle("dialog:turn_on", async (event, supp_id) => {
+    let res = await suppliers[supp_id].turn_on();
+    if (res !== "") {
+      mainWindow.webContents.send("new-error", supp_id, res);
+    }
+    return res;
+  });
+  ipcMain.handle("dialog:turn_off", async (event, supp_id) => {
+    let res = await suppliers[supp_id].turn_off();
+    if (res !== "") {
+      mainWindow.webContents.send("new-error", supp_id, res);
+    }
+    return res;
+  }
   );
 
-  let mainWindow = createWindow();
+  config = obsluzOtworzeniePlikuKonfiguracyjnego();
 
-  config = suppliers = setup_suppliers_and_clients(
-    obsluzOtworzeniePlikuKonfiguracyjnego()
-  );
+  // if (DEBUG) {
+  //   console.log(config);
+  // }
 
   if (config === undefined) {
     console.log("Error: config is undefined.");
-    return;
   }
+
+  suppliers = setup_suppliers_and_clients(config);
   var sprintf = require("sprintf-js").sprintf,
     vsprintf = require("sprintf-js").vsprintf;
 
@@ -661,17 +703,17 @@ app.whenReady().then(() => {
         console.log("Error: ret is not json object.");
         mainWindow.webContents.send("new-error", i, res);
         // send default values to frontend:
-        mainWindow.webContents.send("new-current", i, "000.0");
+        mainWindow.webContents.send("new-current", i, "   . ");
         mainWindow.webContents.send("new-on-off", i, 0);
         mainWindow.webContents.send("new-polarity", i, 0);
-        mainWindow.webContents.send("new-voltage", i, "000.0");
+        mainWindow.webContents.send("new-voltage", i, "   . ");
       }
     }
   }
   timer = setInterval(() => {
     console.log("Sending new status...");
     ask_suppliers();
-  }, 5000);
+  }, config.refreshInterval);
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow();
