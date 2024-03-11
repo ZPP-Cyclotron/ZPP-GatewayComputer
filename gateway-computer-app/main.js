@@ -463,7 +463,7 @@ function setup_suppliers_and_clients(config) {
       );
     } else if (supplier.maxCurrent == 200) {
       splr = new PowerSupply200A(
-        supplier.name,
+        supplier.no,
         supplier.port,
         supplier.maxCurrent,
         supplier.polarity,
