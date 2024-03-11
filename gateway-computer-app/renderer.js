@@ -685,6 +685,40 @@ var PoleBledow = (function () {
   };
 })();
 
+/*********************
+ * Obsługa włącznika *
+ *********************/
+var PoleWlacznika = (function () {
+  function main(obszar_na_on_off, i) {
+    var wlacznik = obszar_na_on_off.querySelector("input");
+
+    wlacznik.addEventListener("change", async function () {
+      if (this.checked) {
+        var odpowiedz = await window.electronAPI.turn_on(i);
+        if (odpowiedz !== "") {
+          alert(odpowiedz);
+          return;
+        }
+      } else {
+        var odpowiedz = await window.electronAPI.turn_off(i);
+        if (odpowiedz !== "") {
+          alert(odpowiedz);
+          return;
+        }
+      }
+    });
+    window.electronAPI.get_on_off((panel_id, state) => {
+      if (panel_id == i) {
+        wlacznik.checked = state;
+      }
+    });
+  }
+
+  return function (obszar_na_on_off, panel_id) {
+    main(obszar_na_on_off, panel_id);
+  };
+})();
+
 function dopiszCyfry(obiekt, wartosci) {
   wartosci.forEach((wartosc) => {
     var cyfra = document.createElement("moja-cyfra");
@@ -759,27 +793,6 @@ window.addEventListener("load", async () => {
     switchInput.setAttribute("type", "checkbox");
     switchInput.setAttribute("role", "switch");
     switchInput.setAttribute("name", "round");
-
-    switchInput.addEventListener("change", async function () {
-      if (this.checked) {
-        var odpowiedz = await window.electronAPI.turn_on(i);
-        if (odpowiedz !== "") {
-          alert(odpowiedz);
-          return;
-        }
-      } else {
-        var odpowiedz = await window.electronAPI.turn_off(i);
-        if (odpowiedz !== "") {
-          alert(odpowiedz);
-          return;
-        }
-      }
-    });
-    window.electronAPI.get_on_off((panel_id, state) => {
-      if (panel_id == i) {
-        switchInput.checked = state;
-      }
-    });
 
     var switchBorder = document.createElement("span");
     switchBorder.classList.add("switch__border");
@@ -1002,6 +1015,7 @@ window.addEventListener("load", async () => {
 
     obszarPaneli.appendChild(panel);
 
+    PoleWlacznika(obszarNaGuzikOnOff, i);
     PoleNapiecia(obszarNaNapiecie, i);
     PoleNatezenia(document.getElementById("natezenie" + (i + 1)), i);
     PoleBledow(obszarBledy, i);
