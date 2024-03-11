@@ -622,7 +622,6 @@ app.whenReady().then(() => {
         console.log(err);
       }
       mainWindow.webContents.send("new-error", supp_id, err);
-      res = "fail";
     } finally {
       return res;
     }
