@@ -697,13 +697,13 @@ var PoleWlacznika = (function () {
         var odpowiedz = await window.electronAPI.turn_on(i);
         if (odpowiedz !== "") {
           alert(odpowiedz);
-          return;
+          this.checked = false;
         }
       } else {
         var odpowiedz = await window.electronAPI.turn_off(i);
         if (odpowiedz !== "") {
           alert(odpowiedz);
-          return;
+          this.checked = true;
         }
       }
     });
