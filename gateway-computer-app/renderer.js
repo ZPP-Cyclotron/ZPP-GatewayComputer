@@ -685,9 +685,9 @@ var PoleBledow = (function () {
   };
 })();
 
-/*********************
- * Obsługa włącznika *
- *********************/
+/**********************
+ * Obsługa włącznika. *
+ **********************/
 var PoleWlacznika = (function () {
   function main(obszar_na_on_off, i) {
     var wlacznik = obszar_na_on_off.querySelector("input");
@@ -716,6 +716,40 @@ var PoleWlacznika = (function () {
 
   return function (obszar_na_on_off, panel_id) {
     main(obszar_na_on_off, panel_id);
+  };
+})();
+
+/************************
+ * Obsługa polaryzacji. *
+ ************************/
+var PolePolaryzacji = (function () {
+  function main(obszar_na_polaryzacje, i) {
+    var przelacznik = obszar_na_polaryzacje.querySelector("input");
+
+    przelacznik.addEventListener("change", async function () {
+      if (this.checked) {
+        var odpowiedz = await window.electronAPI.set_polarity(i, true);
+        if (odpowiedz !== "") {
+          alert(odpowiedz);
+          this.checked = false;
+        }
+      } else {
+        var odpowiedz = await window.electronAPI.set_polarity(i, false);
+        if (odpowiedz !== "") {
+          alert(odpowiedz);
+          this.checked = true;
+        }
+      }
+    });
+    window.electronAPI.get_polarity((panel_id, state) => {
+      if (panel_id == i) {
+        przelacznik.checked = state;
+      }
+    });
+  }
+
+  return function (obszar_na_polaryzacje, panel_id) {
+    main(obszar_na_polaryzacje, panel_id);
   };
 })();
 
@@ -847,27 +881,6 @@ window.addEventListener("load", async () => {
       toggleInput.classList.add("toggle-input");
       toggleInput.setAttribute("type", "checkbox");
 
-      toggleInput.addEventListener("change", async function () {
-        if (this.checked) {
-          var odpowiedz = await window.electronAPI.set_polarity(i, true);
-          if (odpowiedz !== "") {
-            alert(odpowiedz);
-            return;
-          }
-        } else {
-          var odpowiedz = await window.electronAPI.set_polarity(i, false);
-          if (odpowiedz !== "") {
-            alert(odpowiedz);
-            return;
-          }
-        }
-      });
-      window.electronAPI.get_polarity((panel_id, state) => {
-        if (panel_id == i) {
-          toggleInput.checked = state;
-        }
-      });
-
       var toggleHandleWrapper = document.createElement("div");
       toggleHandleWrapper.classList.add("toggle-handle-wrapper");
 
@@ -903,6 +916,8 @@ window.addEventListener("load", async () => {
       toggle.appendChild(toggleBase);
 
       obszarNaPolaryzacje.appendChild(toggle);
+
+      PolePolaryzacji(obszarNaPolaryzacje, i);
     }
 
     obszarPolaryzacja.appendChild(obszarNaPolaryzacje);
