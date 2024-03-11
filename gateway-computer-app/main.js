@@ -35,7 +35,10 @@ class PowerSupply {
     this.polarity_mutable = polarity_mutable;
     this.maxCurrent = maxCurrent;
     this.read_timeout = 1000;
-    this.baudRate = baudRate;
+    this.baudRate = parseInt(baudRate);
+    if (DEBUG) {
+      console.log("baudRate: " + this.baudRate);
+    }
     this.timeout = 1000;
     this.errors = PowerSupply.ERR_NONE;
     this.connected = false;
@@ -437,15 +440,15 @@ class PowerSupply {
 }
 
 class PowerSupply100A extends PowerSupply {
-  constructor(name, port, maxCurrent, polarity_mutable = true) {
-    super(name, port, 100, polarity_mutable);
+  constructor(name, port, maxCurrent, polarity_mutable = true, baudRate) {
+    super(name, port, 100, polarity_mutable, baudRate);
     this.setting_current_n_bits = 12;
   }
 }
 
 class PowerSupply200A extends PowerSupply {
-  constructor(name, port, maxCurrent, polarity_mutable = true) {
-    super(name, port, 200, polarity_mutable);
+  constructor(name, port, maxCurrent, polarity_mutable = true, baudRate) {
+    super(name, port, 200, polarity_mutable, baudRate);
     this.setting_current_n_bits = 16;
   }
 }
@@ -461,6 +464,9 @@ function setup_suppliers_and_clients(config) {
   const suppliers = [];
   for (const supplier of config.suppliers) {
     var splr;
+    if (DEBUG) {
+      console.log(typeof(supplier.baudRate));
+    }
     if (supplier.maxCurrent == 100) {
       splr = new PowerSupply100A(
         supplier.no,

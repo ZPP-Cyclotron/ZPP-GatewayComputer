@@ -4,7 +4,7 @@
     "port": "tty333",
      "polarity": "mutable",
      "maxCurrent": "100",
-     "baudRate": "9600",
+     "baudRate": 9600,
      "x": "-2403.3091",
      "y": "-705.22424"},
 
@@ -12,7 +12,7 @@
      "port": "tty77",
      "polarity": "const",
      "maxCurrent": "200",
-     "baudRate": "9600",
+     "baudRate": 9600,
      "x": "-2314.1479",
      "y": "-881.99066"},
 
@@ -20,7 +20,7 @@
      "port": "tty42",
      "polarity": "mutable",
      "maxCurrent": "100",
-     "baudRate": "9600",
+     "baudRate": 9600,
      "x": "-1820.3091",
      "y": "-885.22424"},
 
@@ -28,7 +28,7 @@
      "port": "tty444",
      "polarity": "const",
      "maxCurrent": "200",
-     "baudRate": "9600",
+     "baudRate": 9600,
      "x": "-2083.7981",
      "y": "-804.31189"},
 
@@ -37,7 +37,7 @@
         "port": "/dev/USB0",
         "polarity": "mutable",
         "maxCurrent": "100",
-        "baudRate": "9600",
+        "baudRate": 9600,
         "x": "-2137.7981",
         "y": "6969"
      }
