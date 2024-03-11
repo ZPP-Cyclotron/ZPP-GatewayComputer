@@ -112,8 +112,8 @@ class Cyferka extends HTMLElement {
       if (j.includes(k)) {
         return this.kolor_on;
       }
-    } else if (this.wartosc[0] == "K") { // do poprawy
-      const kk = ["bse", "bes", "bnw", "bws", "bsw", "bne", "ben"];
+    } else if (this.wartosc[0] == "K") {
+      const kk = ["bws", "bwn", "w2", "w4", "w8"];
       if (kk.includes(k)) {
         return this.kolor_on;
       }
@@ -610,8 +610,6 @@ var PoleNatezenia = (function () {
 
     window.electronAPI.get_current((i, nowe_cyfry) => {
       if (panel_id == i) {
-        console.log(nowe_cyfry);
-
         var tablica = [nowe_cyfry[0], nowe_cyfry[1], nowe_cyfry[2], nowe_cyfry[4]];
         var wiodace_zera = true;
 
@@ -650,8 +648,6 @@ var PoleNapiecia = (function () {
 
     window.electronAPI.get_voltage((i, nowe_cyfry) => {
       if (panel_id == i) {
-        console.log(nowe_cyfry);
-
         var tablica = [nowe_cyfry[0], nowe_cyfry[1], nowe_cyfry[2], nowe_cyfry[4]];
         var wiodace_zera = true;
 
@@ -689,7 +685,6 @@ var PoleBledow = (function () {
     window.electronAPI.get_error((i, nowe_cyfry) => {
       nowe_cyfry = nowe_cyfry.toUpperCase();
       if (panel_id == i) {
-        console.log(nowe_cyfry);
         var i = 0;
 
         for (; i < nowe_cyfry.length; i++) {
@@ -787,10 +782,16 @@ window.addEventListener("load", async () => {
     switchInput.addEventListener("change", async function () {
       if (this.checked) {
         var odpowiedz = await window.electronAPI.turn_on(i);
-        console.log(odpowiedz);
+        if (odpowiedz !== "") {
+          alert(odpowiedz);
+          return;
+        }
       } else {
         var odpowiedz = await window.electronAPI.turn_off(i);
-        console.log(odpowiedz);
+        if (odpowiedz !== "") {
+          alert(odpowiedz);
+          return;
+        }
       }
     });
     window.electronAPI.get_on_off((panel_id, state) => {
@@ -855,10 +856,16 @@ window.addEventListener("load", async () => {
       toggleInput.addEventListener("change", async function () {
         if (this.checked) {
           var odpowiedz = await window.electronAPI.set_polarity(i, true);
-          console.log(odpowiedz);
+          if (odpowiedz !== "") {
+            alert(odpowiedz);
+            return;
+          }
         } else {
           var odpowiedz = await window.electronAPI.set_polarity(i, false);
-          console.log(odpowiedz);
+          if (odpowiedz !== "") {
+            alert(odpowiedz);
+            return;
+          }
         }
       });
       window.electronAPI.get_polarity((panel_id, state) => {
