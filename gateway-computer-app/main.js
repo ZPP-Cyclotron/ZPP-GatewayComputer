@@ -23,7 +23,7 @@ function get_return_msg(errors, fname) {
  *  Server Implementation.  *
  ****************************/
 class PowerSupply {
-  constructor(name, port, maxCurrent, polarity_mutable = true) {
+  constructor(name, port, maxCurrent, polarity_mutable = true, baudRate) {
     PowerSupply.N_supplies++;
     this.name = name;
     this.port = port;
@@ -35,7 +35,7 @@ class PowerSupply {
     this.polarity_mutable = polarity_mutable;
     this.maxCurrent = maxCurrent;
     this.read_timeout = 1000;
-    this.baudRate = 9600;
+    this.baudRate = baudRate;
     this.timeout = 1000;
     this.errors = PowerSupply.ERR_NONE;
     this.connected = false;
@@ -466,14 +466,16 @@ function setup_suppliers_and_clients(config) {
         supplier.no,
         supplier.port,
         supplier.maxCurrent,
-        supplier.polarity
+        supplier.polarity,
+        supplier.baudRate
       );
     } else if (supplier.maxCurrent == 200) {
       splr = new PowerSupply200A(
         supplier.name,
         supplier.port,
         supplier.maxCurrent,
-        supplier.polarity
+        supplier.polarity,
+        supplier.baudRate
       );
     } else {
       console.log("Error: unknown maxCurrent value.");
