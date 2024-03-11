@@ -4,8 +4,8 @@ const path = require("node:path");
 const readline = require("readline");
 
 const DEBUG = true;
-// const CONFIG_FILE_PATH = "./config.json";
-const CONFIG_FILE_PATH = "./test_config.json";
+const CONFIG_FILE_PATH = "./config.json";
+// const CONFIG_FILE_PATH = "./test_config.json";
 
 const ModbusRTU = require("modbus-serial");
 const { assert } = require("node:console");
@@ -606,6 +606,7 @@ app.whenReady().then(() => {
         console.log(err);
       }
       mainWindow.webContents.send("new-error", supp_id, err);
+      res = "fail";
     } finally {
       return res;
     }
@@ -621,6 +622,7 @@ app.whenReady().then(() => {
         console.log(err);
       }
       mainWindow.webContents.send("new-error", supp_id, err);
+      res = "fail";
     } finally {
       return res;
     }
@@ -636,6 +638,7 @@ app.whenReady().then(() => {
         console.log(err);
       }
       mainWindow.webContents.send("new-error", supp_id, err);
+      res = "fail";
     } finally {
       return res;
     }
@@ -651,6 +654,7 @@ app.whenReady().then(() => {
         console.log(err);
       }
       mainWindow.webContents.send("new-error", supp_id, err);
+      res = "fail";
     } finally {
       return res;
     }
@@ -676,9 +680,14 @@ app.whenReady().then(() => {
 
       // check if res is a json object
       if (typeof res === "object") {
+        if (DEBUG) {
+          console.log("GOT INFO FROM SUPPLIER: " + i);
+        }
         let str_current = sprintf("%05.1f", res.current);
         mainWindow.webContents.send("new-current", i, str_current);
         let isOn = res.is_on;
+        // cast isOn to boolean
+        isOn = (isOn === 1);
         mainWindow.webContents.send("new-on-off", i, isOn);
         if (supplier.polarity_mutable) {
           mainWindow.webContents.send("new-polarity", i, res.polarity);
