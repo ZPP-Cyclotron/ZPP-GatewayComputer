@@ -1,6 +1,7 @@
 const { contextBridge, ipcRenderer } = require("electron/renderer");
 
 contextBridge.exposeInMainWorld("electronAPI", {
+  ustawZoom: (zoom) => ipcRenderer.invoke("dialog:ustawZoom", zoom),
   otworzPlikKonfiguracyjny: () =>
     ipcRenderer.invoke("dialog:otworzPlikKonfiguracyjny"),
   set_polarity: (supp_id, new_val) =>

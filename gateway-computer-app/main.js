@@ -463,7 +463,7 @@ function setup_suppliers_and_clients(config) {
       );
     } else if (supplier.maxCurrent == 200) {
       splr = new PowerSupply200A(
-        supplier.name,
+        supplier.no,
         supplier.port,
         supplier.maxCurrent,
         supplier.polarity,
@@ -591,6 +591,9 @@ let timer = null;
 
 app.whenReady().then(() => {
   let mainWindow = createWindow();
+  ipcMain.handle("dialog:ustawZoom", (event, zoom) => {
+    mainWindow.webContents.setZoomFactor(zoom);
+  });
   ipcMain.handle(
     "dialog:otworzPlikKonfiguracyjny",
     obsluzOtworzeniePlikuKonfiguracyjnego

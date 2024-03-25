@@ -10,7 +10,7 @@
 
     {"no": "3",
      "port": "tty77",
-     "polarity": "const",
+     "polarity": "mutable",
      "maxCurrent": "200",
      "baudRate": 9600,
      "x": "-2314.1479",
@@ -25,8 +25,8 @@
      "y": "-885.22424"},
 
      {"no": "7",
-     "port": "tty444",
-     "polarity": "const",
+     "port": "/dev/pts/3",
+     "polarity": "mutable",
      "maxCurrent": "200",
      "baudRate": 9600,
      "x": "-2083.7981",
