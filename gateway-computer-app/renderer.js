@@ -764,6 +764,7 @@ function dopiszCyfry(obiekt, wartosci) {
 
 window.addEventListener("load", async () => {
   const konfiguracja = await window.electronAPI.otworzPlikKonfiguracyjny();
+  await window.electronAPI.ustawZoom(0.5);
 
   if (typeof konfiguracja === "string") {
     alert(konfiguracja);

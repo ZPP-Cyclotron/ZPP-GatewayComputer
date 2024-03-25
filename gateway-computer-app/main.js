@@ -591,6 +591,9 @@ let timer = null;
 
 app.whenReady().then(() => {
   let mainWindow = createWindow();
+  ipcMain.handle("dialog:ustawZoom", (event, zoom) => {
+    mainWindow.webContents.setZoomFactor(zoom);
+  });
   ipcMain.handle(
     "dialog:otworzPlikKonfiguracyjny",
     obsluzOtworzeniePlikuKonfiguracyjnego
