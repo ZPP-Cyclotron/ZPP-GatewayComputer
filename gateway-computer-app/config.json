@@ -30,17 +30,7 @@
      "maxCurrent": "200",
      "baudRate": 9600,
      "x": "-2083.7981",
-     "y": "-804.31189"},
-
-     {
-        "no": "88",
-        "port": "/dev/USB0",
-        "polarity": "mutable",
-        "maxCurrent": "100",
-        "baudRate": 9600,
-        "x": "-2137.7981",
-        "y": "6969"
-     }
+     "y": "-804.31189"}
 ],
 
 "refreshInterval": 5000,
