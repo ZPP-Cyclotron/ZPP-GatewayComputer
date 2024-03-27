@@ -387,6 +387,7 @@ class Mapka extends HTMLElement {
           r="54.073467" />
         <text
        xml:space="preserve"
+       class="naglowek"
        style="font-size:85.3333px;opacity:1;fill:#ec4135;fill-opacity:0.8;stroke:#60b846;stroke-width:0;stroke-opacity:0.533333"
        x="-2478.739"
        y="-1017.2704"
@@ -398,6 +399,7 @@ class Mapka extends HTMLElement {
          y="-1017.2704">A</tspan></text>
     <text
        xml:space="preserve"
+       class="naglowek"
        style="font-size:85.3333px;opacity:1;fill:#ec4135;fill-opacity:0.8;stroke:#60b846;stroke-width:0;stroke-opacity:0.533333"
        x="-2155.4294"
        y="-1102.4537"
@@ -409,6 +411,7 @@ class Mapka extends HTMLElement {
          y="-1102.4537">B</tspan></text>
     <text
        xml:space="preserve"
+       class="naglowek"
        style="font-size:85.3333px;opacity:1;fill:#ec4135;fill-opacity:0.8;stroke:#60b846;stroke-width:0;stroke-opacity:0.533333"
        x="-1423.627"
        y="-258.36401"
@@ -420,6 +423,7 @@ class Mapka extends HTMLElement {
          y="-258.36401">D</tspan></text>
     <text
        xml:space="preserve"
+       class="naglowek"
        style="font-size:85.3333px;opacity:1;fill:#ec4135;fill-opacity:0.8;stroke:#60b846;stroke-width:0;stroke-opacity:0.533333"
        x="-1605.6096"
        y="-984.35864"
