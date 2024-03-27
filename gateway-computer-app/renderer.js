@@ -341,8 +341,8 @@ class Mapka extends HTMLElement {
     <svg
       version="1.1"
       id="svg1"
-      width="1641.7025"
-      height="1092.3036"
+      width="1313.362"
+      height="873.84288"
       viewBox="0 0 1641.7025 1092.3036"
       xmlns="http://www.w3.org/2000/svg"
       xmlns:svg="http://www.w3.org/2000/svg">
@@ -812,7 +812,7 @@ function dopiszCyfry(obiekt, wartosci) {
 
 window.addEventListener("load", async () => {
   const konfiguracja = await window.electronAPI.otworzPlikKonfiguracyjny();
-  await window.electronAPI.ustawZoom(0.5);
+  await window.electronAPI.ustawZoom(0.75);
 
   if (typeof konfiguracja === "string") {
     alert(konfiguracja);
