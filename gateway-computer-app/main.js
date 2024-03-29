@@ -2,9 +2,8 @@ const { app, BrowserWindow, ipcMain, dialog } = require("electron/main");
 const fs = require("node:fs");
 const path = require("node:path");
 const readline = require("readline");
-var PowerSupply100A = require('./supply.js').PowerSupply100A;
-var PowerSupply200A = require('./supply.js').PowerSupply200A;
-
+var PowerSupply100A = require("./supply.js").PowerSupply100A;
+var PowerSupply200A = require("./supply.js").PowerSupply200A;
 
 const DEBUG = true;
 const CONFIG_FILE_PATH = "./config.json";
@@ -21,6 +20,7 @@ function setup_suppliers_and_clients(config) {
   }
 
   const suppliers = [];
+  let i = 0;
   for (const supplier of config.suppliers) {
     var splr;
     if (DEBUG) {
@@ -28,6 +28,7 @@ function setup_suppliers_and_clients(config) {
     }
     if (supplier.maxCurrent == 100) {
       splr = new PowerSupply100A(
+        i,
         supplier.no,
         supplier.port,
         supplier.maxCurrent,
@@ -37,6 +38,7 @@ function setup_suppliers_and_clients(config) {
       );
     } else if (supplier.maxCurrent == 200) {
       splr = new PowerSupply200A(
+        i,
         supplier.no,
         supplier.port,
         supplier.maxCurrent,
@@ -48,6 +50,7 @@ function setup_suppliers_and_clients(config) {
       console.log("Error: unknown maxCurrent value.");
     }
     suppliers.push(splr);
+    i++;
   }
   return suppliers;
 }
@@ -150,7 +153,7 @@ function obsluzOtworzeniePlikuKonfiguracyjnego() {
 
 const createWindow = () => {
   const mainWindow = new BrowserWindow({
-    fullscreen: true,
+    fullscreen: DEBUG ? false : true,
     frame: true,
 
     webPreferences: {
@@ -224,7 +227,7 @@ app.whenReady().then(() => {
   ipcMain.handle("dialog:turn_off", async (event, supp_id) => {
     let res = "";
     try {
-      res = await suppliers[supp_id].turn_off();
+      res = await suppliers[supp_id].initiate_turn_off();
       if (res === "") mainWindow.webContents.send("new-error", supp_id, "");
     } catch (err) {
       if (DEBUG) {
@@ -265,7 +268,7 @@ app.whenReady().then(() => {
         mainWindow.webContents.send("new-current", i, str_current);
         let isOn = res.is_on;
         // cast isOn to boolean
-        isOn = (isOn === 1);
+        isOn = isOn === 1;
         mainWindow.webContents.send("new-on-off", i, isOn);
         if (supplier.polarity_mutable) {
           mainWindow.webContents.send("new-polarity", i, res.polarity);
