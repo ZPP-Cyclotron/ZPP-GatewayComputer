@@ -990,54 +990,6 @@ window.addEventListener("load", async () => {
 
     panel.appendChild(obszarPolaryzacja);
 
-    // NAPIĘCIE
-
-    var obszarNapiecie = document.createElement("div");
-    obszarNapiecie.classList.add("obszar-na-naglowek-i-cos");
-
-    var obszarNapiecieObszarNaNaglowek = document.createElement("div");
-    obszarNapiecieObszarNaNaglowek.classList.add("obszar-na-naglowek");
-
-    var obszarNapiecieNaglowek = document.createElement("p");
-    obszarNapiecieNaglowek.classList.add("naglowek");
-    obszarNapiecieNaglowek.innerText = "VOLTAGE";
-
-    obszarNapiecieObszarNaNaglowek.appendChild(obszarNapiecieNaglowek);
-
-    var obszarNaNapiecie = document.createElement("div");
-    obszarNaNapiecie.classList.add("obszar-na-napiecie");
-
-    dopiszCyfry(obszarNaNapiecie, [" ", " ", " .", " ", "V"]);
-
-    obszarNapiecie.appendChild(obszarNapiecieObszarNaNaglowek);
-    obszarNapiecie.appendChild(obszarNaNapiecie);
-
-    panel.appendChild(obszarNapiecie);
-
-    // NATĘŻENIE (ODCZYT)
-
-    var obszarNatezenieOdczyt = document.createElement("div");
-    obszarNatezenieOdczyt.classList.add("obszar-na-naglowek-i-cos");
-
-    var obszarNatezenieOdczytObszarNaNaglowek = document.createElement("div");
-    obszarNatezenieOdczytObszarNaNaglowek.classList.add("obszar-na-naglowek");
-
-    var obszarNatezenieOdczytNaglowek = document.createElement("p");
-    obszarNatezenieOdczytNaglowek.classList.add("naglowek");
-    obszarNatezenieOdczytNaglowek.innerText = "CURRENT (GET)";
-
-    obszarNatezenieOdczytObszarNaNaglowek.appendChild(obszarNatezenieOdczytNaglowek);
-
-    var obszarNaNatezenieOdczyt = document.createElement("div");
-    obszarNaNatezenieOdczyt.classList.add("obszar-na-napiecie");
-
-    dopiszCyfry(obszarNaNatezenieOdczyt, [" ", " ", " .", " ", "A"]);
-
-    obszarNatezenieOdczyt.appendChild(obszarNatezenieOdczytObszarNaNaglowek);
-    obszarNatezenieOdczyt.appendChild(obszarNaNatezenieOdczyt);
-
-    panel.appendChild(obszarNatezenieOdczyt);
-
     // NATĘŻENIE (USTAWIENIE)
 
     var obszarNatezenie = document.createElement("div");
@@ -1090,6 +1042,54 @@ window.addEventListener("load", async () => {
     obszarNatezenie.appendChild(obszarNaZmianeNatezeniaIGuziki);
 
     panel.appendChild(obszarNatezenie);
+
+    // NATĘŻENIE (ODCZYT)
+
+    var obszarNatezenieOdczyt = document.createElement("div");
+    obszarNatezenieOdczyt.classList.add("obszar-na-naglowek-i-cos");
+
+    var obszarNatezenieOdczytObszarNaNaglowek = document.createElement("div");
+    obszarNatezenieOdczytObszarNaNaglowek.classList.add("obszar-na-naglowek");
+
+    var obszarNatezenieOdczytNaglowek = document.createElement("p");
+    obszarNatezenieOdczytNaglowek.classList.add("naglowek");
+    obszarNatezenieOdczytNaglowek.innerText = "CURRENT (GET)";
+
+    obszarNatezenieOdczytObszarNaNaglowek.appendChild(obszarNatezenieOdczytNaglowek);
+
+    var obszarNaNatezenieOdczyt = document.createElement("div");
+    obszarNaNatezenieOdczyt.classList.add("obszar-na-napiecie");
+
+    dopiszCyfry(obszarNaNatezenieOdczyt, [" ", " ", " .", " ", "A"]);
+
+    obszarNatezenieOdczyt.appendChild(obszarNatezenieOdczytObszarNaNaglowek);
+    obszarNatezenieOdczyt.appendChild(obszarNaNatezenieOdczyt);
+
+    panel.appendChild(obszarNatezenieOdczyt);
+
+    // NAPIĘCIE
+
+    var obszarNapiecie = document.createElement("div");
+    obszarNapiecie.classList.add("obszar-na-naglowek-i-cos");
+
+    var obszarNapiecieObszarNaNaglowek = document.createElement("div");
+    obszarNapiecieObszarNaNaglowek.classList.add("obszar-na-naglowek");
+
+    var obszarNapiecieNaglowek = document.createElement("p");
+    obszarNapiecieNaglowek.classList.add("naglowek");
+    obszarNapiecieNaglowek.innerText = "VOLTAGE (GET)";
+
+    obszarNapiecieObszarNaNaglowek.appendChild(obszarNapiecieNaglowek);
+
+    var obszarNaNapiecie = document.createElement("div");
+    obszarNaNapiecie.classList.add("obszar-na-napiecie");
+
+    dopiszCyfry(obszarNaNapiecie, [" ", " ", " .", " ", "V"]);
+
+    obszarNapiecie.appendChild(obszarNapiecieObszarNaNaglowek);
+    obszarNapiecie.appendChild(obszarNaNapiecie);
+
+    panel.appendChild(obszarNapiecie);
 
     // BŁĘDY
 
