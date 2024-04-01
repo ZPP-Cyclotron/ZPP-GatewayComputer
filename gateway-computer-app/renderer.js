@@ -1167,7 +1167,6 @@ window.addEventListener("load", async () => {
 var przelacznik_trybu_sterowania = document.getElementById("tryb-sterowania");
 
 przelacznik_trybu_sterowania.addEventListener("change", async function () {
-  console.log(this.checked);
   if (this.checked) {
     var odpowiedz = await window.electronAPI.set_control_mode(true);
     if (odpowiedz !== "") {
