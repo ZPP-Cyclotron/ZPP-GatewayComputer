@@ -46,6 +46,17 @@ class PowerSupply {
     return client;
   }
 
+  handleModbusError(err) {
+    if (err.errno !== undefined) return err.errno;
+    else if (err.modbusCode !== undefined) {
+      return "ModbusErr " + err.modbusCode;
+    } else if (String(err).includes("CRC")) {
+      return "CRC error";
+    } else {
+      return "Unknown";
+    }
+  }
+
   async send_frame_to_supplier(frame) {
     let client = null;
     let errors = "";
@@ -63,14 +74,11 @@ class PowerSupply {
       if (DEBUG) {
         console.log(err);
       }
-      errors += err.errno;
+      errors += this.handleModbusError(err);
     } finally {
       try {
         client.close();
       } catch (err) {
-        if (DEBUG) {
-          console.log(err);
-        }
         errors += "bad port close";
       }
       if (errors.length > 0) {
@@ -80,9 +88,6 @@ class PowerSupply {
   }
 
   async turn_on() {
-    if (DEBUG) {
-      console.log("Turning on supplier...");
-    }
     if (this.on === PowerSupply.TURNED_ON()) {
       if (DEBUG) {
         console.log("Supplier " + this.name + " is already on.");
@@ -104,9 +109,6 @@ class PowerSupply {
   }
 
   async initiate_turn_off() {
-    if (DEBUG) {
-      console.log("Turning off supplier...");
-    }
     if (this.on === PowerSupply.TURNED_OFF()) {
       if (DEBUG) {
         console.log("Supplier " + this.name + " is already off.");
@@ -129,8 +131,6 @@ class PowerSupply {
     }
 
     try {
-      var sprintf = require("sprintf-js").sprintf,
-        vsprintf = require("sprintf-js").vsprintf;
       await this.set_current(0);
       this.on = PowerSupply.TURNING_OFF();
       // wait 1s for the current to drop to 0
@@ -159,9 +159,6 @@ class PowerSupply {
   }
 
   async turn_off() {
-    if (DEBUG) {
-      console.log("Turning off supplier...");
-    }
     if (this.on === PowerSupply.TURNED_OFF()) {
       if (DEBUG) {
         console.log("Supplier " + this.name + " is already off.");
@@ -193,9 +190,6 @@ class PowerSupply {
   }
 
   async set_current(new_val) {
-    if (DEBUG) {
-      console.log("setting current to " + new_val + "A");
-    }
     new_val = parseInt(new_val * 10);
     new_val = new_val / 10;
     if (this.on === PowerSupply.TURNED_OFF()) {
@@ -223,8 +217,8 @@ class PowerSupply {
     let scaled_val = (new_val * scale_factor) / this.maxCurrent;
     scaled_val = Math.floor(scaled_val);
     if (DEBUG) {
-      console.log("scaled_val:");
-      console.log(scaled_val);
+      console.log("scaled_val: " + scaled_val);
+      // console.log(scaled_val);
     }
     var code_array = [true, true];
     var binary_val_array = [];
@@ -236,8 +230,8 @@ class PowerSupply {
     }
     binary_val_array = binary_val_array.reverse();
     if (DEBUG) {
-      console.log("binary_val_array:");
-      console.log(binary_val_array);
+      console.log("binary_val_array: " + binary_val_array);
+      // console.log(binary_val_array);
       // check if binary_val_array is correct:
       let tmp = "";
       for (let i = 0; i < binary_val_array.length; i++) {
@@ -251,30 +245,27 @@ class PowerSupply {
     }
     const message_to_supplier = code_array.concat(binary_val_array);
     if (DEBUG) {
-      console.log("message_to_supplier:");
-      console.log(message_to_supplier);
+      console.log("message_to_supplier: " + message_to_supplier);
+      // console.log(message_to_supplier);
     }
 
     try {
       await this.send_frame_to_supplier(message_to_supplier);
       if (DEBUG) {
-        console.log("Current set.");
+        console.log("Current set to: " + new_val + "A");
       }
       this.current_set = new_val;
       return "";
     } catch (errors) {
       if (DEBUG) {
         console.log(errors);
+        // console.log("zlapalem");
       }
       throw errors;
     }
   }
 
   async set_polarity(new_val) {
-    if (DEBUG) {
-      console.log("Setting polarity...");
-      console.log(this.on);
-    }
     if (this.on === PowerSupply.TURNED_OFF()) {
       if (DEBUG) {
         console.log("Supplier is off.");
@@ -297,7 +288,8 @@ class PowerSupply {
     try {
       await this.send_frame_to_supplier([true, false, new_val]);
       if (DEBUG) {
-        console.log("Supplier turned off.");
+        console.log("Setting polarity...");
+        console.log("polarity set.");
       }
       return "";
     } catch (errors) {
@@ -312,7 +304,7 @@ class PowerSupply {
     try {
       await this.send_frame_to_supplier([false, true, true]);
       if (DEBUG) {
-        console.log("Supplier turned off.");
+        console.log("Supplier reset.");
       }
       return "";
     } catch (errors) {
@@ -381,7 +373,7 @@ class PowerSupply {
       if (DEBUG) {
         console.log(err);
       }
-      errors += err.errno;
+      errors += this.handleModbusError(err);
     } finally {
       try {
         client.close();
