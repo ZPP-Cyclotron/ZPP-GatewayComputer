@@ -1132,3 +1132,27 @@ window.addEventListener("load", async () => {
   mapka.setAttribute("konfiguracja", JSON.stringify(konfiguracja));
   document.getElementsByClassName("obszar-mapy")[0].appendChild(mapka);
 });
+
+/********************
+ * Tryb sterowania. *
+ ********************/
+var przelacznik_trybu_sterowania = document.getElementById("tryb-sterowania");
+
+przelacznik_trybu_sterowania.addEventListener("change", async function () {
+  console.log(this.checked);
+  /*
+  if (this.checked) {
+    var odpowiedz = await window.electronAPI.set_polarity(i, true);
+    if (odpowiedz !== "") {
+      alert(odpowiedz);
+      this.checked = false;
+    }
+  } else {
+    var odpowiedz = await window.electronAPI.set_polarity(i, false);
+    if (odpowiedz !== "") {
+      alert(odpowiedz);
+      this.checked = true;
+    }
+  }
+  */
+});
