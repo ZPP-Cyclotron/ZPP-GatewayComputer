@@ -4,6 +4,7 @@ const path = require("node:path");
 const readline = require("readline");
 var PowerSupply100A = require("./supply.js").PowerSupply100A;
 var PowerSupply200A = require("./supply.js").PowerSupply200A;
+var PowerSupply = require("./supply.js").PowerSupply;
 
 const DEBUG = true;
 const CONFIG_FILE_PATH = "./config.json";
@@ -179,6 +180,10 @@ app.whenReady().then(() => {
   );
   ipcMain.handle("dialog:set_polarity", async (event, supp_id, new_val) => {
     let res = "";
+    console.log(suppliers[supp_id].control_mode);
+    if (suppliers[supp_id].control_mode !== PowerSupply.MANUAL()) {
+      return "BAD CONTROL MODE!";
+    }
     try {
       res = await suppliers[supp_id].set_polarity(new_val);
       if (res === "") mainWindow.webContents.send("new-error", supp_id, "");
@@ -195,6 +200,9 @@ app.whenReady().then(() => {
   });
   ipcMain.handle("dialog:set_current", async (event, supp_id, new_val) => {
     let res = "";
+    if (suppliers[supp_id].control_mode !== PowerSupply.MANUAL()) {
+      return "BAD CONTROL MODE!";
+    }
     try {
       res = await suppliers[supp_id].set_current(new_val);
       if (res === "") mainWindow.webContents.send("new-error", supp_id, "");
@@ -210,6 +218,9 @@ app.whenReady().then(() => {
   });
   ipcMain.handle("dialog:turn_on", async (event, supp_id) => {
     let res = "";
+    if (suppliers[supp_id].control_mode !== PowerSupply.MANUAL()) {
+      return "BAD CONTROL MODE!";
+    }
     try {
       res = await suppliers[supp_id].turn_on();
       if (res === "") mainWindow.webContents.send("new-error", supp_id, "");
@@ -226,6 +237,9 @@ app.whenReady().then(() => {
   });
   ipcMain.handle("dialog:turn_off", async (event, supp_id) => {
     let res = "";
+    if (suppliers[supp_id].control_mode !== PowerSupply.MANUAL()) {
+      return "BAD CONTROL MODE!";
+    }
     try {
       res = await suppliers[supp_id].initiate_turn_off();
       if (res === "") mainWindow.webContents.send("new-error", supp_id, "");
@@ -239,6 +253,18 @@ app.whenReady().then(() => {
     } finally {
       return res;
     }
+  });
+  ipcMain.handle("dialog:set_control_mode", async (_, new_val) => {
+    if (DEBUG) {
+      console.log("Control mode set to: " + new_val);
+    }
+    for (const supplier of suppliers) {
+      supplier.set_control_mode(new_val);
+    }
+    if (DEBUG) {
+      console.log("Control mode set to: " + new_val);
+    }
+    return "";
   });
 
   config = obsluzOtworzeniePlikuKonfiguracyjnego();
@@ -269,7 +295,13 @@ app.whenReady().then(() => {
         let isOn = res.is_on;
         // cast isOn to boolean
         isOn = isOn === 1;
-        mainWindow.webContents.send("new-on-off", i, isOn);
+        if (
+          // TODO OGARNAC WSPOLBIEZNE (POLARITY TEZ)
+          suppliers[i].on !== PowerSupply.TURNING_OFF() &&
+          suppliers[i].on !== PowerSupply.TURNING_ON()
+        ) {
+          mainWindow.webContents.send("new-on-off", i, isOn);
+        }
         if (supplier.polarity_mutable) {
           mainWindow.webContents.send("new-polarity", i, res.polarity);
         }
@@ -277,6 +309,8 @@ app.whenReady().then(() => {
         mainWindow.webContents.send("new-voltage", i, str_voltage);
         if (res.errors != 0) {
           mainWindow.webContents.send("new-error", i, "splr_err");
+        } else {
+          mainWindow.webContents.send("new-error", i, "");
         }
       } else {
         console.log("Error: ret is not json object.");

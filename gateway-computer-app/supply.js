@@ -21,6 +21,7 @@ class PowerSupply {
     this.current_read = 0;
     this.current_set = 0;
     this.control_type = PowerSupply.MANUAL();
+    this.control_mode = PowerSupply.MANUAL();
     this.on = PowerSupply.TURNED_OFF();
     this.polarity_mutable = polarity_mutable;
     this.maxCurrent = maxCurrent;
@@ -131,8 +132,9 @@ class PowerSupply {
     }
 
     try {
-      await this.set_current(0);
       this.on = PowerSupply.TURNING_OFF();
+      await this.set_current(0);
+
       // wait 1s for the current to drop to 0
       await new Promise((resolve) => setTimeout(resolve, 1000));
       let res = await this.read_status();
@@ -418,6 +420,13 @@ class PowerSupply {
     }
   }
 
+  set_control_mode(new_val) {
+    if (new_val !== PowerSupply.MANUAL() && new_val !== PowerSupply.REMOTE()) {
+      throw "Illegal control mode!";
+    }
+    this.control_mode = new_val;
+  }
+
   // number of power supplies in the system
   static N_supplies = 0;
 
@@ -457,10 +466,10 @@ class PowerSupply {
   // MANUAL: Control from master computer
   // REMOTE: Control from remote computer
   static MANUAL() {
-    return 0;
+    return false;
   }
   static REMOTE() {
-    return 1;
+    return true;
   }
 
   static TURNED_OFF() {

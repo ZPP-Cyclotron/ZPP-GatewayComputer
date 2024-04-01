@@ -33,6 +33,6 @@
      "y": "-804.31189"}
 ],
 
-"refreshInterval": 5000,
+"refreshInterval": 2000,
 "modbusTimeout": 500
 }

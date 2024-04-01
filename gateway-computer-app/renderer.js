@@ -17,7 +17,11 @@ class Cyferka extends HTMLElement {
       if (k != "k") {
         return this.kolor_off;
       }
-    } else if (this.wartosc[0] == "0" || this.wartosc[0] == "D" || this.wartosc[0] == "O") {
+    } else if (
+      this.wartosc[0] == "0" ||
+      this.wartosc[0] == "D" ||
+      this.wartosc[0] == "O"
+    ) {
       const zero = ["bse", "bes", "bnw", "bwn", "bws", "bsw", "bne", "ben"];
       if (zero.includes(k)) {
         return this.kolor_on;
@@ -58,7 +62,18 @@ class Cyferka extends HTMLElement {
         return this.kolor_on;
       }
     } else if (this.wartosc[0] == "8" || this.wartosc[0] == "B") {
-      const osiem = ["bse", "bes", "bnw", "bwn", "bws", "bsw", "bne", "ben", "w3", "w9"];
+      const osiem = [
+        "bse",
+        "bes",
+        "bnw",
+        "bwn",
+        "bws",
+        "bsw",
+        "bne",
+        "ben",
+        "w3",
+        "w9",
+      ];
       if (osiem.includes(k)) {
         return this.kolor_on;
       }
@@ -179,7 +194,8 @@ class Cyferka extends HTMLElement {
 
   #zaktualizujWartosc() {
     this.innerHTML = `
-      <svg id="wyswietlacz-svg${this.id
+      <svg id="wyswietlacz-svg${
+        this.id
       }" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1052 1361.9982">
       <g
         id="wyswietlacz"
@@ -649,7 +665,12 @@ var PoleNapiecia = (function () {
 
     window.electronAPI.get_voltage((i, nowe_cyfry) => {
       if (panel_id == i) {
-        var tablica = [nowe_cyfry[0], nowe_cyfry[1], nowe_cyfry[2], nowe_cyfry[4]];
+        var tablica = [
+          nowe_cyfry[0],
+          nowe_cyfry[1],
+          nowe_cyfry[2],
+          nowe_cyfry[4],
+        ];
         var wiodace_zera = true;
 
         for (let i = 0; i < tablica.length; i++) {
@@ -685,7 +706,12 @@ var PoleOdczytuNatezenia = (function () {
 
     window.electronAPI.get_current((i, nowe_cyfry) => {
       if (panel_id == i) {
-        var tablica = [nowe_cyfry[0], nowe_cyfry[1], nowe_cyfry[2], nowe_cyfry[4]];
+        var tablica = [
+          nowe_cyfry[0],
+          nowe_cyfry[1],
+          nowe_cyfry[2],
+          nowe_cyfry[4],
+        ];
         var wiodace_zera = true;
 
         for (let i = 0; i < tablica.length; i++) {
@@ -1055,7 +1081,9 @@ window.addEventListener("load", async () => {
     obszarNatezenieOdczytNaglowek.classList.add("naglowek");
     obszarNatezenieOdczytNaglowek.innerText = "CURRENT (GET)";
 
-    obszarNatezenieOdczytObszarNaNaglowek.appendChild(obszarNatezenieOdczytNaglowek);
+    obszarNatezenieOdczytObszarNaNaglowek.appendChild(
+      obszarNatezenieOdczytNaglowek
+    );
 
     var obszarNaNatezenieOdczyt = document.createElement("div");
     obszarNaNatezenieOdczyt.classList.add("obszar-na-napiecie");
@@ -1140,19 +1168,17 @@ var przelacznik_trybu_sterowania = document.getElementById("tryb-sterowania");
 
 przelacznik_trybu_sterowania.addEventListener("change", async function () {
   console.log(this.checked);
-  /*
   if (this.checked) {
-    var odpowiedz = await window.electronAPI.set_polarity(i, true);
+    var odpowiedz = await window.electronAPI.set_control_mode(true);
     if (odpowiedz !== "") {
       alert(odpowiedz);
       this.checked = false;
     }
   } else {
-    var odpowiedz = await window.electronAPI.set_polarity(i, false);
+    var odpowiedz = await window.electronAPI.set_control_mode(false);
     if (odpowiedz !== "") {
       alert(odpowiedz);
       this.checked = true;
     }
   }
-  */
 });
