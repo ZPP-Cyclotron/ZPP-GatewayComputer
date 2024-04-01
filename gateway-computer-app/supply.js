@@ -286,12 +286,30 @@ class PowerSupply {
       );
     }
     try {
-      await this.send_frame_to_supplier([true, false, new_val]);
-      if (DEBUG) {
-        console.log("Setting polarity...");
-        console.log("polarity set.");
+      await this.set_current(0);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      let res = await this.read_status();
+      // check if new_status is a json object
+      let i = this.idx;
+      let new_current = null;
+      if (typeof res === "object") {
+        if (DEBUG) {
+          console.log("[POLARITY] GOT INFO FROM SUPPLIER: " + i);
+        }
+        new_current = res.current;
       }
-      return "";
+      if (new_current === 0) {
+        await this.send_frame_to_supplier([true, false, new_val]);
+        return "";
+      } else {
+        return "failed to set current to 0. failed polarity change";
+      }
+
+      // if (DEBUG) {
+      //   console.log("Setting polarity...");
+      //   console.log("polarity set.");
+      // }
+      // return "";
     } catch (errors) {
       if (DEBUG) {
         console.log(errors);
