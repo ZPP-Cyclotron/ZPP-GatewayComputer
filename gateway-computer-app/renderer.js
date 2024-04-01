@@ -1031,7 +1031,7 @@ window.addEventListener("load", async () => {
     var obszarNaNatezenieOdczyt = document.createElement("div");
     obszarNaNatezenieOdczyt.classList.add("obszar-na-napiecie");
 
-    dopiszCyfry(obszarNaNatezenieOdczyt, [" ", " ", " .", " ", "V"]);
+    dopiszCyfry(obszarNaNatezenieOdczyt, [" ", " ", " .", " ", "A"]);
 
     obszarNatezenieOdczyt.appendChild(obszarNatezenieOdczytObszarNaNaglowek);
     obszarNatezenieOdczyt.appendChild(obszarNaNatezenieOdczyt);
