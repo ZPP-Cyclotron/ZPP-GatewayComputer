@@ -867,36 +867,40 @@ window.addEventListener("load", async () => {
     var obszarNaGuzikOnOff = document.createElement("div");
     obszarNaGuzikOnOff.classList.add("obszar-na-guzik-on-off");
 
-    var switchSwitchRound = document.createElement("label");
-    switchSwitchRound.classList.add("switch");
-    switchSwitchRound.classList.add("switch--round");
+    var switchLabel = document.createElement("label");
+    switchLabel.classList.add("switch");
 
     var switchInput = document.createElement("input");
-    switchInput.classList.add("switch__input");
     switchInput.setAttribute("type", "checkbox");
-    switchInput.setAttribute("role", "switch");
-    switchInput.setAttribute("name", "round");
 
-    var switchBorder = document.createElement("span");
-    switchBorder.classList.add("switch__border");
+    var switchButton = document.createElement("div");
+    switchButton.classList.add("button");
 
-    var switchInside = document.createElement("span");
-    switchInside.classList.add("switch__inside");
+    var switchLight = document.createElement("div");
+    switchLight.classList.add("light");
 
-    var switchFlapa = document.createElement("span");
-    switchFlapa.classList.add("switch__flap-a");
+    var switchDots = document.createElement("div");
+    switchDots.classList.add("dots");
 
-    var switchLabel = document.createElement("span");
-    switchLabel.classList.add("switch__label");
-    switchLabel.innerText = "Round";
+    var switchCharacters = document.createElement("div");
+    switchCharacters.classList.add("characters");
 
-    switchSwitchRound.appendChild(switchInput);
-    switchSwitchRound.appendChild(switchBorder);
-    switchSwitchRound.appendChild(switchInside);
-    switchSwitchRound.appendChild(switchFlapa);
-    switchSwitchRound.appendChild(switchLabel);
+    var switchShine = document.createElement("div");
+    switchShine.classList.add("shine");
 
-    obszarNaGuzikOnOff.appendChild(switchSwitchRound);
+    var switchShadow = document.createElement("div");
+    switchShadow.classList.add("shadow");
+
+    switchButton.appendChild(switchLight);
+    switchButton.appendChild(switchDots);
+    switchButton.appendChild(switchCharacters);
+    switchButton.appendChild(switchShine);
+    switchButton.appendChild(switchShadow);
+
+    switchLabel.appendChild(switchInput);
+    switchLabel.appendChild(switchButton);
+
+    obszarNaGuzikOnOff.appendChild(switchLabel);
 
     obszarOnOff.appendChild(obszarOnOffObszarNaNaglowek);
     obszarOnOff.appendChild(obszarNaGuzikOnOff);
