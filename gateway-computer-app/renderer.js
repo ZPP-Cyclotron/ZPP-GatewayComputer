@@ -1122,6 +1122,7 @@ window.addEventListener("load", async () => {
 
     PoleWlacznika(obszarNaGuzikOnOff, i);
     PoleNapiecia(obszarNaNapiecie, i);
+    PoleOdczytuNatezenia(obszarNaNatezenieOdczyt, i);
     PoleNatezenia(document.getElementById("natezenie" + (i + 1)), i);
     PoleBledow(obszarBledy, i);
   }
