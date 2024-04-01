@@ -632,29 +632,6 @@ var PoleNatezenia = (function () {
       koncz_zmiany();
     });
 
-    window.electronAPI.get_current((i, nowe_cyfry) => {
-      if (panel_id == i) {
-        var tablica = [nowe_cyfry[0], nowe_cyfry[1], nowe_cyfry[2], nowe_cyfry[4]];
-        var wiodace_zera = true;
-
-        for (let i = 0; i < tablica.length; i++) {
-          var cyfra_teraz = tablica[i];
-
-          if (wiodace_zera == true && cyfra_teraz == 0 && i < 2) {
-            cyfra_teraz = " ";
-          } else {
-            wiodace_zera = false;
-          }
-
-          if (i == 2) {
-            cyfra_teraz = cyfra_teraz + ".";
-          }
-
-          cyfry_natezenia[i].setAttribute("wartosc", cyfra_teraz);
-        }
-      }
-    });
-
     obszar_na_natezenie.addEventListener("click", inicjuj_zmiany);
   }
 
@@ -696,6 +673,42 @@ var PoleNapiecia = (function () {
 
   return function (obszar_na_napiecie, panel_id) {
     main(obszar_na_napiecie, panel_id);
+  };
+})();
+
+/************************************
+ * Obsługa pola natężenia (odczyt). *
+ ************************************/
+var PoleOdczytuNatezenia = (function () {
+  function main(obszar_na_natezenie, panel_id) {
+    var cyfry_natezenia = obszar_na_natezenie.querySelectorAll(".cyfra");
+
+    window.electronAPI.get_current((i, nowe_cyfry) => {
+      if (panel_id == i) {
+        var tablica = [nowe_cyfry[0], nowe_cyfry[1], nowe_cyfry[2], nowe_cyfry[4]];
+        var wiodace_zera = true;
+
+        for (let i = 0; i < tablica.length; i++) {
+          var cyfra_teraz = tablica[i];
+
+          if (wiodace_zera == true && cyfra_teraz == 0 && i < 2) {
+            cyfra_teraz = " ";
+          } else {
+            wiodace_zera = false;
+          }
+
+          if (i == 2) {
+            cyfra_teraz = cyfra_teraz + ".";
+          }
+
+          cyfry_natezenia[i].setAttribute("wartosc", cyfra_teraz);
+        }
+      }
+    });
+  }
+
+  return function (obszar_na_natezenie, panel_id) {
+    main(obszar_na_natezenie, panel_id);
   };
 })();
 
@@ -1001,7 +1014,31 @@ window.addEventListener("load", async () => {
 
     panel.appendChild(obszarNapiecie);
 
-    // NATĘŻENIE
+    // NATĘŻENIE (ODCZYT)
+
+    var obszarNatezenieOdczyt = document.createElement("div");
+    obszarNatezenieOdczyt.classList.add("obszar-na-naglowek-i-cos");
+
+    var obszarNatezenieOdczytObszarNaNaglowek = document.createElement("div");
+    obszarNatezenieOdczytObszarNaNaglowek.classList.add("obszar-na-naglowek");
+
+    var obszarNatezenieOdczytNaglowek = document.createElement("p");
+    obszarNatezenieOdczytNaglowek.classList.add("naglowek");
+    obszarNatezenieOdczytNaglowek.innerText = "CURRENT (GET)";
+
+    obszarNatezenieOdczytObszarNaNaglowek.appendChild(obszarNatezenieOdczytNaglowek);
+
+    var obszarNaNatezenieOdczyt = document.createElement("div");
+    obszarNaNatezenieOdczyt.classList.add("obszar-na-napiecie");
+
+    dopiszCyfry(obszarNaNatezenieOdczyt, [" ", " ", " .", " ", "V"]);
+
+    obszarNatezenieOdczyt.appendChild(obszarNatezenieOdczytObszarNaNaglowek);
+    obszarNatezenieOdczyt.appendChild(obszarNaNatezenieOdczyt);
+
+    panel.appendChild(obszarNatezenieOdczyt);
+
+    // NATĘŻENIE (USTAWIENIE)
 
     var obszarNatezenie = document.createElement("div");
     obszarNatezenie.classList.add("obszar-na-naglowek-i-cos");
@@ -1012,7 +1049,7 @@ window.addEventListener("load", async () => {
 
     var obszarNatezenieNaglowek = document.createElement("p");
     obszarNatezenieNaglowek.classList.add("naglowek");
-    obszarNatezenieNaglowek.innerText = "CURRENT";
+    obszarNatezenieNaglowek.innerText = "CURRENT (SET)";
 
     obszarNatezenieObszarNaNaglowek.appendChild(obszarNatezenieNaglowek);
 
