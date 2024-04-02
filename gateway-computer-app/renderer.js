@@ -936,7 +936,6 @@ window.addEventListener("load", async () => {
     panel.appendChild(obszarNazwa);
 
     // ON/OFF
-
     var obszarOnOff = document.createElement("div");
     obszarOnOff.classList.add("obszar-na-naglowek-i-cos");
 
@@ -1165,6 +1164,32 @@ window.addEventListener("load", async () => {
 
     panel.appendChild(obszarNapiecie);
 
+    // TRYB STEROWANIA
+    var obszarSterowania = document.createElement("div");
+    obszarSterowania.classList.add("obszar-na-naglowek-i-cos");
+
+    var obszarSterowaniaObszarNaNaglowek = document.createElement("div");
+    obszarSterowaniaObszarNaNaglowek.classList.add("obszar-na-naglowek");
+
+    var obszarSterowaniaNaglowek = document.createElement("p");
+    obszarSterowaniaNaglowek.classList.add("naglowek");
+    obszarSterowaniaNaglowek.innerText = "REMOTE";
+
+    obszarSterowaniaObszarNaNaglowek.appendChild(obszarSterowaniaNaglowek);
+
+    var obszarNaDiode = document.createElement("div");
+    obszarNaDiode.classList.add("obszar-na-guzik-on-off");
+
+    var dioda = document.createElement("input");
+    dioda.setAttribute("type", "checkbox");
+
+    obszarNaDiode.appendChild(dioda);
+
+    obszarSterowania.appendChild(obszarSterowaniaObszarNaNaglowek);
+    obszarSterowania.appendChild(obszarNaDiode);
+
+    panel.appendChild(obszarSterowania);
+
     // BŁĘDY
 
     var obszarBledy = document.createElement("div");
@@ -1192,28 +1217,7 @@ window.addEventListener("load", async () => {
 
     panel.appendChild(obszarBledy);
 
-    // TRYB STEROWANIA
-    var obszarSterowania = document.createElement("div");
-    obszarSterowania.classList.add("obszar-na-naglowek-i-cos");
-
-    var obszarSterowaniaObszarNaNaglowek = document.createElement("div");
-    obszarSterowaniaObszarNaNaglowek.classList.add("obszar-na-naglowek");
-
-    var obszarSterowaniaNaglowek = document.createElement("p");
-    obszarSterowaniaNaglowek.classList.add("naglowek");
-    obszarSterowaniaNaglowek.innerText = "MODE";
-
-    obszarSterowaniaObszarNaNaglowek.appendChild(obszarSterowaniaNaglowek);
-
-    var przelacznik = document.createElement("input");
-    przelacznik.setAttribute("type", "checkbox");
-
-    obszarSterowania.appendChild(obszarSterowaniaObszarNaNaglowek);
-    obszarSterowania.appendChild(przelacznik);
-
-    panel.appendChild(obszarSterowania);
-
-    // RESZTA
+    // LOGIKA
     obszarPaneli.appendChild(panel);
 
     PoleWlacznika(obszarNaGuzikOnOff, i);
