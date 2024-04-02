@@ -1177,16 +1177,16 @@ window.addEventListener("load", async () => {
 
     obszarSterowaniaObszarNaNaglowek.appendChild(obszarSterowaniaNaglowek);
 
-    var obszarNaDiode = document.createElement("div");
-    obszarNaDiode.classList.add("obszar-na-guzik-on-off");
+    var obszarNaSterowanie = document.createElement("div");
+    obszarNaSterowanie.classList.add("obszar-na-guzik-on-off");
 
-    var dioda = document.createElement("input");
-    dioda.setAttribute("type", "checkbox");
+    var trybSterowania = document.createElement("input");
+    trybSterowania.setAttribute("type", "checkbox");
 
-    obszarNaDiode.appendChild(dioda);
+    obszarNaSterowanie.appendChild(trybSterowania);
 
     obszarSterowania.appendChild(obszarSterowaniaObszarNaNaglowek);
-    obszarSterowania.appendChild(obszarNaDiode);
+    obszarSterowania.appendChild(obszarNaSterowanie);
 
     panel.appendChild(obszarSterowania);
 
@@ -1251,6 +1251,23 @@ przelacznik_trybu_sterowania.addEventListener("change", async function () {
     if (odpowiedz !== "") {
       alert(odpowiedz);
       this.checked = true;
+    }
+  }
+});
+
+/**************
+ * Zapytajka. *
+ **************/
+window.electronAPI.get_turn_off_failed(async (panel_id) => {
+  if (confirm("Prąd nie spadł do 0A. Kontynuować wyłączanie?")) {
+    var odpowiedz = await window.electronAPI.turn_off_fail_continue(panel_id);
+    if (odpowiedz !== "") {
+      alert(odpowiedz);
+    }
+  } else {
+    var odpowiedz = await window.electronAPI.turn_off_fail_stop(panel_id);
+    if (odpowiedz !== "") {
+      alert(odpowiedz);
     }
   }
 });
