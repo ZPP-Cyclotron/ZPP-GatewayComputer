@@ -15,6 +15,12 @@ contextBridge.exposeInMainWorld("electronAPI", {
   set_control_mode: (new_val) =>
     ipcRenderer.invoke("dialog:set_control_mode", new_val),
 
+  turn_off_fail_continue: (supp_id) =>
+    ipcRenderer.invoke("dialog:turn_off_fail_continue", supp_id),
+
+  turn_off_fail_stop: (supp_id) =>
+    ipcRenderer.invoke("dialog:turn_off_fail_stop", supp_id),
+
   // get_status: (callback) => {
   //   ipcRenderer.on('new-status', (event, ...args) => {callback(...args);});
   // }
@@ -54,6 +60,18 @@ contextBridge.exposeInMainWorld("electronAPI", {
   get_nowy_zadany_prad: (callback) => {
     ipcRenderer.on("nowy_zadany_prad", (event, supp_id, new_val) => {
       callback(supp_id, new_val);
+    });
+  },
+  // case:
+  // user naciska off w aplikacji
+  // aplikacja wysyła komunikat set current(0) i czeka 3 sekundy
+  // potem robi read_status i wychodzi current > 0
+  // wtedy ma dać użytkownikowi wybór:
+  // "Prąd nie spadł do zera, czy dalej chcesz wyłączyć czy przerwać wyłączanie?"
+  // jeżeli po 3 sekundach prad jest 0, to aplikacja sie nie pyta, tylko wysyła komunikat turn_off do zasilacza
+  get_turn_off_failed: (callback) => {
+    ipcRenderer.on("turn_off_failed", (event, supp_id) => {
+      callback(supp_id);
     });
   },
 });

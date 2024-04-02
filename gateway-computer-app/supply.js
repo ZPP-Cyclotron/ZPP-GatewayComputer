@@ -136,7 +136,7 @@ class PowerSupply {
       await this.set_current(0);
 
       // wait 1s for the current to drop to 0
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 3000));
       let res = await this.read_status();
       // check if new_status is a json object
       let i = this.idx;
@@ -291,7 +291,7 @@ class PowerSupply {
     }
     try {
       await this.set_current(0);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 3000));
       let res = await this.read_status();
       // check if new_status is a json object
       let i = this.idx;
