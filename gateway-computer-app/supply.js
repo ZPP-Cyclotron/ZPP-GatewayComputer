@@ -153,7 +153,7 @@ class PowerSupply {
         return "";
       } else {
         this.on = PowerSupply.TURNED_ON();
-        return "failed to set current to 0. failed turn off";
+        return "failed_turn_off";
       }
     } catch (errors) {
       throw errors;
