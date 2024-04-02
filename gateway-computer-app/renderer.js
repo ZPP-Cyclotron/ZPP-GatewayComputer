@@ -368,42 +368,46 @@ class Mapka extends HTMLElement {
         id="layer1"
         transform="rotate(145,1269.5516,1056.9368)">
         <path
-          style="display:inline;fill:#000000;fill-opacity:0;stroke:#778899;stroke-width:24.5;stroke-dasharray:none;stroke-opacity:1"
-          d="M 1819.8264,2034.7208 971.86474,1765.6188 588.5396,1519.7486"
-          id="path6" />
-        <path
-          style="display:inline;fill:#000000;fill-opacity:0;stroke:#778899;stroke-width:24.5;stroke-dasharray:none;stroke-opacity:1"
-          d="m 983.48065,826.66583 576.92365,1128.67957 -170.3667,92.9273 -94.8633,284.5899"
-          id="path7" />
-        <path
-          style="fill:#000000;fill-opacity:0;stroke:#778899;stroke-width:24.5;stroke-dasharray:none;stroke-opacity:1"
-          d="M 1560.4043,1951.4734 989.28861,2081.1845"
-          id="path9" />
-        <path
-          style="fill:#000000;fill-opacity:0;stroke:#778899;stroke-width:24.5;stroke-dasharray:none;stroke-opacity:1"
-          d="M 685.8432,1927.4795 1245.7431,1853.5563 922.67129,1555.81"
-          id="path10" />
-        <path
-          style="fill:#696969;fill-opacity:1;stroke:#ffffff;stroke-width:8;stroke-dasharray:none;stroke-opacity:1"
-          d="m 1767.3125,1980.8685 -59.5492,-50.6511 70.5008,-80.0835 59.5493,50.6511 2.0534,25.3255 -23.9566,30.1169 z"
-          id="path11" />
-        <path
-          style="fill:#696969;fill-opacity:1;stroke:#ffffff;stroke-width:8;stroke-dasharray:none;stroke-opacity:1"
-          d="m 1843.9736,1876.1439 128.6812,1.369 v 65.025 l 15.7429,8.2137 -0.6845,78.0301 -17.7963,23.2721 -1.3689,71.1853 -126.6278,-0.6844 0.6845,-61.6027 -17.7963,-9.5827 -0.6845,-77.3456 18.4808,-20.5342 z"
-          id="path12" />
-        <path
-          style="fill:#696969;fill-opacity:1;stroke:#ffffff;stroke-width:8;stroke-dasharray:none;stroke-opacity:1"
-          d="m 1973.3393,2076.6949 26.6945,-29.4324 45.1753,-23.9566 58.1803,48.5977 -67.763,80.0835 -58.8648,-49.2822 z"
-          id="path13" />
-        <circle
-          style="fill:#000000;fill-opacity:0;stroke:#ffffff;stroke-width:8;stroke-dasharray:none;stroke-opacity:1"
-          id="path14"
-          cx="1908.3142"
-          cy="2004.1406"
-          r="54.073467" />
-        <text
+       style="display:inline;fill:#000000;fill-opacity:0;stroke:#778899;stroke-width:24.5;stroke-dasharray:none;stroke-opacity:1"
+       d="M 1819.8264,2034.7208 971.86474,1765.6188 588.5396,1519.7486"
+       id="path6" />
+    <path
+       style="display:inline;fill:#000000;fill-opacity:0;stroke:#778899;stroke-width:24.5;stroke-dasharray:none;stroke-opacity:1"
+       d="m 1106.0217,1245.7097 454.3826,709.6357 -170.3667,92.9273 -94.8633,284.5899"
+       id="path7"
+       sodipodi:nodetypes="cccc" />
+    <path
+       style="fill:#000000;fill-opacity:0;stroke:#778899;stroke-width:24.5;stroke-dasharray:none;stroke-opacity:1"
+       d="M 1560.4043,1951.4734 989.28861,2081.1845"
+       id="path9" />
+    <path
+       style="fill:#000000;fill-opacity:0;stroke:#778899;stroke-width:24.5;stroke-dasharray:none;stroke-opacity:1"
+       d="M 685.8432,1927.4795 1245.7431,1853.5563 922.67129,1555.81"
+       id="path10" />
+    <path
+       style="fill:#696969;fill-opacity:1;stroke:#ffffff;stroke-width:8;stroke-dasharray:none;stroke-opacity:1"
+       d="m 1767.3125,1980.8685 -59.5492,-50.6511 70.5008,-80.0835 59.5493,50.6511 2.0534,25.3255 -23.9566,30.1169 z"
+       id="path11"
+       inkscape:label="lwing" />
+    <path
+       style="fill:#696969;fill-opacity:1;stroke:#ffffff;stroke-width:8;stroke-dasharray:none;stroke-opacity:1"
+       d="m 1843.9736,1876.1439 128.6812,1.369 v 65.025 l 15.7429,8.2137 -0.6845,78.0301 -17.7963,23.2721 -1.3689,71.1853 -126.6278,-0.6844 0.6845,-61.6027 -17.7963,-9.5827 -0.6845,-77.3456 18.4808,-20.5342 z"
+       id="path12"
+       inkscape:label="xwing" />
+    <path
+       style="fill:#696969;fill-opacity:1;stroke:#ffffff;stroke-width:8;stroke-dasharray:none;stroke-opacity:1"
+       d="m 1973.3393,2076.6949 26.6945,-29.4324 45.1753,-23.9566 58.1803,48.5977 -67.763,80.0835 -58.8648,-49.2822 z"
+       id="path13"
+       inkscape:label="rwing" />
+    <circle
+       style="fill:#000000;fill-opacity:0;stroke:#ffffff;stroke-width:8;stroke-dasharray:none;stroke-opacity:1"
+       id="path14"
+       cx="1908.3142"
+       cy="2004.1406"
+       r="54.073467"
+       inkscape:label="owing" />
+    <text
        xml:space="preserve"
-       class="naglowek"
        style="font-size:85.3333px;opacity:1;fill:#ec4135;fill-opacity:0.8;stroke:#60b846;stroke-width:0;stroke-opacity:0.533333"
        x="-2478.739"
        y="-1017.2704"
@@ -415,7 +419,6 @@ class Mapka extends HTMLElement {
          y="-1017.2704">A</tspan></text>
     <text
        xml:space="preserve"
-       class="naglowek"
        style="font-size:85.3333px;opacity:1;fill:#ec4135;fill-opacity:0.8;stroke:#60b846;stroke-width:0;stroke-opacity:0.533333"
        x="-2155.4294"
        y="-1102.4537"
@@ -427,19 +430,6 @@ class Mapka extends HTMLElement {
          y="-1102.4537">B</tspan></text>
     <text
        xml:space="preserve"
-       class="naglowek"
-       style="font-size:85.3333px;opacity:1;fill:#ec4135;fill-opacity:0.8;stroke:#60b846;stroke-width:0;stroke-opacity:0.533333"
-       x="-1423.627"
-       y="-258.36401"
-       id="text6"
-       transform="rotate(-145)"><tspan
-         sodipodi:role="line"
-         id="tspan6"
-         x="-1423.627"
-         y="-258.36401">D</tspan></text>
-    <text
-       xml:space="preserve"
-       class="naglowek"
        style="font-size:85.3333px;opacity:1;fill:#ec4135;fill-opacity:0.8;stroke:#60b846;stroke-width:0;stroke-opacity:0.533333"
        x="-1605.6096"
        y="-984.35864"
@@ -449,6 +439,15 @@ class Mapka extends HTMLElement {
          id="tspan10"
          x="-1605.6096"
          y="-984.35864">C</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:85.3333px;fill:#ec4135;fill-opacity:0.8;stroke:#60b846;stroke-width:0;stroke-opacity:0.533333;"
+       x="-1666.61"
+       y="-440.17242"
+       id="text10-0"
+       transform="rotate(-145)"><tspan
+         sodipodi:role="line"
+         id="tspan1">D</tspan></text>
         ${this.#kolka()}
       </g>
     </svg>`;

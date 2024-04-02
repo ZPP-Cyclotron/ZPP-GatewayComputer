@@ -50,6 +50,12 @@ body {
   align-items: center;
 }
 
+.podzial-mapa-tryb {
+  display: flex;
+  flex-direction: row;
+
+}
+
 .obszar-mapy {
   display: flex;
   justify-content: center;
