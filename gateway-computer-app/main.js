@@ -182,7 +182,13 @@ app.whenReady().then(() => {
     let res = "";
     console.log(suppliers[supp_id].control_mode);
     if (suppliers[supp_id].control_mode !== PowerSupply.MANUAL()) {
-      return "BAD CONTROL MODE!";
+      return "BAD CONTROL MODE (sterowanie ze sterowni)!";
+    }
+    if (
+      suppliers[supp_id].control_of_supplier ===
+      PowerSupply.MANUAL_CONTROL_OF_SUPPLIER()
+    ) {
+      return "BAD CONTROL MODE (ręczne sterowanie zasilaczem)!";
     }
     try {
       res = await suppliers[supp_id].set_polarity(new_val);
@@ -201,7 +207,13 @@ app.whenReady().then(() => {
   ipcMain.handle("dialog:set_current", async (event, supp_id, new_val) => {
     let res = "";
     if (suppliers[supp_id].control_mode !== PowerSupply.MANUAL()) {
-      return "BAD CONTROL MODE!";
+      return "BAD CONTROL MODE (sterowanie ze sterowni)!";
+    }
+    if (
+      suppliers[supp_id].control_of_supplier ===
+      PowerSupply.MANUAL_CONTROL_OF_SUPPLIER()
+    ) {
+      return "BAD CONTROL MODE (ręczne sterowanie zasilaczem)!";
     }
     try {
       res = await suppliers[supp_id].set_current(new_val);
@@ -219,7 +231,13 @@ app.whenReady().then(() => {
   ipcMain.handle("dialog:turn_on", async (event, supp_id) => {
     let res = "";
     if (suppliers[supp_id].control_mode !== PowerSupply.MANUAL()) {
-      return "BAD CONTROL MODE!";
+      return "BAD CONTROL MODE (sterowanie ze sterowni)!";
+    }
+    if (
+      suppliers[supp_id].control_of_supplier ===
+      PowerSupply.MANUAL_CONTROL_OF_SUPPLIER()
+    ) {
+      return "BAD CONTROL MODE (ręczne sterowanie zasilaczem)!";
     }
     try {
       res = await suppliers[supp_id].turn_on();
@@ -238,9 +256,16 @@ app.whenReady().then(() => {
   ipcMain.handle("dialog:turn_off", async (event, supp_id) => {
     let res = "";
     if (suppliers[supp_id].control_mode !== PowerSupply.MANUAL()) {
-      return "BAD CONTROL MODE!";
+      return "BAD CONTROL MODE (sterowanie ze sterowni)!";
+    }
+    if (
+      suppliers[supp_id].control_of_supplier ===
+      PowerSupply.MANUAL_CONTROL_OF_SUPPLIER()
+    ) {
+      return "BAD CONTROL MODE (ręczne sterowanie zasilaczem)!";
     }
     try {
+      mainWindow.webContents.send("nowy_zadany_prad", supp_id, "000.0");
       res = await suppliers[supp_id].initiate_turn_off();
       if (res === "") mainWindow.webContents.send("new-error", supp_id, "");
     } catch (err) {
@@ -307,6 +332,11 @@ app.whenReady().then(() => {
         }
         let str_voltage = sprintf("%05.1f", res.voltage);
         mainWindow.webContents.send("new-voltage", i, str_voltage);
+        mainWindow.webContents.send(
+          "new_control_of_supplier",
+          i,
+          res.control_type
+        );
         if (res.errors != 0) {
           mainWindow.webContents.send("new-error", i, "splr_err");
         } else {

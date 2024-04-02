@@ -649,6 +649,34 @@ var PoleNatezenia = (function () {
     });
 
     obszar_na_natezenie.addEventListener("click", inicjuj_zmiany);
+
+    window.electronAPI.get_nowy_zadany_prad((i, nowe_cyfry) => {
+      if (panel_id == i) {
+        var tablica = [
+          nowe_cyfry[0],
+          nowe_cyfry[1],
+          nowe_cyfry[2],
+          nowe_cyfry[4],
+        ];
+        var wiodace_zera = true;
+
+        for (let i = 0; i < tablica.length; i++) {
+          var cyfra_teraz = tablica[i];
+
+          if (wiodace_zera == true && cyfra_teraz == 0 && i < 2) {
+            cyfra_teraz = " ";
+          } else {
+            wiodace_zera = false;
+          }
+
+          if (i == 2) {
+            cyfra_teraz = cyfra_teraz + ".";
+          }
+
+          cyfry_natezenia[i].setAttribute("wartosc", cyfra_teraz);
+        }
+      }
+    });
   }
 
   return function (div_natezenia, panel_id) {
@@ -837,6 +865,25 @@ var PolePolaryzacji = (function () {
 
   return function (obszar_na_polaryzacje, panel_id) {
     main(obszar_na_polaryzacje, panel_id);
+  };
+})();
+
+/****************************************
+ * Obsługa trybu sterowania zasilaczem. *
+ ****************************************/
+var PoleTrybu = (function () {
+  function main(obszar_na_on_off, i) {
+    var wlacznik = obszar_na_on_off.querySelector("input");
+
+    window.electronAPI.get_control_of_supplier((panel_id, state) => {
+      if (panel_id == i) {
+        wlacznik.checked = state;
+      }
+    });
+  }
+
+  return function (obszar_na_on_off, panel_id) {
+    main(obszar_na_on_off, panel_id);
   };
 })();
 
@@ -1146,6 +1193,28 @@ window.addEventListener("load", async () => {
 
     panel.appendChild(obszarBledy);
 
+    // TRYB STEROWANIA
+    var obszarSterowania = document.createElement("div");
+    obszarSterowania.classList.add("obszar-na-naglowek-i-cos");
+
+    var obszarSterowaniaObszarNaNaglowek = document.createElement("div");
+    obszarSterowaniaObszarNaNaglowek.classList.add("obszar-na-naglowek");
+
+    var obszarSterowaniaNaglowek = document.createElement("p");
+    obszarSterowaniaNaglowek.classList.add("naglowek");
+    obszarSterowaniaNaglowek.innerText = "MODE";
+
+    obszarSterowaniaObszarNaNaglowek.appendChild(obszarSterowaniaNaglowek);
+
+    var przelacznik = document.createElement("input");
+    przelacznik.setAttribute("type", "checkbox");
+
+    obszarSterowania.appendChild(obszarSterowaniaObszarNaNaglowek);
+    obszarSterowania.appendChild(przelacznik);
+
+    panel.appendChild(obszarSterowania);
+
+    // RESZTA
     obszarPaneli.appendChild(panel);
 
     PoleWlacznika(obszarNaGuzikOnOff, i);
@@ -1153,6 +1222,7 @@ window.addEventListener("load", async () => {
     PoleOdczytuNatezenia(obszarNaNatezenieOdczyt, i);
     PoleNatezenia(document.getElementById("natezenie" + (i + 1)), i);
     PoleBledow(obszarBledy, i);
+    PoleTrybu(obszarSterowania, i);
   }
 
   // MAPKA

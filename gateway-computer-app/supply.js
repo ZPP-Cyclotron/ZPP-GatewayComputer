@@ -20,7 +20,7 @@ class PowerSupply {
     this.voltage = 0;
     this.current_read = 0;
     this.current_set = 0;
-    this.control_type = PowerSupply.MANUAL();
+    this.control_of_supplier = PowerSupply.MANUAL_CONTROL_OF_SUPPLIER();
     this.control_mode = PowerSupply.MANUAL();
     this.on = PowerSupply.TURNED_OFF();
     this.polarity_mutable = polarity_mutable;
@@ -194,12 +194,13 @@ class PowerSupply {
   async set_current(new_val) {
     new_val = parseInt(new_val * 10);
     new_val = new_val / 10;
-    if (this.on === PowerSupply.TURNED_OFF()) {
-      if (DEBUG) {
-        console.log("Supplier is off.");
-      }
-      return "Error setting current: supplier " + this.name + " is off.";
-    }
+    // User should be able to set current to 0 even if the supplier is off!
+    // if (this.on === PowerSupply.TURNED_OFF()) {
+    //   if (DEBUG) {
+    //     console.log("Supplier is off.");
+    //   }
+    //   return "Error setting current: supplier " + this.name + " is off.";
+    // }
     if (new_val < 0 || new_val > this.maxCurrent) {
       if (DEBUG) {
         console.log("Error: bad argument.");
@@ -268,12 +269,13 @@ class PowerSupply {
   }
 
   async set_polarity(new_val) {
-    if (this.on === PowerSupply.TURNED_OFF()) {
-      if (DEBUG) {
-        console.log("Supplier is off.");
-      }
-      return "Error setting polarity: supplier " + this.name + " is off.";
-    }
+    // User is able to change polarity even if the supplier is off!
+    // if (this.on === PowerSupply.TURNED_OFF()) {
+    //   if (DEBUG) {
+    //     console.log("Supplier is off.");
+    //   }
+    //   return "Error setting polarity: supplier " + this.name + " is off.";
+    // }
     if (!this.polarity_mutable) {
       return "Error setting polarity: polarity is not mutable.";
     }
@@ -369,7 +371,7 @@ class PowerSupply {
       let polarity = first_reg & 1;
       first_reg = first_reg >> 1;
       let reset = first_reg & 1;
-      let control_type = first_reg >> 1;
+      let control_of_supplier = first_reg >> 1;
       let second_reg = msg.data[1];
       let voltage_mask = (1 << this.reading_voltage_n_bits) - 1;
       let voltage_scaled = second_reg & voltage_mask;
@@ -385,7 +387,7 @@ class PowerSupply {
         is_on: is_on,
         polarity: polarity,
         reset: reset,
-        control_type: control_type,
+        control_type: control_of_supplier,
         voltage: voltage,
         errors: errors,
       };
@@ -409,7 +411,7 @@ class PowerSupply {
         this.on = ret.is_on;
         this.polarity = ret.polarity;
         // this.reset = ret.reset;
-        this.control_type = ret.control_type;
+        this.control_of_supplier = ret.control_type;
         this.voltage = ret.voltage;
         this.errors = ret.errors;
       } else {
@@ -469,6 +471,13 @@ class PowerSupply {
     return false;
   }
   static REMOTE() {
+    return true;
+  }
+
+  static MANUAL_CONTROL_OF_SUPPLIER() {
+    return false;
+  }
+  static APPLICATION_CONTROL_OF_SUPPLIER() {
     return true;
   }
 

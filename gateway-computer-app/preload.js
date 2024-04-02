@@ -19,18 +19,41 @@ contextBridge.exposeInMainWorld("electronAPI", {
   //   ipcRenderer.on('new-status', (event, ...args) => {callback(...args);});
   // }
   get_current: (callback) => {
-    ipcRenderer.on('new-current', (event, supp_id, new_val) => {callback(supp_id, new_val);});
+    ipcRenderer.on("new-current", (event, supp_id, new_val) => {
+      callback(supp_id, new_val);
+    });
   },
   get_on_off: (callback) => {
-    ipcRenderer.on('new-on-off', (event, supp_id, isOn) => {callback(supp_id, isOn);});
+    ipcRenderer.on("new-on-off", (event, supp_id, isOn) => {
+      callback(supp_id, isOn);
+    });
   },
   get_polarity: (callback) => {
-    ipcRenderer.on('new-polarity', (event, supp_id, isPositive) => {callback(supp_id, isPositive);});
+    ipcRenderer.on("new-polarity", (event, supp_id, isPositive) => {
+      callback(supp_id, isPositive);
+    });
   },
   get_error: (callback) => {
-    ipcRenderer.on('new-error', (event, supp_id, message) => {callback(supp_id, message);});
+    ipcRenderer.on("new-error", (event, supp_id, message) => {
+      callback(supp_id, message);
+    });
   },
   get_voltage: (callback) => {
-    ipcRenderer.on('new-voltage', (event, supp_id, new_val) => {callback(supp_id, new_val);});
+    ipcRenderer.on("new-voltage", (event, supp_id, new_val) => {
+      callback(supp_id, new_val);
+    });
+  },
+  get_control_of_supplier: (callback) => {
+    ipcRenderer.on(
+      "new_control_of_supplier",
+      (event, supp_id, isApplication) => {
+        callback(supp_id, isApplication);
+      }
+    );
+  },
+  get_nowy_zadany_prad: (callback) => {
+    ipcRenderer.on("nowy_zadany_prad", (event, supp_id, new_val) => {
+      callback(supp_id, new_val);
+    });
   },
 });
