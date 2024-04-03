@@ -253,6 +253,70 @@ body {
   color: #EC4135;
 }
 
+/* Diody. */
+.led-box {
+  height: 30px;
+  width: 25%;
+  margin: 10px 0;
+}
+
+.led {
+  margin: 0 auto;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+}
+
+.ledon1 {
+  background-color: #60B846;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #808002 0 0 9px, #60B846 0 0 12px;
+}
+
+.ledoff1 {
+  background-color: #203E1B;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #808002 0 0px 9px;
+}
+
+.ledon2 {
+  background-color: #FFD800;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #808002 0 0 9px, #FFD800 0 0 12px;
+}
+
+.ledoff2 {
+  background-color: #5D3E19;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #808002 0 0px 9px;
+}
+
+.ledon3 {
+  background-color: #BD93F9;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #808002 0 0 9px, #BD93F9 0 0 12px;
+}
+
+.ledoff3 {
+  background-color: #4D2389;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #808002 0 0px 9px;
+}
+
+.ledon4 {
+  background-color: #8BE9FD;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #808002 0 0 9px, #8BE9FD 0 0 12px;
+}
+
+.ledoff4 {
+  background-color: #324274;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #808002 0 0px 9px;
+}
+
+.ledon5 {
+  background-color: #EC4135;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #808002 0 0 9px, #EC4135 0 0 12px;
+}
+
+.ledoff5 {
+  background-color: #590804;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #808002 0 0px 9px;
+}
+
 /* Przełącznik. */
 .toggle {
   display: flex;

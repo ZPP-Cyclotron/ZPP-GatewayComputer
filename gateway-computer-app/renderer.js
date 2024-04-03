@@ -871,18 +871,22 @@ var PolePolaryzacji = (function () {
  * Obsługa trybu sterowania zasilaczem. *
  ****************************************/
 var PoleTrybu = (function () {
-  function main(obszar_na_on_off, i) {
-    var wlacznik = obszar_na_on_off.querySelector("input");
-
+  function main(dioda, i) {
     window.electronAPI.get_control_of_supplier((panel_id, state) => {
       if (panel_id == i) {
-        wlacznik.checked = state;
+        if (state) {
+          dioda.classList.remove("ledoff" + (i + 1));
+          dioda.classList.add("ledon" + (i + 1));
+        } else {
+          dioda.classList.remove("ledon" + (i + 1));
+          dioda.classList.add("ledoff" + (i + 1));
+        }
       }
     });
   }
 
-  return function (obszar_na_on_off, panel_id) {
-    main(obszar_na_on_off, panel_id);
+  return function (dioda, panel_id) {
+    main(dioda, panel_id);
   };
 })();
 
@@ -1180,10 +1184,16 @@ window.addEventListener("load", async () => {
     var obszarNaSterowanie = document.createElement("div");
     obszarNaSterowanie.classList.add("obszar-na-guzik-on-off");
 
-    var trybSterowania = document.createElement("input");
-    trybSterowania.setAttribute("type", "checkbox");
+    var ledBox = document.createElement("div");
+    ledBox.classList.add("led-box");
 
-    obszarNaSterowanie.appendChild(trybSterowania);
+    var ledDiode = document.createElement("div");
+    ledDiode.classList.add("led");
+    ledDiode.classList.add("ledoff" + (i + 1));
+
+    ledBox.appendChild(ledDiode);
+
+    obszarNaSterowanie.appendChild(ledBox);
 
     obszarSterowania.appendChild(obszarSterowaniaObszarNaNaglowek);
     obszarSterowania.appendChild(obszarNaSterowanie);
@@ -1225,7 +1235,7 @@ window.addEventListener("load", async () => {
     PoleOdczytuNatezenia(obszarNaNatezenieOdczyt, i);
     PoleNatezenia(document.getElementById("natezenie" + (i + 1)), i);
     PoleBledow(obszarBledy, i);
-    PoleTrybu(obszarSterowania, i);
+    PoleTrybu(ledDiode, i);
   }
 
   // MAPKA
