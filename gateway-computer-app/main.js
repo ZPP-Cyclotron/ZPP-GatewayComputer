@@ -154,9 +154,9 @@ function obsluzOtworzeniePlikuKonfiguracyjnego() {
 
 const createWindow = () => {
   const mainWindow = new BrowserWindow({
-    fullscreen: DEBUG ? false : true,
+    fullscreen: true,
     frame: true,
-    width: 1500,
+    // width: 1500,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
     },
