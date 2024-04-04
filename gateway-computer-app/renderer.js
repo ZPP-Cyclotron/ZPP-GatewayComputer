@@ -890,6 +890,29 @@ var PoleTrybu = (function () {
   };
 })();
 
+/********************************
+ * Odczyt aktywności zasilacza. *
+ ********************************/
+var PoleOnOffOdczyt = (function () {
+  function main(dioda, i) {
+    window.electronAPI.get_on_off_odczytany((panel_id, state) => {
+      if (panel_id == i) {
+        if (state) {
+          dioda.classList.remove("ledoff" + (i + 1));
+          dioda.classList.add("ledon" + (i + 1));
+        } else {
+          dioda.classList.remove("ledon" + (i + 1));
+          dioda.classList.add("ledoff" + (i + 1));
+        }
+      }
+    });
+  }
+
+  return function (dioda, panel_id) {
+    main(dioda, panel_id);
+  };
+})();
+
 function dopiszCyfry(obiekt, wartosci) {
   wartosci.forEach((wartosc) => {
     var cyfra = document.createElement("moja-cyfra");
@@ -938,6 +961,39 @@ window.addEventListener("load", async () => {
     obszarNazwa.appendChild(obszarNaNazwe);
 
     panel.appendChild(obszarNazwa);
+
+    // ON/OFF (ODCZYT)
+
+    var obszarOnOffOdczyt = document.createElement("div");
+    obszarOnOffOdczyt.classList.add("obszar-na-naglowek-i-cos");
+
+    var obszarOnOffOdczytObszarNaNaglowek = document.createElement("div");
+    obszarOnOffOdczytObszarNaNaglowek.classList.add("obszar-na-naglowek");
+
+    var obszarOnOffOdczytNaglowek = document.createElement("p");
+    obszarOnOffOdczytNaglowek.classList.add("naglowek");
+    obszarOnOffOdczytNaglowek.innerText = "ACTIVE";
+
+    obszarOnOffOdczytObszarNaNaglowek.appendChild(obszarOnOffOdczytNaglowek);
+
+    var obszarNaOnOffOdczyt = document.createElement("div");
+    obszarNaOnOffOdczyt.classList.add("obszar-na-guzik-on-off");
+
+    var ledBoxStatus = document.createElement("div");
+    ledBoxStatus.classList.add("led-box");
+
+    var ledDiodeStatus = document.createElement("div");
+    ledDiodeStatus.classList.add("led");
+    ledDiodeStatus.classList.add("ledoff" + (i + 1));
+
+    ledBoxStatus.appendChild(ledDiodeStatus);
+
+    obszarNaOnOffOdczyt.appendChild(ledBoxStatus);
+
+    obszarOnOffOdczyt.appendChild(obszarOnOffOdczytObszarNaNaglowek);
+    obszarOnOffOdczyt.appendChild(obszarNaOnOffOdczyt);
+
+    panel.appendChild(obszarOnOffOdczyt);
 
     // ON/OFF
     var obszarOnOff = document.createElement("div");
@@ -1231,6 +1287,7 @@ window.addEventListener("load", async () => {
     obszarPaneli.appendChild(panel);
 
     PoleWlacznika(obszarNaGuzikOnOff, i);
+    PoleOnOffOdczyt(ledDiodeStatus, i);
     PoleNapiecia(obszarNaNapiecie, i);
     PoleOdczytuNatezenia(obszarNaNatezenieOdczyt, i);
     PoleNatezenia(document.getElementById("natezenie" + (i + 1)), i);

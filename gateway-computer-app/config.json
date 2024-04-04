@@ -25,7 +25,7 @@
      "y": "-885.22424"},
 
      {"no": "7",
-     "port": "/dev/pts/3",
+     "port": "/dev/pts/5",
      "polarity": "mutable",
      "maxCurrent": "200",
      "baudRate": 9600,
@@ -33,6 +33,6 @@
      "y": "-804.31189"}
 ],
 
-"refreshInterval": 2000,
+"refreshInterval": 5000,
 "modbusTimeout": 500
 }

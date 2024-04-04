@@ -265,7 +265,7 @@ app.whenReady().then(() => {
     ) {
       return "BAD CONTROL MODE (ręczne sterowanie zasilaczem)!";
     }
-    suppliers[supp_id].on = PowerSupply.TURNING_OFF();
+    suppliers[supp_id].on_read_from_supplier = PowerSupply.TURNING_OFF();
     console.log("turning off set");
     try {
       mainWindow.webContents.send("nowy_zadany_prad", supp_id, "000.0");
@@ -336,7 +336,7 @@ app.whenReady().then(() => {
     ) {
       return "BAD CONTROL MODE (ręczne sterowanie zasilaczem)!";
     }
-    suppliers[supp_id].on = PowerSupply.TURNED_ON();
+    suppliers[supp_id].on_read_from_supplier = PowerSupply.TURNED_ON();
     return "";
   });
 
@@ -357,7 +357,8 @@ app.whenReady().then(() => {
       if (DEBUG) {
         // console.log(res);
         console.log("zasilacz: " + i);
-        console.log(suppliers[i]);
+        // console.log(suppliers[i]);
+        console.log(res);
       }
 
       // check if res is a json object
@@ -365,19 +366,35 @@ app.whenReady().then(() => {
         if (DEBUG) {
           console.log("GOT INFO FROM SUPPLIER: " + i);
         }
-        let str_current = sprintf("%05.1f", res.current);
+        let str_current = sprintf("%05.1f", res.current_read_from_supplier);
         mainWindow.webContents.send("new-current", i, str_current);
-        let isOn = res.is_on;
-        // cast isOn to boolean
-        isOn = isOn === 1;
-        if (
-          // TODO OGARNAC WSPOLBIEZNE (POLARITY TEZ)
-          suppliers[i].on !== PowerSupply.TURNING_OFF() &&
-          suppliers[i].on !== PowerSupply.TURNING_ON()
-        ) {
-          console.log("Setting on-off for supplier: " + i + " to: " + isOn);
-          mainWindow.webContents.send("new-on-off", i, isOn);
-        }
+        let str_current_sent_to_pico = sprintf(
+          "%05.1f",
+          res.current_sent_to_pico
+        );
+        mainWindow.webContents.send(
+          "nowy_zadany_prad",
+          i,
+          str_current_sent_to_pico
+        );
+        // let isOn = res.is_on;
+        // // cast isOn to boolean
+        // isOn = isOn === 1;
+        // if (
+        //   // TODO OGARNAC WSPOLBIEZNE (POLARITY TEZ)
+        //   suppliers[i].on_read_from_supplier !== PowerSupply.TURNING_OFF() &&
+        //   suppliers[i].on_read_from_supplier !== PowerSupply.TURNING_ON()
+        // ) {
+        //   console.log("Setting on-off for supplier: " + i + " to: " + isOn);
+        //   mainWindow.webContents.send("new-on-off", i, isOn);
+        // }
+
+        mainWindow.webContents.send("new-on-off", i, res.is_on_sent_to_pico);
+        mainWindow.webContents.send(
+          "on_off_odczytany",
+          i,
+          res.is_on_read_from_supplier
+        );
         if (suppliers[i].polarity_mutable) {
           mainWindow.webContents.send("new-polarity", i, res.polarity);
         }

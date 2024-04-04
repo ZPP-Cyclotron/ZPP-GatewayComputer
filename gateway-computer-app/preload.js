@@ -86,4 +86,10 @@ contextBridge.exposeInMainWorld("electronAPI", {
       callback(supp_id);
     });
   },
+
+  get_on_off_odczytany: (callback) => {
+    ipcRenderer.on("on_off_odczytany", (event, supp_id, isOn) => {
+      callback(supp_id, isOn);
+    });
+  },
 });

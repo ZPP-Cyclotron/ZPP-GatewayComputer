@@ -20,9 +20,14 @@ class PowerSupply {
     this.voltage = 0;
     this.current_read = 0;
     this.current_set = 0;
+    this.current_sent_to_pico_n_bits = 16;
     this.control_of_supplier = PowerSupply.MANUAL_CONTROL_OF_SUPPLIER();
     this.control_mode = PowerSupply.MANUAL();
-    this.on = PowerSupply.TURNED_OFF();
+    // to jest stan zasilacza, tylko do odczytu w aplikacji
+    this.on_read_from_supplier = PowerSupply.TURNED_OFF();
+
+    // to jest polecenie wyslane do pico
+    this.on_sent_to_pico;
     this.polarity_mutable = polarity_mutable;
     this.maxCurrent = maxCurrent;
     this.read_timeout = modbusTimeout;
@@ -37,7 +42,7 @@ class PowerSupply {
     this.reading_current_n_bits = 12;
     this.reading_voltage_n_bits = 12;
     this.maxVoltage = 100;
-    this.n_error_bits = 4;
+    this.n_error_bits = 3;
     this.N_READING_REGISTERS = 3;
   }
 
@@ -90,7 +95,7 @@ class PowerSupply {
   }
 
   async turn_on() {
-    if (this.on === PowerSupply.TURNED_ON()) {
+    if (this.on_read_from_supplier === PowerSupply.TURNED_ON()) {
       if (DEBUG) {
         console.log("Supplier " + this.name + " is already on.");
       }
@@ -111,13 +116,13 @@ class PowerSupply {
   }
 
   async initiate_turn_off() {
-    if (this.on === PowerSupply.TURNED_OFF()) {
+    if (this.on_read_from_supplier === PowerSupply.TURNED_OFF()) {
       if (DEBUG) {
         console.log("Supplier " + this.name + " is already off.");
       }
       return "Supplier " + this.name + " is already off.";
     }
-    // if (this.on === PowerSupply.TURNING_OFF()) {
+    // if (this.on_read_from_supplier === PowerSupply.TURNING_OFF()) {
     //   if (DEBUG) {
     //     console.log(
     //       "Supplier " +
@@ -133,7 +138,7 @@ class PowerSupply {
     // }
 
     try {
-      this.on = PowerSupply.TURNING_OFF();
+      this.on_read_from_supplier = PowerSupply.TURNING_OFF();
       await this.set_current(0);
 
       // wait 1s for the current to drop to 0
@@ -146,14 +151,14 @@ class PowerSupply {
         if (DEBUG) {
           console.log("[TURNING OFF] GOT INFO FROM SUPPLIER: " + i);
         }
-        new_current = res.current;
+        new_current = res.current_read_from_supplier;
       }
       if (new_current === 0) {
         await this.turn_off();
-        this.on = PowerSupply.TURNED_OFF();
+        this.on_read_from_supplier = PowerSupply.TURNED_OFF();
         return "";
       } else {
-        // this.on = PowerSupply.TURNED_ON();
+        // this.on_read_from_supplier = PowerSupply.TURNED_ON();
         return "turn_off_failed";
       }
     } catch (errors) {
@@ -162,13 +167,13 @@ class PowerSupply {
   }
 
   async turn_off() {
-    if (this.on === PowerSupply.TURNED_OFF()) {
+    if (this.on_read_from_supplier === PowerSupply.TURNED_OFF()) {
       if (DEBUG) {
         console.log("Supplier " + this.name + " is already off.");
       }
       return "Supplier " + this.name + " is already off.";
     }
-    // this.on = PowerSupply.TURNED_OFF();
+    // this.on_read_from_supplier = PowerSupply.TURNED_OFF();
     try {
       await this.send_frame_to_supplier([false, false, false]);
       if (DEBUG) {
@@ -187,7 +192,7 @@ class PowerSupply {
     new_val = parseInt(new_val * 10);
     new_val = new_val / 10;
     // User should be able to set current to 0 even if the supplier is off!
-    // if (this.on === PowerSupply.TURNED_OFF()) {
+    // if (this.on_read_from_supplier === PowerSupply.TURNED_OFF()) {
     //   if (DEBUG) {
     //     console.log("Supplier is off.");
     //   }
@@ -262,7 +267,7 @@ class PowerSupply {
 
   async set_polarity(new_val) {
     // User is able to change polarity even if the supplier is off!
-    // if (this.on === PowerSupply.TURNED_OFF()) {
+    // if (this.on_read_from_supplier === PowerSupply.TURNED_OFF()) {
     //   if (DEBUG) {
     //     console.log("Supplier is off.");
     //   }
@@ -353,12 +358,14 @@ class PowerSupply {
       if (DEBUG) {
         // console.log("read current_scaled:" + current_scaled);
       }
-      let current = (current_scaled * this.maxCurrent) / current_mask;
+      let current_received_from_supplier =
+        (current_scaled * this.maxCurrent) / current_mask;
       if (DEBUG) {
         // console.log("read current:" + current);
       }
       first_reg = first_reg >> this.reading_current_n_bits;
-      let is_on = first_reg & 1;
+      // Value read from supplier:
+      let is_on_read_from_supplier = first_reg & 1;
       first_reg = first_reg >> 1;
       let polarity = first_reg & 1;
       first_reg = first_reg >> 1;
@@ -367,6 +374,20 @@ class PowerSupply {
       let second_reg = msg.data[1];
       let voltage_mask = (1 << this.reading_voltage_n_bits) - 1;
       let voltage_scaled = second_reg & voltage_mask;
+      second_reg = second_reg >> this.reading_voltage_n_bits;
+      let errors_mask = (1 << this.n_error_bits) - 1;
+      let errors_read_from_supplier = second_reg & errors_mask;
+      second_reg = second_reg >> this.n_error_bits;
+      let is_on_sent_to_pico = second_reg & 1;
+
+      let third_reg = msg.data[2];
+      let current_sent_to_pico_mask =
+        (1 << this.current_sent_to_pico_n_bits) - 1;
+      let current_sent_to_pico_scaled = third_reg & current_sent_to_pico_mask;
+      let current_sent_to_pico =
+        (current_sent_to_pico_scaled * this.maxCurrent) /
+        current_sent_to_pico_mask;
+
       if (DEBUG) {
         // console.log("read voltage_scaled:" + voltage_scaled);
       }
@@ -374,14 +395,17 @@ class PowerSupply {
       if (DEBUG) {
         // console.log("read voltage:" + voltage);
       }
+
       ret = {
-        current: current,
-        is_on: is_on,
+        current_read_from_supplier: current_received_from_supplier,
+        current_sent_to_pico: current_sent_to_pico,
+        is_on_read_from_supplier: is_on_read_from_supplier,
+        is_on_sent_to_pico: is_on_sent_to_pico,
         polarity: polarity,
         reset: reset,
         control_type: control_of_supplier,
         voltage: voltage,
-        errors: errors,
+        errors: errors_read_from_supplier,
       };
     } catch (err) {
       if (DEBUG) {
@@ -400,8 +424,8 @@ class PowerSupply {
 
       if (ret != null) {
         this.current_read = ret.current;
-        if (this.on !== PowerSupply.TURNING_OFF()) {
-          this.on = ret.is_on;
+        if (this.on_read_from_supplier !== PowerSupply.TURNING_OFF()) {
+          this.on_read_from_supplier = ret.is_on;
         }
         this.polarity = ret.polarity;
         // this.reset = ret.reset;
