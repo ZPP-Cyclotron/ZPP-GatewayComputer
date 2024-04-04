@@ -203,9 +203,9 @@ class PowerSupply {
         console.log("Error: bad argument.");
       }
       return (
-        "Error setting current: bad argument\n new_val = " +
+        "Error: bad argument " +
         new_val +
-        "A. Minimal value is 0A, maximal value is " +
+        "A when setting current. Minimal value is 0A, maximal value is " +
         this.maxCurrent +
         "A."
       );
@@ -252,7 +252,7 @@ class PowerSupply {
     try {
       await this.send_frame_to_supplier(message_to_supplier);
       if (DEBUG) {
-        console.log("Current set to: " + new_val + "A");
+        console.log("Current set to " + new_val + "A.");
       }
       this.current_set = new_val;
       return "";
@@ -274,14 +274,14 @@ class PowerSupply {
     //   return "Error setting polarity: supplier " + this.name + " is off.";
     // }
     if (!this.polarity_mutable) {
-      return "Error setting polarity: polarity is not mutable.";
+      return "Error: polarity is not mutable.";
     }
     if (
       new_val != PowerSupply.POLARITY_POSITIVE() &&
       new_val != PowerSupply.POLARITY_NEGATIVE()
     ) {
       return (
-        "Error setting polarity: bad argument. Got " +
+        "Error: bad argument when setting polarity. Got " +
         new_val +
         ". Expected 0 or 1"
       );
@@ -303,7 +303,7 @@ class PowerSupply {
         await this.send_frame_to_supplier([true, false, new_val]);
         return "";
       } else {
-        return "failed to set current to 0. failed polarity change";
+        return "We hold our time too precious to be spent with such brabbler.";
       }
 
       // if (DEBUG) {

@@ -48,7 +48,7 @@ function setup_suppliers_and_clients(config) {
         config.modbusTimeout
       );
     } else {
-      console.log("Error: unknown maxCurrent value.");
+      console.log("Error: unknown maximum value of current.");
     }
     suppliers.push(splr);
     i++;
@@ -143,11 +143,11 @@ function obsluzOtworzeniePlikuKonfiguracyjnego() {
   } catch (err) {
     if (err.code === "ENOENT") {
       console.log("Config file" + CONFIG_FILE_PATH + "not found!");
-      return "Config file " + CONFIG_FILE_PATH + " not found!";
+      return "Error: config file " + CONFIG_FILE_PATH + " not found!";
     }
     if (err instanceof SyntaxError) {
       console.log("Config file is not a valid JSON file!");
-      return "Config file is not a valid JSON file!";
+      return "Error: config file is not a valid JSON file! Pernicous blood-sucker of sleeping men!";
     }
   }
 }
@@ -182,13 +182,13 @@ app.whenReady().then(() => {
     let res = "";
     console.log(suppliers[supp_id].control_mode);
     if (suppliers[supp_id].control_mode !== PowerSupply.MANUAL()) {
-      return "BAD CONTROL MODE (sterowanie ze sterowni)!";
+      return "Error: bad control mode (change to local). Bloody bawdy villain! Remorseless, treacherous, lecherous, kindless villain!";
     }
     if (
       suppliers[supp_id].control_of_supplier ===
       PowerSupply.MANUAL_CONTROL_OF_SUPPLIER()
     ) {
-      return "BAD CONTROL MODE (ręczne sterowanie zasilaczem)!";
+      return "Error: bad control mode (change to remote on power supply control panel).";
     }
     try {
       res = await suppliers[supp_id].set_polarity(new_val);
@@ -199,7 +199,7 @@ app.whenReady().then(() => {
         console.log(err);
       }
       mainWindow.webContents.send("new-error", supp_id, err);
-      res = "failed. Check the box on the right for more info.";
+      res = "Error: check the error code column for more info.";
     } finally {
       return res;
     }
@@ -207,13 +207,13 @@ app.whenReady().then(() => {
   ipcMain.handle("dialog:set_current", async (event, supp_id, new_val) => {
     let res = "";
     if (suppliers[supp_id].control_mode !== PowerSupply.MANUAL()) {
-      return "BAD CONTROL MODE (sterowanie ze sterowni)!";
+      return "Error: bad control mode (change to local).";
     }
     if (
       suppliers[supp_id].control_of_supplier ===
       PowerSupply.MANUAL_CONTROL_OF_SUPPLIER()
     ) {
-      return "BAD CONTROL MODE (ręczne sterowanie zasilaczem)!";
+      return "Error: bad control mode (change to remote on power supply control panel).";
     }
     try {
       res = await suppliers[supp_id].set_current(new_val);
@@ -231,13 +231,13 @@ app.whenReady().then(() => {
   ipcMain.handle("dialog:turn_on", async (event, supp_id) => {
     let res = "";
     if (suppliers[supp_id].control_mode !== PowerSupply.MANUAL()) {
-      return "BAD CONTROL MODE (sterowanie ze sterowni)!";
+      return "Error: bad control mode (change to local).";
     }
     if (
       suppliers[supp_id].control_of_supplier ===
       PowerSupply.MANUAL_CONTROL_OF_SUPPLIER()
     ) {
-      return "BAD CONTROL MODE (ręczne sterowanie zasilaczem)!";
+      return "Error: bad control mode (change to remote on power supply control panel).";
     }
     try {
       res = await suppliers[supp_id].turn_on();
@@ -248,7 +248,7 @@ app.whenReady().then(() => {
         console.log(err);
       }
       mainWindow.webContents.send("new-error", supp_id, err);
-      res = "failed. Check the box on the right for more info.";
+      res = "Error: check the error code column for more info.";
     } finally {
       return res;
     }
@@ -257,13 +257,13 @@ app.whenReady().then(() => {
     let res = "";
     console.log("user presses turn off");
     if (suppliers[supp_id].control_mode !== PowerSupply.MANUAL()) {
-      return "BAD CONTROL MODE (sterowanie ze sterowni)!";
+      return "Error: bad control mode (change to local).";
     }
     if (
       suppliers[supp_id].control_of_supplier ===
       PowerSupply.MANUAL_CONTROL_OF_SUPPLIER()
     ) {
-      return "BAD CONTROL MODE (ręczne sterowanie zasilaczem)!";
+      return "Error: bad control mode (change to remote on power supply control panel).";
     }
     suppliers[supp_id].on_read_from_supplier = PowerSupply.TURNING_OFF();
     console.log("turning off set");
@@ -282,7 +282,7 @@ app.whenReady().then(() => {
         console.log(err);
       }
       mainWindow.webContents.send("new-error", supp_id, err);
-      res = "failed. Check the box on the right for more info.";
+      res = "Error: check the error code column for more info.";
       return res;
     }
     // finally {
@@ -304,13 +304,13 @@ app.whenReady().then(() => {
   ipcMain.handle("dialog:turn_off_fail_continue", async (event, supp_id) => {
     let res = "";
     if (suppliers[supp_id].control_mode !== PowerSupply.MANUAL()) {
-      return "BAD CONTROL MODE (sterowanie ze sterowni)!";
+      return "Error: bad control mode (change to local).";
     }
     if (
       suppliers[supp_id].control_of_supplier ===
       PowerSupply.MANUAL_CONTROL_OF_SUPPLIER()
     ) {
-      return "BAD CONTROL MODE (ręczne sterowanie zasilaczem)!";
+      return "Error: bad control mode (change to remote on power supply control panel).";
     }
     try {
       res = await suppliers[supp_id].turn_off();
@@ -321,20 +321,20 @@ app.whenReady().then(() => {
         console.log(err);
       }
       mainWindow.webContents.send("new-error", supp_id, err);
-      res = "failed. Check the box on the right for more info.";
+      res = "Error: check the error code column for more info.";
     }
     return res;
   });
   ipcMain.handle("dialog:turn_off_fail_stop", async (event, supp_id) => {
     let res = "";
     if (suppliers[supp_id].control_mode !== PowerSupply.MANUAL()) {
-      return "BAD CONTROL MODE (sterowanie ze sterowni)!";
+      return "Error: bad control mode (change to local).";
     }
     if (
       suppliers[supp_id].control_of_supplier ===
       PowerSupply.MANUAL_CONTROL_OF_SUPPLIER()
     ) {
-      return "BAD CONTROL MODE (ręczne sterowanie zasilaczem)!";
+      return "Error: bad control mode (change to remote on power supply control panel).";
     }
     suppliers[supp_id].on_read_from_supplier = PowerSupply.TURNED_ON();
     return "";
