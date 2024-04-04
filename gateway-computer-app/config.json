@@ -1,9 +1,9 @@
 {
 "suppliers": [
     {"no": "2",
-    "port": "tty333",
-     "polarity": "mutable",
-     "maxCurrent": "100",
+    "port": "/dev/pts/5",
+     "polarity": "const",
+     "maxCurrent": "200",
      "baudRate": 9600,
      "x": "-2403.3091",
      "y": "-705.22424"},
@@ -11,7 +11,7 @@
     {"no": "3",
      "port": "tty77",
      "polarity": "mutable",
-     "maxCurrent": "200",
+     "maxCurrent": "100",
      "baudRate": 9600,
      "x": "-2314.1479",
      "y": "-881.99066"},
@@ -25,9 +25,9 @@
      "y": "-885.22424"},
 
      {"no": "7",
-     "port": "/dev/pts/5",
+     "port": "tty333",
      "polarity": "mutable",
-     "maxCurrent": "200",
+     "maxCurrent": "100",
      "baudRate": 9600,
      "x": "-2083.7981",
      "y": "-804.31189"}
