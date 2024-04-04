@@ -44,6 +44,7 @@ class PowerSupply {
     this.maxVoltage = 100;
     this.n_error_bits = 3;
     this.N_READING_REGISTERS = 3;
+    this.wait_for_current_to_drop_timeout = 3000;
   }
 
   async get_connected_client() {
@@ -142,7 +143,9 @@ class PowerSupply {
       await this.set_current(0);
 
       // wait 1s for the current to drop to 0
-      await new Promise((resolve) => setTimeout(resolve, 3000));
+      await new Promise((resolve) =>
+        setTimeout(resolve, this.wait_for_current_to_drop_timeout)
+      );
       let res = await this.read_status();
       // check if new_status is a json object
       let i = this.idx;
@@ -288,7 +291,9 @@ class PowerSupply {
     }
     try {
       await this.set_current(0);
-      await new Promise((resolve) => setTimeout(resolve, 3000));
+      await new Promise((resolve) =>
+        setTimeout(resolve, this.wait_for_current_to_drop_timeout)
+      );
       let res = await this.read_status();
       // check if new_status is a json object
       let i = this.idx;
