@@ -199,7 +199,7 @@ app.whenReady().then(() => {
         console.log(err);
       }
       mainWindow.webContents.send("new-error", supp_id, err);
-      res = "Error: check the error code column for more info.";
+      res = "Error: check the error code column for more info: " + err;
     } finally {
       return res;
     }
@@ -224,6 +224,7 @@ app.whenReady().then(() => {
         console.log(err);
       }
       mainWindow.webContents.send("new-error", supp_id, err);
+      res = "Error: check the error code column for more info: " + err;
     } finally {
       return res;
     }
@@ -248,7 +249,7 @@ app.whenReady().then(() => {
         console.log(err);
       }
       mainWindow.webContents.send("new-error", supp_id, err);
-      res = "Error: check the error code column for more info.";
+      res = "Error: check the error code column for more info: " + err;
     } finally {
       return res;
     }
@@ -271,18 +272,21 @@ app.whenReady().then(() => {
       mainWindow.webContents.send("nowy_zadany_prad", supp_id, "000.0");
       res = await suppliers[supp_id].initiate_turn_off();
 
-      if (res === "") mainWindow.webContents.send("new-error", supp_id, "");
+      if (res === "") {
+        mainWindow.webContents.send("new-error", supp_id, "");
+      }
       if (res === "turn_off_failed") {
         mainWindow.webContents.send("turn_off_failed", supp_id);
-        return "";
+        res = "";
       }
+      return res;
     } catch (err) {
       if (DEBUG) {
         console.log("sending new-error:");
         console.log(err);
       }
       mainWindow.webContents.send("new-error", supp_id, err);
-      res = "Error: check the error code column for more info.";
+      res = "Error: check the error code column for more info: " + err;
       return res;
     }
     // finally {
@@ -321,7 +325,7 @@ app.whenReady().then(() => {
         console.log(err);
       }
       mainWindow.webContents.send("new-error", supp_id, err);
-      res = "Error: check the error code column for more info.";
+      res = "Error: check the error code column for more info: " + err;
     }
     return res;
   });

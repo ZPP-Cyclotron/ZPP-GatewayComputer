@@ -438,6 +438,7 @@ class PowerSupply {
         this.voltage = ret.voltage;
         this.errors = ret.errors;
       } else {
+        console.log("ret is null, errors: " + errors);
         ret = errors;
       }
 
