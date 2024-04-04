@@ -38,6 +38,7 @@ class PowerSupply {
     this.reading_voltage_n_bits = 12;
     this.maxVoltage = 100;
     this.n_error_bits = 4;
+    this.N_READING_REGISTERS = 3;
   }
 
   async get_connected_client() {
@@ -116,20 +117,20 @@ class PowerSupply {
       }
       return "Supplier " + this.name + " is already off.";
     }
-    if (this.on === PowerSupply.TURNING_OFF()) {
-      if (DEBUG) {
-        console.log(
-          "Supplier " +
-            this.name +
-            " is already turning off.\n Please wait until the next read from supplier happens."
-        );
-      }
-      return (
-        "Supplier " +
-        this.name +
-        " is already turning off.\n Please wait until the next read from supplier happens."
-      );
-    }
+    // if (this.on === PowerSupply.TURNING_OFF()) {
+    //   if (DEBUG) {
+    //     console.log(
+    //       "Supplier " +
+    //         this.name +
+    //         " is already turning off.\n Please wait until the next read from supplier happens."
+    //     );
+    //   }
+    //   return (
+    //     "Supplier " +
+    //     this.name +
+    //     " is already turning off.\n Please wait until the next read from supplier happens."
+    //   );
+    // }
 
     try {
       this.on = PowerSupply.TURNING_OFF();
@@ -152,8 +153,8 @@ class PowerSupply {
         this.on = PowerSupply.TURNED_OFF();
         return "";
       } else {
-        this.on = PowerSupply.TURNED_ON();
-        return "failed_turn_off";
+        // this.on = PowerSupply.TURNED_ON();
+        return "turn_off_failed";
       }
     } catch (errors) {
       throw errors;
@@ -167,16 +168,7 @@ class PowerSupply {
       }
       return "Supplier " + this.name + " is already off.";
     }
-    if (this.on === PowerSupply.TURNING_OFF()) {
-      if (DEBUG) {
-        console.log(
-          "Supplier " + this.name + " is already turning off.\n Please wait."
-        );
-      }
-      return (
-        "Supplier " + this.name + " is already turning off.\n Please wait."
-      );
-    }
+    // this.on = PowerSupply.TURNED_OFF();
     try {
       await this.send_frame_to_supplier([false, false, false]);
       if (DEBUG) {
@@ -214,13 +206,13 @@ class PowerSupply {
       );
     }
     if (DEBUG) {
-      console.log(new_val);
+      console.log("set current to: " + new_val);
     }
     const scale_factor = (1 << this.setting_current_n_bits) - 1;
     let scaled_val = (new_val * scale_factor) / this.maxCurrent;
     scaled_val = Math.floor(scaled_val);
     if (DEBUG) {
-      console.log("scaled_val: " + scaled_val);
+      // console.log("scaled_val: " + scaled_val);
       // console.log(scaled_val);
     }
     var code_array = [true, true];
@@ -233,7 +225,7 @@ class PowerSupply {
     }
     binary_val_array = binary_val_array.reverse();
     if (DEBUG) {
-      console.log("binary_val_array: " + binary_val_array);
+      // console.log("binary_val_array: " + binary_val_array);
       // console.log(binary_val_array);
       // check if binary_val_array is correct:
       let tmp = "";
@@ -241,14 +233,14 @@ class PowerSupply {
         tmp += binary_val_array[i];
       }
       let dec_val = parseInt(tmp, 2);
-      console.log("tmp: " + tmp);
-      console.log("dec_val: " + dec_val);
-      console.log("scaled_val: " + scaled_val);
+      // console.log("tmp: " + tmp);
+      // console.log("dec_val: " + dec_val);
+      // console.log("scaled_val: " + scaled_val);
       assert(dec_val == scaled_val);
     }
     const message_to_supplier = code_array.concat(binary_val_array);
     if (DEBUG) {
-      console.log("message_to_supplier: " + message_to_supplier);
+      // console.log("message_to_supplier: " + message_to_supplier);
       // console.log(message_to_supplier);
     }
 
@@ -351,19 +343,19 @@ class PowerSupply {
       return "bad port open";
     }
     try {
-      let msg = await client.readInputRegisters(0, 2);
+      let msg = await client.readInputRegisters(0, this.N_READING_REGISTERS);
       if (DEBUG) {
-        console.log(msg);
+        // console.log(msg);
       }
       let first_reg = msg.data[0];
       let current_mask = (1 << this.reading_current_n_bits) - 1;
       let current_scaled = first_reg & current_mask;
       if (DEBUG) {
-        console.log("read current_scaled:" + current_scaled);
+        // console.log("read current_scaled:" + current_scaled);
       }
       let current = (current_scaled * this.maxCurrent) / current_mask;
       if (DEBUG) {
-        console.log("read current:" + current);
+        // console.log("read current:" + current);
       }
       first_reg = first_reg >> this.reading_current_n_bits;
       let is_on = first_reg & 1;
@@ -376,11 +368,11 @@ class PowerSupply {
       let voltage_mask = (1 << this.reading_voltage_n_bits) - 1;
       let voltage_scaled = second_reg & voltage_mask;
       if (DEBUG) {
-        console.log("read voltage_scaled:" + voltage_scaled);
+        // console.log("read voltage_scaled:" + voltage_scaled);
       }
       let voltage = (voltage_scaled * this.maxVoltage) / voltage_mask;
       if (DEBUG) {
-        console.log("read voltage:" + voltage);
+        // console.log("read voltage:" + voltage);
       }
       ret = {
         current: current,
@@ -408,7 +400,9 @@ class PowerSupply {
 
       if (ret != null) {
         this.current_read = ret.current;
-        this.on = ret.is_on;
+        if (this.on !== PowerSupply.TURNING_OFF()) {
+          this.on = ret.is_on;
+        }
         this.polarity = ret.polarity;
         // this.reset = ret.reset;
         this.control_of_supplier = ret.control_type;

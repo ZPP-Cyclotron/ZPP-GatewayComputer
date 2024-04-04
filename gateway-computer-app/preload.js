@@ -21,6 +21,12 @@ contextBridge.exposeInMainWorld("electronAPI", {
   turn_off_fail_stop: (supp_id) =>
     ipcRenderer.invoke("dialog:turn_off_fail_stop", supp_id),
 
+  polarity_fail_continue: (supp_id) =>
+    ipcRenderer.invoke("dialog:polarity_fail_continue", supp_id),
+
+  polarity_fail_stop: (supp_id) =>
+    ipcRenderer.invoke("dialog:polarity_fail_stop", supp_id),
+
   // get_status: (callback) => {
   //   ipcRenderer.on('new-status', (event, ...args) => {callback(...args);});
   // }
@@ -71,6 +77,12 @@ contextBridge.exposeInMainWorld("electronAPI", {
   // jeżeli po 3 sekundach prad jest 0, to aplikacja sie nie pyta, tylko wysyła komunikat turn_off do zasilacza
   get_turn_off_failed: (callback) => {
     ipcRenderer.on("turn_off_failed", (event, supp_id) => {
+      callback(supp_id);
+    });
+  },
+
+  get_polarity_failed: (callback) => {
+    ipcRenderer.on("polarity_failed", (event, supp_id) => {
       callback(supp_id);
     });
   },

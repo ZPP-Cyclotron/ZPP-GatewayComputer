@@ -156,7 +156,7 @@ const createWindow = () => {
   const mainWindow = new BrowserWindow({
     fullscreen: DEBUG ? false : true,
     frame: true,
-
+    width: 1500,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
     },
@@ -255,6 +255,7 @@ app.whenReady().then(() => {
   });
   ipcMain.handle("dialog:turn_off", async (event, supp_id) => {
     let res = "";
+    console.log("user presses turn off");
     if (suppliers[supp_id].control_mode !== PowerSupply.MANUAL()) {
       return "BAD CONTROL MODE (sterowanie ze sterowni)!";
     }
@@ -264,10 +265,17 @@ app.whenReady().then(() => {
     ) {
       return "BAD CONTROL MODE (ręczne sterowanie zasilaczem)!";
     }
+    suppliers[supp_id].on = PowerSupply.TURNING_OFF();
+    console.log("turning off set");
     try {
       mainWindow.webContents.send("nowy_zadany_prad", supp_id, "000.0");
       res = await suppliers[supp_id].initiate_turn_off();
+
       if (res === "") mainWindow.webContents.send("new-error", supp_id, "");
+      if (res === "turn_off_failed") {
+        mainWindow.webContents.send("turn_off_failed", supp_id);
+        return "";
+      }
     } catch (err) {
       if (DEBUG) {
         console.log("sending new-error:");
@@ -275,9 +283,11 @@ app.whenReady().then(() => {
       }
       mainWindow.webContents.send("new-error", supp_id, err);
       res = "failed. Check the box on the right for more info.";
-    } finally {
       return res;
     }
+    // finally {
+    //   console.log("finally returning: " + res);
+    // }
   });
   ipcMain.handle("dialog:set_control_mode", async (_, new_val) => {
     if (DEBUG) {
@@ -289,6 +299,44 @@ app.whenReady().then(() => {
     if (DEBUG) {
       console.log("Control mode set to: " + new_val);
     }
+    return "";
+  });
+  ipcMain.handle("dialog:turn_off_fail_continue", async (event, supp_id) => {
+    let res = "";
+    if (suppliers[supp_id].control_mode !== PowerSupply.MANUAL()) {
+      return "BAD CONTROL MODE (sterowanie ze sterowni)!";
+    }
+    if (
+      suppliers[supp_id].control_of_supplier ===
+      PowerSupply.MANUAL_CONTROL_OF_SUPPLIER()
+    ) {
+      return "BAD CONTROL MODE (ręczne sterowanie zasilaczem)!";
+    }
+    try {
+      res = await suppliers[supp_id].turn_off();
+      if (res === "") mainWindow.webContents.send("new-error", supp_id, "");
+    } catch (err) {
+      if (DEBUG) {
+        console.log("sending new-error:");
+        console.log(err);
+      }
+      mainWindow.webContents.send("new-error", supp_id, err);
+      res = "failed. Check the box on the right for more info.";
+    }
+    return res;
+  });
+  ipcMain.handle("dialog:turn_off_fail_stop", async (event, supp_id) => {
+    let res = "";
+    if (suppliers[supp_id].control_mode !== PowerSupply.MANUAL()) {
+      return "BAD CONTROL MODE (sterowanie ze sterowni)!";
+    }
+    if (
+      suppliers[supp_id].control_of_supplier ===
+      PowerSupply.MANUAL_CONTROL_OF_SUPPLIER()
+    ) {
+      return "BAD CONTROL MODE (ręczne sterowanie zasilaczem)!";
+    }
+    suppliers[supp_id].on = PowerSupply.TURNED_ON();
     return "";
   });
 
@@ -304,10 +352,12 @@ app.whenReady().then(() => {
 
   async function ask_suppliers() {
     for (let i = 0; i < suppliers.length; i++) {
-      let supplier = suppliers[i];
-      let res = await supplier.read_status();
+      // let supplier = suppliers[i];
+      let res = await suppliers[i].read_status();
       if (DEBUG) {
-        console.log(res);
+        // console.log(res);
+        console.log("zasilacz: " + i);
+        console.log(suppliers[i]);
       }
 
       // check if res is a json object
@@ -325,9 +375,10 @@ app.whenReady().then(() => {
           suppliers[i].on !== PowerSupply.TURNING_OFF() &&
           suppliers[i].on !== PowerSupply.TURNING_ON()
         ) {
+          console.log("Setting on-off for supplier: " + i + " to: " + isOn);
           mainWindow.webContents.send("new-on-off", i, isOn);
         }
-        if (supplier.polarity_mutable) {
+        if (suppliers[i].polarity_mutable) {
           mainWindow.webContents.send("new-polarity", i, res.polarity);
         }
         let str_voltage = sprintf("%05.1f", res.voltage);
