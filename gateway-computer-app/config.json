@@ -26,8 +26,8 @@
 
      {"no": "7",
      "port": "tty333",
-     "polarity": "mutable",
-     "maxCurrent": "100",
+     "polarity": "const",
+     "maxCurrent": "200",
      "baudRate": 38400,
      "x": "-2083.7981",
      "y": "-804.31189"}

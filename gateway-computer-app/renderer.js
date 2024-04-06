@@ -1326,7 +1326,7 @@ przelacznik_trybu_sterowania.addEventListener("change", async function () {
  * Zapytajka. *
  **************/
 window.electronAPI.get_turn_off_failed(async (panel_id) => {
-  if (confirm("Prąd nie spadł do 0A. Kontynuować wyłączanie?")) {
+  if (confirm("The current did not drop to 0A. Do proceed with the shutdown ?")) {
     var odpowiedz = await window.electronAPI.turn_off_fail_continue(panel_id);
     if (odpowiedz !== "") {
       alert(odpowiedz);
@@ -1338,3 +1338,4 @@ window.electronAPI.get_turn_off_failed(async (panel_id) => {
     }
   }
 });
+
