@@ -194,13 +194,6 @@ class PowerSupply {
   async set_current(new_val) {
     new_val = parseInt(new_val * 10);
     new_val = new_val / 10;
-    // User should be able to set current to 0 even if the supplier is off!
-    // if (this.on_read_from_supplier === PowerSupply.TURNED_OFF()) {
-    //   if (DEBUG) {
-    //     console.log("Supplier is off.");
-    //   }
-    //   return "Error setting current: supplier " + this.name + " is off.";
-    // }
     if (new_val < 0 || new_val > this.maxCurrent) {
       if (DEBUG) {
         console.log("Error: bad argument.");
@@ -219,10 +212,6 @@ class PowerSupply {
     const scale_factor = (1 << this.setting_current_n_bits) - 1;
     let scaled_val = (new_val * scale_factor) / this.maxCurrent;
     scaled_val = Math.floor(scaled_val);
-    if (DEBUG) {
-      // console.log("scaled_val: " + scaled_val);
-      // console.log(scaled_val);
-    }
     var code_array = [true, true];
     var binary_val_array = [];
     var div = 2;
@@ -233,24 +222,15 @@ class PowerSupply {
     }
     binary_val_array = binary_val_array.reverse();
     if (DEBUG) {
-      // console.log("binary_val_array: " + binary_val_array);
-      // console.log(binary_val_array);
       // check if binary_val_array is correct:
       let tmp = "";
       for (let i = 0; i < binary_val_array.length; i++) {
         tmp += binary_val_array[i];
       }
       let dec_val = parseInt(tmp, 2);
-      // console.log("tmp: " + tmp);
-      // console.log("dec_val: " + dec_val);
-      // console.log("scaled_val: " + scaled_val);
       assert(dec_val == scaled_val);
     }
     const message_to_supplier = code_array.concat(binary_val_array);
-    if (DEBUG) {
-      // console.log("message_to_supplier: " + message_to_supplier);
-      // console.log(message_to_supplier);
-    }
 
     try {
       await this.send_frame_to_supplier(message_to_supplier);
@@ -262,20 +242,12 @@ class PowerSupply {
     } catch (errors) {
       if (DEBUG) {
         console.log(errors);
-        // console.log("zlapalem");
       }
       throw errors;
     }
   }
 
   async set_polarity(new_val) {
-    // User is able to change polarity even if the supplier is off!
-    // if (this.on_read_from_supplier === PowerSupply.TURNED_OFF()) {
-    //   if (DEBUG) {
-    //     console.log("Supplier is off.");
-    //   }
-    //   return "Error setting polarity: supplier " + this.name + " is off.";
-    // }
     if (!this.polarity_mutable) {
       return "Error: polarity is not mutable.";
     }
@@ -308,14 +280,8 @@ class PowerSupply {
         await this.send_frame_to_supplier([true, false, new_val]);
         return "";
       } else {
-        return "We hold our time too precious to be spent with such brabbler.";
+        return "Polarity change failed: current is not 0";
       }
-
-      // if (DEBUG) {
-      //   console.log("Setting polarity...");
-      //   console.log("polarity set.");
-      // }
-      // return "";
     } catch (errors) {
       if (DEBUG) {
         console.log(errors);
@@ -354,20 +320,11 @@ class PowerSupply {
     }
     try {
       let msg = await client.readInputRegisters(0, this.N_READING_REGISTERS);
-      if (DEBUG) {
-        // console.log(msg);
-      }
       let first_reg = msg.data[0];
       let current_mask = (1 << this.reading_current_n_bits) - 1;
       let current_scaled = first_reg & current_mask;
-      if (DEBUG) {
-        // console.log("read current_scaled:" + current_scaled);
-      }
       let current_received_from_supplier =
         (current_scaled * this.maxCurrent) / current_mask;
-      if (DEBUG) {
-        // console.log("read current:" + current);
-      }
       first_reg = first_reg >> this.reading_current_n_bits;
       // Value read from supplier:
       let is_on_read_from_supplier = first_reg & 1;
@@ -392,14 +349,7 @@ class PowerSupply {
       let current_sent_to_pico =
         (current_sent_to_pico_scaled * this.maxCurrent) /
         current_sent_to_pico_mask;
-
-      if (DEBUG) {
-        // console.log("read voltage_scaled:" + voltage_scaled);
-      }
       let voltage = (voltage_scaled * this.maxVoltage) / voltage_mask;
-      if (DEBUG) {
-        // console.log("read voltage:" + voltage);
-      }
 
       ret = {
         current_read_from_supplier: current_received_from_supplier,
