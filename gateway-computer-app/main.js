@@ -179,16 +179,9 @@ app.whenReady().then(() => {
     obsluzOtworzeniePlikuKonfiguracyjnego
   );
   ipcMain.handle("dialog:set_polarity", async (event, supp_id, new_val) => {
-    let res = "";
-    console.log(suppliers[supp_id].control_mode);
-    if (suppliers[supp_id].control_mode !== PowerSupply.MANUAL()) {
-      return "Error: bad control mode (change to local). Bloody bawdy villain! Remorseless, treacherous, lecherous, kindless villain!";
-    }
-    if (
-      suppliers[supp_id].control_of_supplier ===
-      PowerSupply.MANUAL_CONTROL_OF_SUPPLIER()
-    ) {
-      return "Error: bad control mode (change to remote on power supply control panel).";
+    let res = suppliers[supp_id].check_supplier_and_application_control_modes();
+    if (res !== "") {
+      return res;
     }
     try {
       res = await suppliers[supp_id].set_polarity(new_val);
@@ -205,15 +198,9 @@ app.whenReady().then(() => {
     }
   });
   ipcMain.handle("dialog:set_current", async (event, supp_id, new_val) => {
-    let res = "";
-    if (suppliers[supp_id].control_mode !== PowerSupply.MANUAL()) {
-      return "Error: bad control mode (change to local).";
-    }
-    if (
-      suppliers[supp_id].control_of_supplier ===
-      PowerSupply.MANUAL_CONTROL_OF_SUPPLIER()
-    ) {
-      return "Error: bad control mode (change to remote on power supply control panel).";
+    let res = suppliers[supp_id].check_supplier_and_application_control_modes();
+    if (res !== "") {
+      return res;
     }
     try {
       res = await suppliers[supp_id].set_current(new_val);
@@ -230,15 +217,9 @@ app.whenReady().then(() => {
     }
   });
   ipcMain.handle("dialog:turn_on", async (event, supp_id) => {
-    let res = "";
-    if (suppliers[supp_id].control_mode !== PowerSupply.MANUAL()) {
-      return "Error: bad control mode (change to local).";
-    }
-    if (
-      suppliers[supp_id].control_of_supplier ===
-      PowerSupply.MANUAL_CONTROL_OF_SUPPLIER()
-    ) {
-      return "Error: bad control mode (change to remote on power supply control panel).";
+    let res = suppliers[supp_id].check_supplier_and_application_control_modes();
+    if (res !== "") {
+      return res;
     }
     try {
       res = await suppliers[supp_id].turn_on();
@@ -255,16 +236,9 @@ app.whenReady().then(() => {
     }
   });
   ipcMain.handle("dialog:turn_off", async (event, supp_id) => {
-    let res = "";
-    console.log("user presses turn off");
-    if (suppliers[supp_id].control_mode !== PowerSupply.MANUAL()) {
-      return "Error: bad control mode (change to local).";
-    }
-    if (
-      suppliers[supp_id].control_of_supplier ===
-      PowerSupply.MANUAL_CONTROL_OF_SUPPLIER()
-    ) {
-      return "Error: bad control mode (change to remote on power supply control panel).";
+    let res = suppliers[supp_id].check_supplier_and_application_control_modes();
+    if (res !== "") {
+      return res;
     }
     suppliers[supp_id].on_read_from_supplier = PowerSupply.TURNING_OFF();
     console.log("turning off set");
@@ -306,15 +280,9 @@ app.whenReady().then(() => {
     return "";
   });
   ipcMain.handle("dialog:turn_off_fail_continue", async (event, supp_id) => {
-    let res = "";
-    if (suppliers[supp_id].control_mode !== PowerSupply.MANUAL()) {
-      return "Error: bad control mode (change to local).";
-    }
-    if (
-      suppliers[supp_id].control_of_supplier ===
-      PowerSupply.MANUAL_CONTROL_OF_SUPPLIER()
-    ) {
-      return "Error: bad control mode (change to remote on power supply control panel).";
+    let res = suppliers[supp_id].check_supplier_and_application_control_modes();
+    if (res !== "") {
+      return res;
     }
     try {
       res = await suppliers[supp_id].turn_off();
@@ -330,15 +298,9 @@ app.whenReady().then(() => {
     return res;
   });
   ipcMain.handle("dialog:turn_off_fail_stop", async (event, supp_id) => {
-    let res = "";
-    if (suppliers[supp_id].control_mode !== PowerSupply.MANUAL()) {
-      return "Error: bad control mode (change to local).";
-    }
-    if (
-      suppliers[supp_id].control_of_supplier ===
-      PowerSupply.MANUAL_CONTROL_OF_SUPPLIER()
-    ) {
-      return "Error: bad control mode (change to remote on power supply control panel).";
+    let res = suppliers[supp_id].check_supplier_and_application_control_modes();
+    if (res !== "") {
+      return res;
     }
     suppliers[supp_id].on_read_from_supplier = PowerSupply.TURNED_ON();
     return "";

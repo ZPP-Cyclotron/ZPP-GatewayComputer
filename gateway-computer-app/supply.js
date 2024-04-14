@@ -453,6 +453,16 @@ class PowerSupply {
     this.control_mode = new_val;
   }
 
+  check_supplier_and_application_control_modes() {
+    if (this.control_mode !== PowerSupply.MANUAL()) {
+      return "Error: bad control mode (change to local).";
+    }
+    if (this.control_of_supplier === PowerSupply.MANUAL_CONTROL_OF_SUPPLIER()) {
+      return "Error: bad control mode (change to remote on power supply control panel).";
+    }
+    return "";
+  }
+
   // number of power supplies in the system
   static N_supplies = 0;
 
