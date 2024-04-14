@@ -154,14 +154,14 @@ function obsluzOtworzeniePlikuKonfiguracyjnego() {
 
 const createWindow = () => {
   const mainWindow = new BrowserWindow({
-    fullscreen: true,
+    // fullscreen: true,
     frame: true,
-    // width: 1500,
+    width: 1500,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
     },
   });
-
+  mainWindow.maximize();
   mainWindow.loadFile("templates/index.html");
 
   return mainWindow;
