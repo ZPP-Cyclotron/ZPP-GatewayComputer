@@ -240,8 +240,6 @@ app.whenReady().then(() => {
     if (res !== "") {
       return res;
     }
-    suppliers[supp_id].on_read_from_supplier = PowerSupply.TURNING_OFF();
-    console.log("turning off set");
     try {
       mainWindow.webContents.send("nowy_zadany_prad", supp_id, "000.0");
       res = await suppliers[supp_id].initiate_turn_off();
@@ -263,9 +261,6 @@ app.whenReady().then(() => {
       res = "Error: check the error code column for more info: " + err;
       return res;
     }
-    // finally {
-    //   console.log("finally returning: " + res);
-    // }
   });
   ipcMain.handle("dialog:set_control_mode", async (_, new_val) => {
     if (DEBUG) {
@@ -302,7 +297,8 @@ app.whenReady().then(() => {
     if (res !== "") {
       return res;
     }
-    suppliers[supp_id].on_read_from_supplier = PowerSupply.TURNED_ON();
+    suppliers[supp_id].turn_off_fail_stop();
+    mainWindow.webContents.send("new-on-off", supp_id, true);
     return "";
   });
 
@@ -321,17 +317,12 @@ app.whenReady().then(() => {
       // let supplier = suppliers[i];
       let res = await suppliers[i].read_status();
       if (DEBUG) {
-        // console.log(res);
-        console.log("zasilacz: " + i);
         // console.log(suppliers[i]);
         console.log(res);
       }
 
       // check if res is a json object
       if (typeof res === "object") {
-        if (DEBUG) {
-          console.log("GOT INFO FROM SUPPLIER: " + i);
-        }
         let str_current = sprintf("%05.1f", res.current_read_from_supplier);
         mainWindow.webContents.send("new-current", i, str_current);
         let str_current_sent_to_pico = sprintf(
@@ -343,19 +334,7 @@ app.whenReady().then(() => {
           i,
           str_current_sent_to_pico
         );
-        // let isOn = res.is_on;
-        // // cast isOn to boolean
-        // isOn = isOn === 1;
-        // if (
-        //   // TODO OGARNAC WSPOLBIEZNE (POLARITY TEZ)
-        //   suppliers[i].on_read_from_supplier !== PowerSupply.TURNING_OFF() &&
-        //   suppliers[i].on_read_from_supplier !== PowerSupply.TURNING_ON()
-        // ) {
-        //   console.log("Setting on-off for supplier: " + i + " to: " + isOn);
-        //   mainWindow.webContents.send("new-on-off", i, isOn);
-        // }
 
-        mainWindow.webContents.send("new-on-off", i, res.is_on_sent_to_pico);
         mainWindow.webContents.send(
           "on_off_odczytany",
           i,
@@ -376,6 +355,8 @@ app.whenReady().then(() => {
         } else {
           mainWindow.webContents.send("new-error", i, "");
         }
+
+        mainWindow.webContents.send("new-on-off", i, res.is_on_sent_to_pico);
       } else {
         console.log("Error: ret is not json object.");
         mainWindow.webContents.send("new-error", i, res);
@@ -383,7 +364,6 @@ app.whenReady().then(() => {
     }
   }
   timer = setInterval(() => {
-    console.log("Sending new status...");
     ask_suppliers();
   }, config.refreshInterval);
   app.on("activate", () => {

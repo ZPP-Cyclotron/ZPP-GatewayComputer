@@ -45,6 +45,7 @@ class PowerSupply {
     this.n_error_bits = 3;
     this.N_READING_REGISTERS = 3;
     this.wait_for_current_to_drop_timeout = 3000;
+    this.turning_off = false;
   }
 
   async get_connected_client() {
@@ -102,8 +103,15 @@ class PowerSupply {
       }
       return "Supplier " + this.name + " is already on.";
     }
+    if (this.on_sent_to_pico === PowerSupply.TURNED_ON()) {
+      if (DEBUG) {
+        console.log("Supplier " + this.name + " has already been turned on.");
+      }
+      return "Supplier " + this.name + " has already been turned on.";
+    }
     try {
       await this.send_frame_to_supplier([false, false, true]);
+      this.on_sent_to_pico = PowerSupply.TURNED_ON();
       if (DEBUG) {
         console.log("Supplier turned on.");
       }
@@ -123,25 +131,26 @@ class PowerSupply {
       }
       return "Supplier " + this.name + " is already off.";
     }
-    // if (this.on_read_from_supplier === PowerSupply.TURNING_OFF()) {
-    //   if (DEBUG) {
-    //     console.log(
-    //       "Supplier " +
-    //         this.name +
-    //         " is already turning off.\n Please wait until the next read from supplier happens."
-    //     );
-    //   }
-    //   return (
-    //     "Supplier " +
-    //     this.name +
-    //     " is already turning off.\n Please wait until the next read from supplier happens."
-    //   );
-    // }
+    if (this.on_sent_to_pico === PowerSupply.TURNED_OFF()) {
+      if (DEBUG) {
+        console.log("Supplier " + this.name + " has already been turned off.");
+      }
+      return "Supplier " + this.name + " has already been turned off.";
+    }
+    if (this.turning_off === true) {
+      let msg =
+        "Supplier " +
+        this.name +
+        " is already turning off.\n Please wait until the next read from supplier happens.";
+      if (DEBUG) {
+        console.log(msg);
+      }
+      return msg;
+    }
 
     try {
-      this.on_read_from_supplier = PowerSupply.TURNING_OFF();
       await this.set_current(0);
-
+      this.turning_off = true;
       // wait 1s for the current to drop to 0
       await new Promise((resolve) =>
         setTimeout(resolve, this.wait_for_current_to_drop_timeout)
@@ -158,7 +167,7 @@ class PowerSupply {
       }
       if (new_current === 0) {
         await this.turn_off();
-        this.on_read_from_supplier = PowerSupply.TURNED_OFF();
+        this.turning_off = false;
         return "";
       } else {
         // this.on_read_from_supplier = PowerSupply.TURNED_ON();
@@ -182,6 +191,7 @@ class PowerSupply {
       if (DEBUG) {
         console.log("Supplier turned off.");
       }
+      this.turning_off = false;
       return "";
     } catch (errors) {
       if (DEBUG) {
@@ -355,7 +365,7 @@ class PowerSupply {
         current_read_from_supplier: current_received_from_supplier,
         current_sent_to_pico: current_sent_to_pico,
         is_on_read_from_supplier: is_on_read_from_supplier,
-        is_on_sent_to_pico: is_on_sent_to_pico,
+        is_on_sent_to_pico: this.turning_off === true ? 0 : is_on_sent_to_pico,
         polarity: polarity,
         reset: reset,
         control_type: control_of_supplier,
@@ -379,14 +389,14 @@ class PowerSupply {
 
       if (ret != null) {
         this.current_read = ret.current;
-        if (this.on_read_from_supplier !== PowerSupply.TURNING_OFF()) {
-          this.on_read_from_supplier = ret.is_on;
-        }
+        this.on_read_from_supplier = ret.is_on;
         this.polarity = ret.polarity;
         // this.reset = ret.reset;
         this.control_of_supplier = ret.control_type;
         this.voltage = ret.voltage;
         this.errors = ret.errors;
+        this.on_sent_to_pico =
+          this.turning_off === true ? 0 : ret.is_on_sent_to_pico;
       } else {
         console.log("ret is null, errors: " + errors);
         ret = errors;
@@ -411,6 +421,11 @@ class PowerSupply {
       return "Error: bad control mode (change to remote on power supply control panel).";
     }
     return "";
+  }
+
+  turn_off_fail_stop() {
+    this.turning_off = false;
+    this.on_sent_to_pico = PowerSupply.TURNED_ON();
   }
 
   // number of power supplies in the system
@@ -470,13 +485,6 @@ class PowerSupply {
   }
   static TURNED_ON() {
     return 1;
-  }
-
-  static TURNING_ON() {
-    return 2;
-  }
-  static TURNING_OFF() {
-    return 3;
   }
 }
 
