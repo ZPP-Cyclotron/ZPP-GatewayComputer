@@ -92,4 +92,10 @@ contextBridge.exposeInMainWorld("electronAPI", {
       callback(supp_id, isOn);
     });
   },
+
+  get_sign: (callback) => {
+    ipcRenderer.on("new-sign", (event, supp_id, sign) => {
+      callback(supp_id, sign);
+    });
+  },
 });

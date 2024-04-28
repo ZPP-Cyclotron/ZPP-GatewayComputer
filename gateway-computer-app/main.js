@@ -342,7 +342,15 @@ app.whenReady().then(() => {
         );
         if (suppliers[i].polarity_mutable) {
           mainWindow.webContents.send("new-polarity", i, res.polarity);
+          // send to frontend the polarity value that was sent to pico controller:
+          let polarity_sent_to_pico = res.polarity_sent_to_pico;
+          if (polarity_sent_to_pico === 1) {
+            mainWindow.webContents.send("new-sign", i, "+");
+          } else {
+            mainWindow.webContents.send("new-sign", i, "-");
+          }
         }
+
         let str_voltage = sprintf("%05.1f", res.voltage);
         mainWindow.webContents.send("new-voltage", i, str_voltage);
         mainWindow.webContents.send(

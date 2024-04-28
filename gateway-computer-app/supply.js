@@ -349,6 +349,8 @@ class PowerSupply {
       second_reg = second_reg >> this.reading_voltage_n_bits;
       let errors_mask = (1 << this.n_error_bits) - 1;
       let errors_read_from_supplier = second_reg & errors_mask;
+      let polarity_sent_to_pico = errors_read_from_supplier & 4;
+      errors_read_from_supplier = errors_read_from_supplier & 3;
       second_reg = second_reg >> this.n_error_bits;
       let is_on_sent_to_pico = second_reg & 1;
 
@@ -367,6 +369,7 @@ class PowerSupply {
         is_on_read_from_supplier: is_on_read_from_supplier,
         is_on_sent_to_pico: this.turning_off === true ? 0 : is_on_sent_to_pico,
         polarity: polarity,
+        polarity_sent_to_pico: polarity_sent_to_pico,
         reset: reset,
         control_type: control_of_supplier,
         voltage: voltage,
