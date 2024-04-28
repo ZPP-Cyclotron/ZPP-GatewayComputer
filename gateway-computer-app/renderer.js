@@ -1172,6 +1172,11 @@ window.addEventListener("load", async () => {
       dopiszCyfry(obszarNaPolarOdczyt, [" "]);
 
       PoleOdczytuPolaryzacji(obszarNaPolarOdczyt, i);
+    } else {
+      var obszarNaPolarOdczyt = document.createElement("div");
+      obszarNaPolarOdczyt.classList.add("obszar-na-polaryzacje");
+
+      obszarPolarOdczyt.appendChild(obszarNaPolarOdczyt);
     }
 
     panel.appendChild(obszarPolarOdczyt);
