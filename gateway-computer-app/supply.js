@@ -12,6 +12,7 @@ class PowerSupply {
     baudRate,
     modbusTimeout
   ) {
+    this.bad_port_msg = "bad    port";
     PowerSupply.N_supplies++;
     this.idx = idx;
     this.name = name;
@@ -56,9 +57,10 @@ class PowerSupply {
   }
 
   handleModbusError(err) {
+    if (err.errno === "ETIMEDOUT") return "MODBUS TIMEOUT";
     if (err.errno !== undefined) return err.errno;
     else if (err.modbusCode !== undefined) {
-      return "ModbusErr " + err.modbusCode;
+      return "Modbus Error " + err.modbusCode;
     } else if (String(err).includes("CRC")) {
       return "CRC error";
     } else {
@@ -75,7 +77,7 @@ class PowerSupply {
       if (DEBUG) {
         console.log(err);
       }
-      throw "bad port open";
+      throw this.bad_port_msg;
     }
     try {
       await client.writeCoils(0, frame);
@@ -284,8 +286,9 @@ class PowerSupply {
         if (DEBUG) {
           console.log("[POLARITY] GOT INFO FROM SUPPLIER: " + i);
         }
-        new_current = res.current;
+        new_current = res.current_read_from_supplier;
       }
+      console.log("[SET POLARITY] new_current: " + new_current);
       if (new_current === 0) {
         await this.send_frame_to_supplier([true, false, new_val]);
         return "";
@@ -326,7 +329,7 @@ class PowerSupply {
       if (DEBUG) {
         console.log(err);
       }
-      return "bad port open";
+      return this.bad_port_msg;
     }
     try {
       let msg = await client.readInputRegisters(0, this.N_READING_REGISTERS);
@@ -391,7 +394,7 @@ class PowerSupply {
       }
 
       if (ret != null) {
-        this.current_read = ret.current;
+        this.current_read = ret.current_read_from_supplier;
         this.on_read_from_supplier = ret.is_on;
         this.polarity = ret.polarity;
         // this.reset = ret.reset;
