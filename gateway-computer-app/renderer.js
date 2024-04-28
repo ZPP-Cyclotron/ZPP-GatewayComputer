@@ -182,6 +182,16 @@ class Cyferka extends HTMLElement {
       if (z.includes(k)) {
         return this.kolor_on;
       }
+    } else if (this.wartosc[0] == "+") {
+      const plus = ["w3", "w9", "w12", "w6"];
+      if (plus.includes(k)) {
+        return this.kolor_on;
+      }
+    } else if (this.wartosc[0] == "-") {
+      const minus = ["w3", "w9"];
+      if (minus.includes(k)) {
+        return this.kolor_on;
+      }
     }
 
     // Kropka.
@@ -867,6 +877,22 @@ var PolePolaryzacji = (function () {
   };
 })();
 
+var PoleOdczytuPolaryzacji = (function () {
+  function main(obszar_na_polaryzacje, panel_id) {
+    var cyfra_polaryzacji = obszar_na_polaryzacje.querySelector(".cyfra");
+
+    window.electronAPI.get_sign((i, znak) => {
+      if (panel_id == i) {
+        cyfra_polaryzacji.setAttribute("wartosc", znak);
+      }
+    });
+  }
+
+  return function (obszar_na_polaryzacje, panel_id) {
+    main(obszar_na_polaryzacje, panel_id);
+  };
+})();
+
 /****************************************
  * Obsługa trybu sterowania zasilaczem. *
  ****************************************/
@@ -1050,6 +1076,33 @@ window.addEventListener("load", async () => {
     obszarOnOff.appendChild(obszarNaGuzikOnOff);
 
     panel.appendChild(obszarOnOff);
+
+    // POLARYZACJA (ODCZYT)
+
+    var obszarPolarOdczyt = document.createElement("div");
+    obszarPolarOdczyt.classList.add("obszar-na-naglowek-i-cos");
+
+    var obszarPolarOdczytObszarNaNaglowek = document.createElement("div");
+    obszarPolarOdczytObszarNaNaglowek.classList.add("obszar-na-naglowek");
+
+    var obszarPolarOdczytNaglowek = document.createElement("p");
+    obszarPolarOdczytNaglowek.classList.add("naglowek");
+    obszarPolarOdczytNaglowek.innerText = "POLAR (GET)";
+
+    obszarPolarOdczytObszarNaNaglowek.appendChild(obszarPolarOdczytNaglowek);
+
+    obszarPolarOdczyt.appendChild(obszarPolarOdczytObszarNaNaglowek);
+
+    if (konfiguracja.suppliers[i].polarity == "mutable") {
+      var obszarNaPolarOdczyt = document.createElement("div");
+      obszarNaPolarOdczyt.classList.add("obszar-na-napiecie");
+
+      obszarPolarOdczyt.appendChild(obszarNaPolarOdczyt);
+
+      PolePolaryzacji(obszarNaPolarOdczyt, i);
+    }
+
+    panel.appendChild(obszarPolarOdczyt);
 
     // POLARYZACJA
 
@@ -1338,4 +1391,3 @@ window.electronAPI.get_turn_off_failed(async (panel_id) => {
     }
   }
 });
-
