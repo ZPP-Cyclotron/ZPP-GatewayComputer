@@ -1077,33 +1077,6 @@ window.addEventListener("load", async () => {
 
     panel.appendChild(obszarOnOff);
 
-    // POLARYZACJA (ODCZYT)
-
-    var obszarPolarOdczyt = document.createElement("div");
-    obszarPolarOdczyt.classList.add("obszar-na-naglowek-i-cos");
-
-    var obszarPolarOdczytObszarNaNaglowek = document.createElement("div");
-    obszarPolarOdczytObszarNaNaglowek.classList.add("obszar-na-naglowek");
-
-    var obszarPolarOdczytNaglowek = document.createElement("p");
-    obszarPolarOdczytNaglowek.classList.add("naglowek");
-    obszarPolarOdczytNaglowek.innerText = "POLAR (GET)";
-
-    obszarPolarOdczytObszarNaNaglowek.appendChild(obszarPolarOdczytNaglowek);
-
-    obszarPolarOdczyt.appendChild(obszarPolarOdczytObszarNaNaglowek);
-
-    if (konfiguracja.suppliers[i].polarity == "mutable") {
-      var obszarNaPolarOdczyt = document.createElement("div");
-      obszarNaPolarOdczyt.classList.add("obszar-na-napiecie");
-
-      obszarPolarOdczyt.appendChild(obszarNaPolarOdczyt);
-
-      PolePolaryzacji(obszarNaPolarOdczyt, i);
-    }
-
-    panel.appendChild(obszarPolarOdczyt);
-
     // POLARYZACJA
 
     var obszarPolaryzacja = document.createElement("div");
@@ -1114,7 +1087,7 @@ window.addEventListener("load", async () => {
 
     var obszarPolaryzacjaNaglowek = document.createElement("p");
     obszarPolaryzacjaNaglowek.classList.add("naglowek");
-    obszarPolaryzacjaNaglowek.innerText = "POLARITY N/P";
+    obszarPolaryzacjaNaglowek.innerText = "POLAR (SET)";
 
     obszarPolaryzacjaObszarNaNaglowek.appendChild(obszarPolaryzacjaNaglowek);
 
@@ -1173,6 +1146,37 @@ window.addEventListener("load", async () => {
     obszarPolaryzacja.appendChild(obszarNaPolaryzacje);
 
     panel.appendChild(obszarPolaryzacja);
+
+    // POLARYZACJA (ODCZYT)
+
+    var obszarPolarOdczyt = document.createElement("div");
+    obszarPolarOdczyt.classList.add("obszar-na-naglowek-i-cos");
+
+    var obszarPolarOdczytObszarNaNaglowek = document.createElement("div");
+    obszarPolarOdczytObszarNaNaglowek.classList.add("obszar-na-naglowek");
+
+    var obszarPolarOdczytNaglowek = document.createElement("p");
+    obszarPolarOdczytNaglowek.classList.add("naglowek");
+    obszarPolarOdczytNaglowek.innerText = "POLAR (GET)";
+
+    obszarPolarOdczytObszarNaNaglowek.appendChild(obszarPolarOdczytNaglowek);
+
+    obszarPolarOdczyt.appendChild(obszarPolarOdczytObszarNaNaglowek);
+
+    if (konfiguracja.suppliers[i].polarity == "mutable") {
+      var obszarNaPolarOdczyt = document.createElement("div");
+      obszarNaPolarOdczyt.classList.add("obszar-na-napiecie");
+
+      obszarPolarOdczyt.appendChild(obszarNaPolarOdczyt);
+
+      dopiszCyfry(obszarNaPolarOdczyt, [" "]);
+
+      PoleOdczytuPolaryzacji(obszarNaPolarOdczyt, i);
+    }
+
+    panel.appendChild(obszarPolarOdczyt);
+
+
 
     // NATĘŻENIE (USTAWIENIE)
 
