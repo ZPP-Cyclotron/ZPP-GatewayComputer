@@ -20,7 +20,7 @@ class PowerSupply {
     this.polarity = PowerSupply.POLARITY_UNDEFINED();
     this.voltage = 0;
     this.current_read = 0;
-    this.current_set = 0;
+    this.current_set = -1;
     this.current_sent_to_pico_n_bits = 16;
     this.control_of_supplier = PowerSupply.MANUAL_CONTROL_OF_SUPPLIER();
     this.control_mode = PowerSupply.MANUAL();
@@ -394,6 +394,10 @@ class PowerSupply {
       }
 
       if (ret != null) {
+        if (ret.control_type !== 1 || this.current_set < 0) {
+          this.current_set = ret.current_sent_to_pico;
+        }
+        ret.current_sent_to_pico = this.current_set;
         this.current_read = ret.current_read_from_supplier;
         this.on_read_from_supplier = ret.is_on;
         this.polarity = ret.polarity;
