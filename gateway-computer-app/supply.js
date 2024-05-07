@@ -80,6 +80,9 @@ class PowerSupply {
       throw this.bad_port_msg;
     }
     try {
+      if (DEBUG === true) {
+        console.log("write coils, wartosci: " + frame);
+      }
       await client.writeCoils(0, frame);
     } catch (err) {
       if (DEBUG) {
@@ -332,7 +335,15 @@ class PowerSupply {
       return this.bad_port_msg;
     }
     try {
+      if (DEBUG === true) {
+        console.log("Read Input Registers");
+      }
       let msg = await client.readInputRegisters(0, this.N_READING_REGISTERS);
+      if (DEBUG === true) {
+        console.log(msg.data[0].toString(2));
+        console.log(msg.data[1].toString(2));
+        console.log(msg.data[2].toString(2));
+      }
       let first_reg = msg.data[0];
       let current_mask = (1 << this.reading_current_n_bits) - 1;
       let current_scaled = first_reg & current_mask;
